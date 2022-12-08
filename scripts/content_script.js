@@ -41,7 +41,8 @@ const notifyError = (message) => {
 const checkAddonCollapse = async () => {
    const isOpen = await getStorage(addonCollapsible);
    if (isOpen === false) {
-      if ($("#om-collapsible").hasClass("om-active")) $("#om-collapsible").click();
+      if ($("#om-collapsible").hasClass("om-active"))
+         $("#om-collapsible").click();
    } else {
       if (!$("#om-collapsible").hasClass("om-active"))
          $("#om-collapsible").click();
@@ -191,6 +192,14 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
          initAddon();
          chrome.runtime.sendMessage({
             message: "listedSaveApiKey",
+         });
+         break;
+
+      case "getApiKey":
+         res({ message: "received" });
+         chrome.runtime.sendMessage({
+            message: "getApiKey",
+            data: await getStorage(mbApi),
          });
          break;
 

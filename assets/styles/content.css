@@ -293,3 +293,15 @@ th {
 .revert-order-item {
    padding: 0.5rem 0.6rem;
 }
+
+.om-synced-all-wrap {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+.om-text-synced-all {
+   font-weight: 410;
+   padding: 10px 0;
+   text-align: center;
+   font-size: 18px;
+}

@@ -47,7 +47,10 @@
    ],
    "web_accessible_resources": [
       {
-         "resources": ["assets/images/not-found.png"],
+         "resources": [
+            "assets/images/not-found.png",
+            "assets/images/completed.png"
+         ],
          "matches": ["https://www.etsy.com/*"]
       }
    ]

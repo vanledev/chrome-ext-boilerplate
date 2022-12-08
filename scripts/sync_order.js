@@ -7,6 +7,15 @@ const orderNotFound = `
    </div>
 `;
 
+const syncedAllOrders = `
+   <div class="om-synced-all-wrap">
+      <div style="padding:20px 10px;"><img style="width:30px;object-fit:cover;" src="${chrome.runtime.getURL(
+         "assets/images/completed.png"
+      )}"/></div>
+      <div class="om-text-synced-all" >All orders were synced to MB</div>
+   </div>
+`;
+
 const handleEventCheckSyncedOrders = (data) => {
    // remove loading
    $("#not_synced .loader-resp").remove();
@@ -45,10 +54,11 @@ const handleEventCheckSyncedOrders = (data) => {
       `);
 
    //------------ insert data into table
-   const orderStatus = data.data;
+   let { orders, status: orderStatus } = data;
    let hasNotSync = false;
    let hasIgnore = false;
-   for (const order of data.orders) {
+   orders = []
+   for (const order of orders) {
       // add order into not sync table
       if (orderStatus[order.orderId] === "Not Synced") {
          hasNotSync = true;
@@ -92,7 +102,7 @@ const handleEventCheckSyncedOrders = (data) => {
    }
    if (hasNotSync) $(".btn-sync-order-wrap").css("display", "flex");
    else {
-      $("#not_synced .table_wrap").append(orderNotFound);
+      $("#not_synced .table_wrap").append(syncedAllOrders);
       $("#not_synced .btn-sync-order-wrap").css("display", "none");
    }
 
@@ -130,28 +140,19 @@ const setTextBtnRevert = () => {
 // listing event from background
 chrome.runtime.onMessage.addListener(async function (req, sender, res) {
    const { message, data } = req || {};
-   console.log("message: ", message)
    if (message === "orders") {
       res({ message: "received" });
-      if (!data || data.length == 0) {
+      if (!data) {
          return;
       }
-      chrome.runtime.sendMessage({
-         message: "checkSyncedOrders",
-         data: {
-            apiKey: await getStorage(mbApi),
-            orders: data,
-         },
-      });
-   }
-   if (message === "checkSyncedOrders") {
-      res({ message: "received" });
-      if (data.error) {
+      const { error } = data || {};
+      if (error) {
          notifyError("Check synced order: " + data.error);
          return;
       }
       handleEventCheckSyncedOrders(data);
    }
+
    if (message === "syncOrderToMB") {
       res({ message: "received" });
       $(".loader").removeClass("loader");

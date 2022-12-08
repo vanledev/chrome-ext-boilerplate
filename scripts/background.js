@@ -27,6 +27,25 @@ const sendMessage = (tabId, message, data) => {
    }, 3000);
 };
 
+const sendToContentScript = (msg, data) =>
+   new Promise(async (resolve) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+         if (!tabs || !tabs.length || !tabs[0].id) return resolve(false);
+         sendMessage(tabs[0].id, msg, data);
+         resolve(true);
+      });
+   });
+
+const getMBApiKey = () =>
+   new Promise(async (resolve) => {
+      const isSended = await sendToContentScript("getApiKey", null);
+      if (!isSended) resolve(null);
+      chrome.runtime.onMessage.addListener(async (req, sender, res) => {
+         const { message, data } = req || {};
+         if (message === "getApiKey" && data) resolve(data);
+      });
+   });
+
 const getOrders = (data) => {
    const orders = [];
    const mapBuyer = {};
@@ -132,26 +151,6 @@ chrome.runtime.onMessage.addListener(async (req, sender, res) => {
          massage: "listedSaveApiKey",
       });
    }
-   if (message === "checkSyncedOrders") {
-      const { apiKey, orders } = data;
-      if (!apiKey || !orders || !orders.length) return;
-      const query = JSON.stringify({
-         query: `
-            query{
-               checkEtsyOrderSyncedByIds(
-                  ids: ${JSON.stringify(orders.map((o) => o["orderId"]))}
-               )
-            }
-      `,
-      });
-      const result = await sendRequestToMB(null, apiKey, query);
-      const resp = {
-         orders,
-         data: result.data ? result.data.checkEtsyOrderSyncedByIds : null,
-         error: result.errors ? result.errors[0].message : null,
-      };
-      sendMessage(sender.tab.id, "checkSyncedOrders", resp);
-   }
    if (message === "syncOrderToMB") {
       const { apiKey, orders } = data;
       if (!apiKey || !orders || !orders.length) return;
@@ -213,21 +212,41 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 // capture event from devtool
 chrome.runtime.onConnect.addListener(function (port) {
    if (port.name !== "captureOrders") return;
-   port.onMessage.addListener(function (msg) {
+   port.onMessage.addListener(async (msg) => {
       const { message, data } = msg || {};
       switch (message) {
          case "orderInfo":
             if (!data) break;
             const orders = getOrders(data);
-            chrome.tabs.query(
-               { active: true, currentWindow: true },
-               function (tabs) {
-                  if (tabs?.length > 0 && tabs[0].id) {
-                     // send order info to content script
-                     sendMessage(tabs[0].id, "orders", orders);
+            const resp = {
+               orders,
+               status: {},
+               error: null,
+            };
+
+            if (orders.length === 0) {
+               sendToContentScript("orders", resp);
+               return;
+            }
+            // check synced orders
+            const mbApiKey = await getMBApiKey();
+            if (!mbApiKey) return;
+            const query = JSON.stringify({
+               query: `
+                  query{
+                     checkEtsyOrderSyncedByIds(
+                        ids: ${JSON.stringify(orders.map((o) => o["orderId"]))}
+                     )
                   }
-               }
-            );
+            `,
+            });
+            const result = await sendRequestToMB(null, mbApiKey, query);
+            resp.status = result.data
+               ? result.data.checkEtsyOrderSyncedByIds
+               : null;
+            resp.error = result.errors ? result.errors[0].message : null;
+
+            sendToContentScript("orders", resp);
             break;
          default:
             break;
