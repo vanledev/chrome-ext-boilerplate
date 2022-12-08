@@ -1,17 +1,16 @@
 {
-   "update_url": "https://clients2.google.com/service/update2/crx",
    "manifest_version": 3,
-   "name": "Etsy Helper",
+   "name": "MerchBridge Etsy Helper",
    "version": "1.0",
    "description": "An extension to help you fulfill Etsy orders easier with MerchBridge.",
-   "devtools_page": "devtool/htmls/devtool.html",
+   "devtools_page": "devtool/devtool.html",
    "icons": {
       "16": "assets/images/16.png",
       "48": "assets/images/48.png",
       "128": "assets/images/128.png"
    },
    "action": {
-      "default_popup": "index.html",
+      "default_popup": "popup/index.html",
       "default_title": "Etsy Helper",
       "default_icon": {
          "48": "assets/images/48.png"
