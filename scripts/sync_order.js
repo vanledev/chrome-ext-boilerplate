@@ -54,10 +54,9 @@ const handleEventCheckSyncedOrders = (data) => {
       `);
 
    //------------ insert data into table
-   let { orders, status: orderStatus } = data;
+   const { orders, status: orderStatus } = data;
    let hasNotSync = false;
    let hasIgnore = false;
-   orders = []
    for (const order of orders) {
       // add order into not sync table
       if (orderStatus[order.orderId] === "Not Synced") {
