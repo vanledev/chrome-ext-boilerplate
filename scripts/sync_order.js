@@ -16,7 +16,7 @@ const syncedAllOrders = `
    </div>
 `;
 
-const handleEventCheckSyncedOrders = (data) => {
+const appendOrdersIntoTable = (data) => {
    // remove loading
    $("#not_synced .loader-resp").remove();
    $("#ignored .loader-resp").remove();
@@ -149,7 +149,7 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
          notifyError("Check synced order: " + data.error);
          return;
       }
-      handleEventCheckSyncedOrders(data);
+      appendOrdersIntoTable(data);
    }
 
    if (message === "syncOrderToMB") {

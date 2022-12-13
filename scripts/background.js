@@ -147,9 +147,7 @@ const sendRequestToMB = async (endPoint, apiKey, data) => {
 chrome.runtime.onMessage.addListener(async (req, sender, res) => {
    const { message, data } = req || {};
    if (message === "listedSaveApiKey") {
-      chrome.runtime.sendMessage({
-         massage: "listedSaveApiKey",
-      });
+      sendToContentScript("listedSaveApiKey", null);
    }
    if (message === "syncOrderToMB") {
       const { apiKey, orders } = data;

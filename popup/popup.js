@@ -43,5 +43,8 @@ $(document).ready(function () {
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-   if (request.massage === "listedSaveApiKey") window.close();
+   if (request.message === "listedSaveApiKey") {
+      res({ message: "received" });
+      window.close();
+   }
 });
