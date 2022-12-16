@@ -278,30 +278,32 @@ th {
    object-fit: cover;
 }
 
-.om-not-found-wrap {
-   display: flex;
-   justify-content: center;
-   position: relative;
-}
-.om-text-not-found {
-   text-align: center;
-   font-size: 18px;
-   position: absolute;
-   bottom: 0;
-}
 .sync-order-item,
 .revert-order-item {
    padding: 0.5rem 0.6rem;
 }
 
-.om-synced-all-wrap {
+.om-synced-all-wrap, .om-not-found-wrap {
    display: flex;
    justify-content: center;
    align-items: center;
 }
-.om-text-synced-all {
+.om-text-synced-all, .om-text-not-found {
    font-weight: 410;
    padding: 10px 0;
    text-align: center;
    font-size: 18px;
+}
+
+.om-status-label-wrap {
+   margin-top: 5px;
+}
+
+.om-status-label {
+   color: white;
+   padding: 5px;
+   padding: 3px;
+   border-radius: 3px;
+   font-size: 13px;
+   font-weight: 600;
 }

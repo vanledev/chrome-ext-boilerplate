@@ -1,6 +1,6 @@
 const orderNotFound = `
    <div class="om-not-found-wrap">
-      <div><img class="om-img-200" src="${chrome.runtime.getURL(
+      <div style="padding:20px 10px;"><img style="width:30px;object-fit:cover;" src="${chrome.runtime.getURL(
          "assets/images/not-found.png"
       )}"/></div>
       <div class="om-text-not-found" >Orders not found</div>
@@ -16,53 +16,117 @@ const syncedAllOrders = `
    </div>
 `;
 
-const appendOrdersIntoTable = (data) => {
+const statusLabel = (status, colorCode) => `
+   <div class="om-status-label-wrap" data-status="${status}">
+      <span class="om-status-label" style="background-color:${colorCode};">${status}</span>
+   </div>
+`;
+
+const addStatusLabel = (orderInfos) => {
+   if (!orderInfos) return;
+   // orderInfos = {
+   //    [orderId]: {
+   //       status: String,
+   //       trackingCode: String
+   //    }
+   // }
+   const ordersXpath = "#browse-view .panel-body-row";
+   for (let i = 0; i < $(ordersXpath).length; i++) {
+      const item = $(ordersXpath)?.eq(i);
+      const orderId = item?.find("h3 a:first-child")?.text()?.split("#")?.pop();
+      console.log("orderId: ", orderId);
+      if (!orderId || !orderInfos[orderId]) continue;
+      const addLabelXpath = ".flag .col-group .col-md-4";
+      item
+         .find(addLabelXpath)
+         .append(`<div class="wt-mt-xs-2 om-order-info"></div>`);
+      const elem = item.find(addLabelXpath + " .om-order-info");
+      const { status, trackingCode } = orderInfos[orderId];
+      switch (status) {
+         case "Synced":
+            if (!item.find(`[data-status="Synced"]`).length)
+               elem.append(statusLabel("Synced", "#008060"));
+            if (trackingCode) {
+               if (!item.find(`[data-status="Tracking Available"]`).length)
+                  elem.append(statusLabel("Tracking Available", "#008060"));
+            } else {
+               if (!item.find(`[data-status="Tracking Not Available"]`).length)
+                  elem.append(statusLabel("Tracking Not Available", "#f44336"));
+            }
+            break;
+         case "Not Synced":
+            if (!item.find(`[data-status="Not Synced"]`).length)
+               elem.append(statusLabel("Not Synced", "#f44336"));
+            break;
+         case "Ignored":
+            if (!item.find(`[data-status="Ignored"]`).length)
+               elem.append(statusLabel("MB Ignored", "#f44336"));
+            break;
+         default:
+            break;
+      }
+   }
+};
+
+const removeTableLoading = () => {
    // remove loading
    $("#not_synced .loader-resp").remove();
    $("#ignored .loader-resp").remove();
    // show not synced table
    if (!$("#not_synced table").length)
       $("#not_synced").prepend(`
-         <div class="table_wrap">
-            <table class="om-table">
-               <tr>
-                  <th class="force-sync-all-item">
-                     <input class="om-checkbox" type="checkbox" />
-                  </th>
-                  <th>Image</th>
-                  <th>Order ID</th>
-                  <th>Action</th>
-               </tr>
-            </table>
-         </div>
-      `);
+          <div class="table_wrap">
+             <table class="om-table">
+               <thead>
+                  <tr>
+                     <th class="force-sync-all-item">
+                        <input class="om-checkbox" type="checkbox" />
+                     </th>
+                     <th>Image</th>
+                     <th>Order ID</th>
+                     <th>Action</th>
+                  </tr>
+               </thead>
+               <tbody></tbody>
+             </table>
+          </div>
+       `);
    // show ignore table
    if (!$("#ignored table").length)
       $("#ignored").prepend(`
-         <div class="table_wrap">
-            <table class="om-table">
-               <tr>
-                  <th class="force-revert-all-item">
-                     <input class="om-checkbox" type="checkbox" />
-                  </th>
-                  <th>Image</th>
-                  <th>Order ID</th>
-                  <th>Action</th>
-               </tr>
-            </table>
-         </div>
-      `);
+          <div class="table_wrap">
+             <table class="om-table">
+               <thead>
+                  <tr>
+                     <th class="force-revert-all-item">
+                        <input class="om-checkbox" type="checkbox" />
+                     </th>
+                     <th>Image</th>
+                     <th>Order ID</th>
+                     <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+             </table>
+          </div>
+       `);
+};
 
-   //------------ insert data into table
-   const { orders, status: orderStatus } = data;
+const appendOrdersIntoTable = (data) => {
+   removeTableLoading();
+   if (!data) return;
+   const { orders, mbInfos } = data;
+   addStatusLabel(mbInfos);
+
    let hasNotSync = false;
    let hasIgnore = false;
    for (const order of orders) {
       // add order into not sync table
-      if (orderStatus[order.orderId] === "Not Synced") {
+      const { status } = mbInfos[order.orderId];
+      if (status === "Not Synced") {
          hasNotSync = true;
          if (!$(`#not_synced tr[data-order-id="${order.orderId}"]`).length) {
-            $("#not_synced .om-table").append(`
+            $("#not_synced .om-table tbody").append(`
                <tr data-order-id="${order.orderId}">
                   <td class="force-sync-item"><input data-order="${b64Encode(
                      order
@@ -79,10 +143,10 @@ const appendOrdersIntoTable = (data) => {
          }
       }
       // add order into ignored table
-      if (orderStatus[order.orderId] === "Ignored") {
+      if (status === "Ignored") {
          hasIgnore = true;
          if (!$(`#ignored tr[data-order-id="${order.orderId}"]`).length) {
-            $("#ignored .om-table").append(`
+            $("#ignored .om-table tbody").append(`
                <tr data-order-id="${order.orderId}">
                   <td class="force-revert-item"><input data-order="${b64Encode(
                      order

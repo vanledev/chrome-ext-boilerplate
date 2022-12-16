@@ -218,7 +218,7 @@ chrome.runtime.onConnect.addListener(function (port) {
             const orders = getOrders(data);
             const resp = {
                orders,
-               status: {},
+               mbInfos: {},
                error: null,
             };
 
@@ -239,7 +239,7 @@ chrome.runtime.onConnect.addListener(function (port) {
             `,
             });
             const result = await sendRequestToMB(null, mbApiKey, query);
-            resp.status = result.data
+            resp.mbInfos = result.data
                ? result.data.checkEtsyOrderSyncedByIds
                : null;
             resp.error = result.errors ? result.errors[0].message : null;
