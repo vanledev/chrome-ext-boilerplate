@@ -90,6 +90,12 @@ const addonComponent = `
    </div>
 `;
 
+// <div id="add_tracking" class="tabcontent om-tabcontent">
+// <div class="om-fl-center om-mgt-15 btn-add-tracking-wrap">
+//    <button id="add-trackings" class="om-btn">Add Trackings</button>
+// </div>
+// </div>
+
 const syncOrderComponent = `
    <div class="sync-order-wrap">
       <h3 style="text-align:center;" >Orders Statistic</h3>
@@ -128,12 +134,16 @@ const initAddon = async () => {
    $("#sync_order").append(syncOrderComponent);
    $(".btn-sync-order-wrap").css("display", "none");
    $(".btn-revert-order-wrap").css("display", "none");
+   $(".btn-add-tracking-wrap").css("display", "none");
 
    // loading tabs until receive orders
    $("#not_synced").prepend(
       `<div style="position:relative;height:100px" class="loader-resp"></div>`
    );
    $("#ignored").prepend(
+      `<div style="position:relative;height:100px" class="loader-resp"></div>`
+   );
+   $("#add_tracking").prepend(
       `<div style="position:relative;height:100px" class="loader-resp"></div>`
    );
    // active tab not synced
@@ -172,7 +182,7 @@ $(document).on("click", "#om-collapsible", function () {
    else setStorage(addonCollapsible, false);
 });
 
-// // open tabs
+// open tabs
 $(document).on("click", `.om-tablinks`, function (e) {
    $(".om-tabcontent").each(function () {
       $(this).css("display", "none");

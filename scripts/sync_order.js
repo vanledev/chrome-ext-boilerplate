@@ -72,6 +72,7 @@ const removeTableLoading = () => {
    // remove loading
    $("#not_synced .loader-resp").remove();
    $("#ignored .loader-resp").remove();
+   $("#add_tracking .loader-resp").remove();
    // show not synced table
    if (!$("#not_synced table").length)
       $("#not_synced").prepend(`
@@ -110,19 +111,40 @@ const removeTableLoading = () => {
              </table>
           </div>
        `);
+   // // show tracking table
+   // if (!$("#add_tracking table").length)
+   //    $("#add_tracking").prepend(`
+   //       <div class="table_wrap">
+   //          <table class="om-table">
+   //            <thead>
+   //               <tr>
+   //                  <th class="force-revert-all-item">
+   //                     <input class="om-checkbox" type="checkbox" />
+   //                  </th>
+   //                  <th>Image</th>
+   //                  <th>Order ID</th>
+   //                  <th>Action</th>
+   //               </tr>
+   //             </thead>
+   //             <tbody></tbody>
+   //          </table>
+   //       </div>
+   //    `);
 };
 
 const appendOrdersIntoTable = (data) => {
    removeTableLoading();
    if (!data) return;
-   const { orders, mbInfos } = data;
+   const { orders, mbInfos = {} } = data;
    addStatusLabel(mbInfos);
 
    let hasNotSync = false;
    let hasIgnore = false;
+   let hasTracking = false;
    for (const order of orders) {
       // add order into not sync table
-      const { status } = mbInfos[order.orderId];
+      if (!order) continue;
+      const { status, trackingCode } = mbInfos[order.orderId];
       if (status === "Not Synced") {
          hasNotSync = true;
          if (!$(`#not_synced tr[data-order-id="${order.orderId}"]`).length) {
@@ -162,18 +184,47 @@ const appendOrdersIntoTable = (data) => {
             `);
          }
       }
+      // add order into tracking table
+      if (trackingCode) {
+         hasTracking = true;
+         // if (!$(`#add_tracking tr[data-order-id="${order.orderId}"]`).length) {
+         //    $("#add_tracking .om-table tbody").append(`
+         //       <tr data-order-id="${order.orderId}">
+         //          <td class="force-add-tracking-item"><input data-order="${b64Encode(
+         //             order
+         //          )}" class="om-checkbox" type="checkbox"></td>
+         //          <td> <img class="om-img-75" src="${
+         //             order.items[0].image
+         //          }" /></td>
+         //          <td>
+         //             <span class="om-order-id-tag">${order.orderId}</span>
+         //             <span class="om-tracking-tag">${trackingCode}</span>
+         //          </td>
+         //          <td><button class="add-tracking-item om-btn" data-order-id="${
+         //             order.orderId
+         //          }" data-order="${b64Encode(order)}">Add</button></td>
+         //       </tr>
+         //    `);
+         // }
+      }
    }
    if (hasNotSync) $(".btn-sync-order-wrap").css("display", "flex");
    else {
       $("#not_synced .table_wrap").append(syncedAllOrders);
       $("#not_synced .btn-sync-order-wrap").css("display", "none");
    }
-
    if (hasIgnore) $(".btn-revert-order-wrap").css("display", "flex");
    else {
-      $("#ignored .table_wrap").append(orderNotFound);
+      if (!$("#ignored .table_wrap .om-not-found-wrap").length)
+         $("#ignored .table_wrap").append(orderNotFound);
       $("#ignored .btn-revert-order-wrap").css("display", "none");
    }
+   // if (hasTracking) $(".btn-add-tracking-wrap").css("display", "flex");
+   // else {
+   //    if (!$("#add_tracking .table_wrap .om-not-found-wrap").length)
+   //       $("#add_tracking .table_wrap").append(orderNotFound);
+   //    $("#add_tracking .btn-add-tracking-wrap").css("display", "none");
+   // }
 };
 
 const setTextBtnSync = () => {
@@ -241,7 +292,8 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
       }
       // If the order is out of stock, then add not found
       if (!$("#not_synced tr[data-order-id]").length) {
-         $("#not_synced .table_wrap").append(orderNotFound);
+         if (!$("#not_synced .table_wrap .om-not-found-wrap").length)
+            $("#not_synced .table_wrap").append(orderNotFound);
          $(".btn-sync-order-wrap").css("display", "none");
       }
       setTextBtnSync();
@@ -278,7 +330,8 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
             }
       }
       if ($("#ignored tr[data-order-id]").length == 0) {
-         $("#ignored .table_wrap").append(orderNotFound);
+         if (!$("#ignored .table_wrap .om-not-found-wrap").length)
+            $("#ignored .table_wrap").append(orderNotFound);
          $("#ignored .btn-revert-order-wrap").css("display", "none");
       }
       setTextBtnRevert();
@@ -363,7 +416,7 @@ $(document).on("click", "#sync-order", async function () {
          "loader"
       );
    }
-
+   console.log("orders: ", orders);
    // send order ids to background
    chrome.runtime.sendMessage({
       message: "syncOrderToMB",
@@ -385,6 +438,7 @@ $(document).on("click", ".sync-order-item", async function () {
    orders.push(b64Decode(orderString));
    $(this).addClass("loader");
    $("#sync-order").addClass("loader");
+   console.log("orders: ", orders);
    // send order ids to background
    chrome.runtime.sendMessage({
       message: "syncOrderToMB",

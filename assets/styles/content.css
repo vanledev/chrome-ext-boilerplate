@@ -283,12 +283,14 @@ th {
    padding: 0.5rem 0.6rem;
 }
 
-.om-synced-all-wrap, .om-not-found-wrap {
+.om-synced-all-wrap,
+.om-not-found-wrap {
    display: flex;
    justify-content: center;
    align-items: center;
 }
-.om-text-synced-all, .om-text-not-found {
+.om-text-synced-all,
+.om-text-not-found {
    font-weight: 410;
    padding: 10px 0;
    text-align: center;
@@ -306,4 +308,17 @@ th {
    border-radius: 3px;
    font-size: 13px;
    font-weight: 600;
+}
+.btn-add-tracking-wrap {
+   padding: 1.5rem;
+}
+
+.om-order-id-tag {
+   display: block;
+   margin-bottom: 5px;
+}
+.om-tracking-tag {
+   padding: 5px;
+   background-color: #bbe5b3;
+   border-radius: 5px;
 }
