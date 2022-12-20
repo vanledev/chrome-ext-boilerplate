@@ -34,7 +34,6 @@ const addStatusLabel = (orderInfos) => {
    for (let i = 0; i < $(ordersXpath).length; i++) {
       const item = $(ordersXpath)?.eq(i);
       const orderId = item?.find("h3 a:first-child")?.text()?.split("#")?.pop();
-      console.log("orderId: ", orderId);
       if (!orderId || !orderInfos[orderId]) continue;
       const addLabelXpath = ".flag .col-group .col-md-4";
       item
@@ -416,7 +415,6 @@ $(document).on("click", "#sync-order", async function () {
          "loader"
       );
    }
-   console.log("orders: ", orders);
    // send order ids to background
    chrome.runtime.sendMessage({
       message: "syncOrderToMB",
@@ -438,7 +436,6 @@ $(document).on("click", ".sync-order-item", async function () {
    orders.push(b64Decode(orderString));
    $(this).addClass("loader");
    $("#sync-order").addClass("loader");
-   console.log("orders: ", orders);
    // send order ids to background
    chrome.runtime.sendMessage({
       message: "syncOrderToMB",
