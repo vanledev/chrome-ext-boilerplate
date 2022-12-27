@@ -3,19 +3,22 @@ const addonCollapsible = "AddonCollapsible";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-const getStorage = (key) =>
-   new Promise((r) =>
-      chrome.storage.local.get(key).then((result) => {
-         r(result[key]);
-      })
-   );
+const setCookie = (name, value) => {
+   let cookie = name + "=" + encodeURIComponent(value);
+   cookie += "; max-age=" + 365 * 24 * 60 * 60;
+   document.cookie = cookie;
+};
 
-const setStorage = (key, value) =>
-   new Promise((r) =>
-      chrome.storage.local.set({ [key]: value }).then(() => {
-         r(value);
-      })
-   );
+const getCookie = (name) => {
+   const cookieArr = document.cookie.split(";");
+   for (var i = 0; i < cookieArr.length; i++) {
+      const cookiePair = cookieArr[i].split("=");
+      if (name == cookiePair[0].trim()) {
+         return decodeURIComponent(cookiePair[1]);
+      }
+   }
+   return null;
+};
 
 const notifySuccess = (message) => {
    $.toast({
@@ -39,7 +42,7 @@ const notifyError = (message) => {
 };
 
 const checkAddonCollapse = async () => {
-   const isOpen = await getStorage(addonCollapsible);
+   const isOpen = getCookie(addonCollapsible);
    if (isOpen === false) {
       if ($("#om-collapsible").hasClass("om-active"))
          $("#om-collapsible").click();
@@ -118,7 +121,7 @@ const syncOrderComponent = `
 
 const initAddon = async () => {
    // check has api token
-   const apiKey = await getStorage(mbApi);
+   const apiKey = getCookie(mbApi);
    if (!apiKey || !apiKey.includes("etsyapi")) {
       notifyError("Please enter MB api key.");
       return;
@@ -178,8 +181,8 @@ $(document).on("click", "#om-collapsible", function () {
       content.style.width = "500px";
       content.style.height = "auto";
    }
-   if ($(this).hasClass("om-active")) setStorage(addonCollapsible, true);
-   else setStorage(addonCollapsible, false);
+   if ($(this).hasClass("om-active")) setCookie(addonCollapsible, true);
+   else setCookie(addonCollapsible, false);
 });
 
 // open tabs
@@ -194,25 +197,43 @@ $(document).on("click", `.om-tablinks`, function (e) {
    $(this).addClass("om-active om-active-tab");
 });
 
+// capture event from background
 chrome.runtime.onMessage.addListener(async function (req, sender, res) {
    const { message, data } = req || {};
    switch (message) {
-      case "saveApiKey":
-         res({ message: "received" });
-         initAddon();
-         chrome.runtime.sendMessage({
-            message: "listedSaveApiKey",
-         });
-         break;
-
       case "getApiKey":
          res({ message: "received" });
          chrome.runtime.sendMessage({
             message: "getApiKey",
-            data: await getStorage(mbApi),
+            data: getCookie(mbApi),
          });
          break;
+      default:
+         break;
+   }
+});
 
+// capture event from popup
+chrome.runtime.onMessage.addListener(async function (req, sender, res) {
+   console.log("content listing: ", req);
+   const { message, data } = req || {};
+   switch (message) {
+      case "popupSaveApiKey":
+         res({ message: "received" });
+         setCookie(mbApi, data);
+         initAddon();
+         chrome.runtime.sendMessage({
+            message: "listedSaveApiKey",
+            data: getCookie(mbApi),
+         });
+         break;
+      case "popupGetApiKey":
+         res({ message: "received" });
+         chrome.runtime.sendMessage({
+            message: "popupGetApiKeyValue",
+            data: getCookie(mbApi),
+         });
+         break;
       default:
          break;
    }

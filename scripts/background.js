@@ -12,6 +12,7 @@ const stopInteval = (params) => {
 };
 
 const sendMessage = (tabId, message, data) => {
+   let timeOut = 0;
    let start = setInterval(function () {
       chrome.tabs.sendMessage(
          tabId,
@@ -22,9 +23,11 @@ const sendMessage = (tabId, message, data) => {
          function (response) {
             if (!chrome.runtime.lastError && response?.message === "received")
                stopInteval(start);
+            if (timeOut == 30) stopInteval(start);
          }
       );
-   }, 3000);
+      timeOut++;
+   }, 1000);
 };
 
 const sendToContentScript = (msg, data) =>
@@ -146,9 +149,6 @@ const sendRequestToMB = async (endPoint, apiKey, data) => {
 // capture event from content script
 chrome.runtime.onMessage.addListener(async (req, sender, res) => {
    const { message, data } = req || {};
-   if (message === "listedSaveApiKey") {
-      sendToContentScript("listedSaveApiKey", null);
-   }
    if (message === "syncOrderToMB") {
       const { apiKey, orders } = data;
       if (!apiKey || !orders || !orders.length) return;
@@ -188,20 +188,16 @@ chrome.runtime.onMessage.addListener(async (req, sender, res) => {
 });
 
 // capture event from popup
-chrome.runtime.onMessage.addListener((req, sender, res) => {
+chrome.runtime.onMessage.addListener(async (req, sender, res) => {
+   console.log("req: ", req);
    const { message, data } = req || {};
    switch (message) {
-      case "saveApiKey":
-         chrome.tabs.query(
-            { active: true, currentWindow: true },
-            function (tabs) {
-               if (tabs?.length > 0 && tabs[0].id) {
-                  // send order info to content script
-                  sendMessage(tabs[0].id, "saveApiKey", data);
-               }
-            }
-         );
+      case "popupSaveApiKey":
+         sendToContentScript("popupSaveApiKey", data);
          break;
+      case "popupGetApiKey":
+         console.log("listed get api key from popup");
+         sendToContentScript("popupGetApiKey", null);
       default:
          break;
    }
