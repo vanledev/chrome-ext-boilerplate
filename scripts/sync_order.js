@@ -419,7 +419,7 @@ $(document).on("click", "#sync-order", async function () {
    chrome.runtime.sendMessage({
       message: "syncOrderToMB",
       data: {
-         apiKey: getCookie(mbApi),
+         apiKey: await getStorage(mbApi),
          orders,
       },
    });
@@ -440,7 +440,7 @@ $(document).on("click", ".sync-order-item", async function () {
    chrome.runtime.sendMessage({
       message: "syncOrderToMB",
       data: {
-         apiKey: getCookie(mbApi),
+         apiKey: await getStorage(mbApi),
          orders,
       },
    });
@@ -482,7 +482,7 @@ $(document).on("click", "#revert-order", async function () {
    chrome.runtime.sendMessage({
       message: "deleteIgnoreOrder",
       data: {
-         apiKey: getCookie(mbApi),
+         apiKey: await getStorage(mbApi),
          orders,
       },
    });
@@ -503,7 +503,7 @@ $(document).on("click", ".revert-order-item", async function () {
    chrome.runtime.sendMessage({
       message: "deleteIgnoreOrder",
       data: {
-         apiKey: getCookie(mbApi),
+         apiKey: await getStorage(mbApi),
          orders,
       },
    });
