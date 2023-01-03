@@ -86,18 +86,14 @@ const addonComponent = `
             <div id="sync_order" class="tabcontent om-tabcontent"></div>
 
             <div id="add_tracking" class="tabcontent om-tabcontent">
-               <h3 style="padding:20px;">Coming Soon!</h3>
+               <div class="om-fl-center om-mgt-15 btn-add-tracking-wrap">
+                  <button id="add-trackings" class="om-btn">Add Trackings</button>
+               </div>
             </div>
          </div>
       </div>
    </div>
 `;
-
-// <div id="add_tracking" class="tabcontent om-tabcontent">
-// <div class="om-fl-center om-mgt-15 btn-add-tracking-wrap">
-//    <button id="add-trackings" class="om-btn">Add Trackings</button>
-// </div>
-// </div>
 
 const syncOrderComponent = `
    <div class="sync-order-wrap">
@@ -120,14 +116,14 @@ const syncOrderComponent = `
 `;
 
 const initAddon = async () => {
+   // embedding addon into etsy
+   if (!window.location.href.includes("/your/orders/sold")) return;
    // check has api token
    const apiKey = getCookie(mbApi);
    if (!apiKey || !apiKey.includes("etsyapi")) {
       notifyError("Please enter MB api key.");
       return;
    }
-   // embedding addon into etsy
-   if (!window.location.href.includes("/your/orders/sold")) return;
    if ($(".om-addon").length) return;
    $("body").append(addonComponent);
    await checkAddonCollapse();
@@ -152,10 +148,6 @@ const initAddon = async () => {
    // active tab not synced
    $('[data-name="not_synced"]').click();
 };
-
-$(document).ready(function () {
-   initAddon();
-});
 
 const b64Encode = (obj) => {
    const strObj = JSON.stringify(obj);
@@ -236,4 +228,8 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
       default:
          break;
    }
+});
+
+$(document).ready(function () {
+   initAddon();
 });

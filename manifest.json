@@ -1,7 +1,7 @@
 {
    "manifest_version": 3,
    "name": "MerchBridge Etsy Helper",
-   "version": "1.0",
+   "version": "1.0.0",
    "description": "An extension to help you fulfill Etsy orders easier with MerchBridge.",
    "devtools_page": "devtool/devtool.html",
    "icons": {
@@ -38,7 +38,7 @@
       "extension_pages": "script-src 'self'; object-src 'self'",
       "sandbox": "sandbox allow-scripts; script-src 'self' 'https://www.etsy.com/*'; object-src 'self'"
    },
-   "permissions": ["storage", "nativeMessaging", "webRequest"],
+   "permissions": ["storage", "webRequest"],
    "host_permissions": [
       "https://www.etsy.com/*",
       "https://api-dev.merchbridge.com/*",
