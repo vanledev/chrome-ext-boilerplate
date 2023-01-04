@@ -103,36 +103,38 @@ const executeAddTracking = async (orderId, tracking) => {
       notifyError("Could not detect carrier from tracking.");
       return;
    }
-   // click show model order detail
-   $(`.flag-body.wt-vertical-align-top[data-order-id="${orderId}"]`).trigger(
-      "click"
-   );
-   // wait modal order info
-   const linkXpath = `#order-details-order-info [href="https://www.etsy.com/your/orders/${orderId}?order_id=${orderId}"]`;
-   let timeOutOrderInfo = 0;
+   // click btn update progress
+   const btnUpdateProgressXpath = `.flag-img [role="tablist"][data-order-id="${orderId}"] .wt-mb-xs-1:nth-child(2) button`;
+   let timeOutBtnUpdateProgress = 0;
    while (true) {
-      if (timeOutOrderInfo == 60) {
-         notifyError("Could not open model order info.");
+      if (timeOutBtnUpdateProgress == 60) {
+         notifyError("Order not found.");
          return;
       }
-      if ($(linkXpath).length) break;
+      if ($(btnUpdateProgressXpath).length) break;
       await sleep(500);
-      timeOutOrderInfo++;
+      timeOutBtnUpdateProgress++;
    }
-   // wait btn complete order
-   const btnCompleteXpath =
-      '#order-detail-container [data-test-id="no-user-defined-steps-update-progress-button"] button';
-   let timeOutBtnComplete = 0;
-   while (true) {
-      if (timeOutBtnComplete == 60) {
-         notifyError("Could not found button Complete Order");
-         return;
+   $(btnUpdateProgressXpath).trigger("click");
+   // check has option progress
+   const progressOptionXpath = `.flag-img [role="tablist"][data-order-id="${orderId}"] .list-unstyled li:last-child .btn-primary`;
+   if ($(progressOptionXpath).length) {
+      let timeOutOrderInfo = 0;
+      while (true) {
+         if (timeOutOrderInfo == 60) {
+            notifyError("Could not open progress options.");
+            return;
+         }
+         if ($(progressOptionXpath).length) break;
+         await sleep(500);
+         timeOutOrderInfo++;
       }
-      if ($(btnCompleteXpath).length) break;
-      await sleep(500);
-      timeOutBtnComplete++;
+      // click btn complete order
+      const btnCompleteElem = document.querySelector(progressOptionXpath);
+      const btnCompleteEvent = document.createEvent("HTMLEvents");
+      btnCompleteEvent.initEvent("click", true, true);
+      btnCompleteElem.dispatchEvent(btnCompleteEvent);
    }
-   $(btnCompleteXpath).trigger("click");
    // wait modal add tracking
    let timeOutModalTracking = 0;
    while (true) {
@@ -166,7 +168,7 @@ const executeAddTracking = async (orderId, tracking) => {
    const carrierEvent = document.createEvent("HTMLEvents");
    carrierEvent.initEvent("change", true, true);
    carrierElem.dispatchEvent(carrierEvent);
-   await sleep(2000);
+   await sleep(1000);
    // enter tracking
    const trackingXpath = `#mark-as-complete-overlay input[name="trackingCode-${orderId}"]`;
    let timeOutTrackingInput = 0;
@@ -184,7 +186,7 @@ const executeAddTracking = async (orderId, tracking) => {
    trackingInputElem.val("");
    document.execCommand("insertText", false, tracking);
    trackingInputElem.blur();
-   await sleep(3000);
+   await sleep(1000);
    // submit add tracking
    const btnXpath =
       "#mark-as-complete-overlay .wt-overlay__footer__action .wt-btn--filled";
@@ -199,18 +201,6 @@ const executeAddTracking = async (orderId, tracking) => {
       timeOutBtn++;
    }
    $(btnXpath).trigger("click");
-   // wait response add tracking
-   const xpathSuccess = "#order-detail-container .strong.display-inline";
-   let timeOutSuccess = 0;
-   while (true) {
-      if (timeOutSuccess == 60) {
-         notifyError("Could not add tracking for order.");
-         return;
-      }
-      if ($(xpathSuccess).length) break;
-      await sleep(500);
-      timeOutSuccess++;
-   }
    // show response success
    $(`#add_tracking tr[data-order-id="${orderId}"]`).remove();
    if ($(`#add_tracking tr`).length == 0) {
@@ -220,8 +210,6 @@ const executeAddTracking = async (orderId, tracking) => {
    }
    notifySuccess("Add tracking success.");
    await sleep(1000);
-   const closeModalXpath = "button.btn-transparent.position-top";
-   if ($(closeModalXpath).length) $(closeModalXpath).trigger("click");
 };
 
 $(document).on("click", ".add-tracking-item", async function () {

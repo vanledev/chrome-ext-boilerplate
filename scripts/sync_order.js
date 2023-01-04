@@ -38,6 +38,7 @@ const addStatusLabel = (orderInfos) => {
       item
          .find(".flag-body.wt-vertical-align-top")
          .attr("data-order-id", orderId);
+      item.find(`.flag-img [role="tablist"]`).attr("data-order-id", orderId);
       const addLabelXpath = ".flag .col-group .col-md-4";
       item
          .find(addLabelXpath)
