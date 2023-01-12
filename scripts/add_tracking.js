@@ -212,6 +212,36 @@ const executeAddTracking = async (orderId, tracking) => {
    await sleep(1000);
 };
 
+const setTextBtnAddTrack = () => {
+   let hasChecked = false;
+   $(".force-add-tracking-item .om-checkbox").each(function () {
+      if ($(this).is(":checked")) {
+         hasChecked = true;
+         return false;
+      }
+   });
+   if (hasChecked) $("#add-trackings").text("Add Tracks Selected Orders");
+   else $("#add-trackings").text("Add Trackings");
+};
+
+// checked force add tracking
+$(document).on("click", ".force-add-tracking-all-item .om-checkbox", function () {
+   if ($(this).is(":checked"))
+      $(".force-add-tracking-item .om-checkbox").each(function () {
+         if (!$(this).is(":checked")) $(this).click();
+      });
+   else
+      $(".force-add-tracking-item .om-checkbox").each(function () {
+         if ($(this).is(":checked")) $(this).click();
+      });
+   setTextBtnAddTrack();
+});
+
+// checked force add all tracking
+$(document).on("click", ".force-add-tracking-item .om-checkbox", function () {
+   setTextBtnAddTrack();
+});
+
 $(document).on("click", ".add-tracking-item", async function () {
    const orderId = $(this).attr("data-order-id");
    const tracking = $(this).attr("data-tracking");

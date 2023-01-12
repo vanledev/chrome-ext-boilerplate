@@ -121,7 +121,7 @@ const removeTableLoading = () => {
             <table class="om-table">
               <thead>
                  <tr>
-                    <th class="force-revert-all-item">
+                    <th class="force-add-tracking-all-item">
                        <input class="om-checkbox" type="checkbox" />
                     </th>
                     <th>Image</th>
@@ -364,6 +364,7 @@ $(document).on("click", ".force-sync-all-item .om-checkbox", function () {
       });
    setTextBtnSync();
 });
+
 // checked force sync order item
 $(document).on("click", ".force-sync-item .om-checkbox", function () {
    setTextBtnSync();
@@ -381,6 +382,7 @@ $(document).on("click", ".force-revert-all-item .om-checkbox", function () {
       });
    setTextBtnRevert();
 });
+
 // checked force revert order item
 $(document).on("click", ".force-revert-item .om-checkbox", function () {
    setTextBtnRevert();

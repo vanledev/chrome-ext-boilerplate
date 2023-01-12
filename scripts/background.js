@@ -1,8 +1,7 @@
 const isProduction = true;
 const MBUrl = isProduction
    ? "https://api.merchbridge.com/query"
-   : // : "https://api-dev.merchbridge.com/query";
-     "http://127.0.0.1:8080/query";
+   : "https://api-dev.merchbridge.com/query";
 const EtsyDomain = "https://www.etsy.com";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -60,6 +59,13 @@ const getOrders = (data) => {
       const buyer = mapBuyer[order.buyer_id];
       const shipping = order.fulfillment.to_address;
       const payment = order.payment.cost_breakdown;
+      const notes = order.notes;
+      let note = null;
+      if (notes) {
+         const { type, note_from_buyer } = notes;
+         if (type == "Etsy_Order_Notes" && note_from_buyer)
+            note = notes.note_from_buyer;
+      }
       const newOrder = {
          orderId: String(order.order_id),
          buyer: {
@@ -104,6 +110,7 @@ const getOrders = (data) => {
             attributes: [],
             personalized: [],
          };
+         if (note) newItem.note = note;
          for (const variation of transaction.variations) {
             if (variation.property === "Personalization") {
                newItem.personalized.push({
