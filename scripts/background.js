@@ -56,6 +56,7 @@ const getOrders = (data) => {
       mapBuyer[buyer.buyer_id] = buyer;
    }
    for (const order of data.orders) {
+      if (order.is_canceled) continue;
       const buyer = mapBuyer[order.buyer_id];
       const shipping = order.fulfillment.to_address;
       const payment = order.payment.cost_breakdown;
@@ -191,6 +192,22 @@ chrome.runtime.onMessage.addListener(async (req, sender, res) => {
          error: result.errors ? result.errors[0].message : null,
       };
       sendMessage(sender.tab.id, "deleteIgnoreEtsyOrder", resp);
+   }
+   if (message === "fetchTrackChinaToUS") {
+      const { endpoint } = data;
+      chrome.tabs.create({ url: endpoint }, (tab) => {
+         sendMessage(tab.id, "fetchTrackChinaToUS", {
+            receiverId: sender.tab.id,
+         });
+      });
+   }
+   if (message === "fetchedTrackChinaToUS") {
+      const { receiverId, validTracks } = data;
+      chrome.tabs.remove(sender.tab.id);
+      chrome.tabs.update(receiverId, { selected: true });
+      sendMessage(receiverId, "fetchedTrackChinaToUS", {
+         validTracks,
+      });
    }
 });
 

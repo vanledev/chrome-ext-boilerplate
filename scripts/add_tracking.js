@@ -98,6 +98,10 @@ const executeAddTracking = async (orderId, tracking) => {
       notifyError("Tracking Order not found.");
       return;
    }
+   if (tracking.startsWith("YT")) {
+      notifyError("Invalid Tracking Order.");
+      return;
+   }
    const carrierCode = detectCarrierValue(detectCarrierCode(tracking));
    if (!carrierCode) {
       notifyError("Could not detect carrier from tracking.");
@@ -225,17 +229,21 @@ const setTextBtnAddTrack = () => {
 };
 
 // checked force add tracking
-$(document).on("click", ".force-add-tracking-all-item .om-checkbox", function () {
-   if ($(this).is(":checked"))
-      $(".force-add-tracking-item .om-checkbox").each(function () {
-         if (!$(this).is(":checked")) $(this).click();
-      });
-   else
-      $(".force-add-tracking-item .om-checkbox").each(function () {
-         if ($(this).is(":checked")) $(this).click();
-      });
-   setTextBtnAddTrack();
-});
+$(document).on(
+   "click",
+   ".force-add-tracking-all-item .om-checkbox",
+   async function () {
+      if ($(this).is(":checked"))
+         $(".force-add-tracking-item .om-checkbox").each(function () {
+            if (!$(this).is(":checked")) $(this).click();
+         });
+      else
+         $(".force-add-tracking-item .om-checkbox").each(function () {
+            if ($(this).is(":checked")) $(this).click();
+         });
+      setTextBtnAddTrack();
+   }
+);
 
 // checked force add all tracking
 $(document).on("click", ".force-add-tracking-item .om-checkbox", function () {
@@ -253,6 +261,11 @@ $(document).on("click", ".add-tracking-item", async function () {
       notifyError("Tracking Order not found.");
       return;
    }
+   await fetchTrackChinaToUS();
+   if ($(`#add_tracking tr[data-order-id="${orderId}"]`).length == 0) {
+      notifyError("Order without US tracking code.");
+      return;
+   }
    $("#add-trackings").addClass("loader");
    $(this).addClass("loader");
    await executeAddTracking(orderId, tracking);
@@ -261,6 +274,7 @@ $(document).on("click", ".add-tracking-item", async function () {
 });
 
 $(document).on("click", "#add-trackings", async function () {
+   await fetchTrackChinaToUS();
    const orders = [];
    // check sync order specify
    let isAddTrackingSpecify = false;
@@ -292,4 +306,106 @@ $(document).on("click", "#add-trackings", async function () {
       $(`.add-tracking-item[data-order-id="${orderId}"]`).removeClass("loader");
    }
    $(this).removeClass("loader");
+});
+
+const trackChinaToUS = {
+   trackings: [],
+   fetched: false,
+};
+const fetchTrackChinaToUS = async () => {
+   const trackings = [];
+   $(".force-add-tracking-item .om-checkbox").each(function () {
+      const tracking = $(this).attr("data-tracking");
+      if (tracking.startsWith("YT")) trackings.push(tracking);
+   });
+   if (trackings.length == 0) return;
+   const endpoint = `https://www.yuntrack.com/parcelTracking?id=${trackings.join(
+      ","
+   )}`;
+   chrome.runtime.sendMessage({
+      message: "fetchTrackChinaToUS",
+      data: {
+         endpoint,
+      },
+   });
+   while (true) {
+      await sleep(1000);
+      if (trackChinaToUS.fetched) break;
+   }
+   for (const tracking of trackings) {
+      let isValid = false;
+      for (const { oldTrack, newTrack } of trackChinaToUS.trackings) {
+         if (tracking == oldTrack) {
+            isValid = true;
+            const orderId = $(
+               `.force-add-tracking-item [data-tracking="${oldTrack}"] `
+            ).attr("data-order-id");
+            $(`.force-add-tracking-item [data-tracking="${oldTrack}"]`).attr(
+               "data-tracking",
+               newTrack
+            );
+            $(
+               `#add_tracking [data-order-id="${orderId}"] .om-tracking-tag:last-child`
+            ).text(newTrack);
+            $(`.add-tracking-item [data-tracking="${oldTrack}"]`).attr(
+               "data-tracking",
+               newTrack
+            );
+         }
+      }
+      if (!isValid) {
+         const orderId = $(
+            `.force-add-tracking-item [data-tracking="${tracking}"] `
+         ).attr("data-order-id");
+         $(`#add_tracking tr[data-order-id="${orderId}"]`).remove();
+      }
+   }
+
+   const res = [...trackChinaToUS.trackings];
+   trackChinaToUS.trackings = [];
+   trackChinaToUS.fetched = false;
+   return res;
+};
+
+chrome.runtime.onMessage.addListener(async function (req, sender, res) {
+   const { message, data } = req || {};
+   if (message === "fetchTrackChinaToUS") {
+      res({ message: "received" });
+      let validTracks = [];
+      let countTimeout = 0;
+      let isValid = false;
+      while (true) {
+         if (countTimeout == 30) break;
+         if ($(".el-table__row").length > 0) {
+            isValid = true;
+            break;
+         }
+         countTimeout++;
+         await sleep(1000);
+      }
+      if (isValid) {
+         for (let i = 1; i <= $(".el-table__row").length; i++) {
+            let oldTrack = $(
+               `.el-table__row:nth-child(${i}) td:nth-child(2) .cell>div:nth-child(1)`
+            ).text();
+            let newTrack = $(
+               `.el-table__row:nth-child(${i}) td:nth-child(4) .cell>div:nth-child(1)`
+            ).text();
+            if (!oldTrack || !newTrack) continue;
+            newTrack = newTrack.trim();
+            if (!newTrack.startsWith("92")) continue;
+            validTracks.push({ oldTrack, newTrack });
+         }
+      }
+      chrome.runtime.sendMessage({
+         message: "fetchedTrackChinaToUS",
+         data: { ...data, validTracks },
+      });
+   }
+   if (message === "fetchedTrackChinaToUS") {
+      res({ message: "received" });
+      const { validTracks } = data;
+      trackChinaToUS.trackings = validTracks;
+      trackChinaToUS.fetched = true;
+   }
 });
