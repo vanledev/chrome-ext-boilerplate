@@ -25,7 +25,8 @@
             "assets/libs/jquery.toast.js",
             "scripts/content_script.js",
             "scripts/sync_order.js",
-            "scripts/add_tracking.js"
+            "scripts/add_tracking.js",
+            "scripts/settings.js"
          ],
          "css": ["assets/styles/jquery.toast.css", "assets/styles/content.css"],
          "run_at": "document_end"

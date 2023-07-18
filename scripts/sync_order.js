@@ -135,6 +135,10 @@ const removeTableLoading = () => {
       `);
 };
 
+const calcu = (val, convertVal) => {
+   return Number((val / convertVal).toFixed(2));
+}
+
 const appendOrdersIntoTable = (data) => {
    removeTableLoading();
    if (!data) return;
@@ -144,10 +148,43 @@ const appendOrdersIntoTable = (data) => {
    let hasNotSync = false;
    let hasIgnore = false;
    let hasTracking = false;
-   for (const order of orders) {
+
+   for (let order of orders) {
       // add order into not sync table
       if (!order || !mbInfos || !mbInfos[order.orderId]) continue;
       const { status, trackingCode } = mbInfos[order.orderId];
+
+      let convert = false;
+      let convertVal = 1;
+      let currencyConvert = getCookie("currencyConvert");
+      if (currencyConvert && typeof currencyConvert === "string") {
+         currencyConvert = JSON.parse(currencyConvert);
+         convert = !!currencyConvert.checked;
+         convertVal = currencyConvert.value;
+      }
+
+      if (convert && convertVal) {
+         const { discountTotal, grandTotal, shippingTotal, subTotal, taxTotal, items } = order || {};
+         const newItems = (items || []).map((item) => {
+            const { price, shippingCost } = item || {};
+            return {
+               ...item,
+               price: calcu(price, convertVal),
+               shippingCost: calcu(shippingCost, convertVal),
+            }
+         })
+
+         order = {
+            ...order,
+            items: newItems,
+            discountTotal: calcu(discountTotal, convertVal),
+            grandTotal: calcu(grandTotal, convertVal),
+            shippingTotal: calcu(shippingTotal, convertVal),
+            subTotal: calcu(subTotal, convertVal),
+            taxTotal: calcu(taxTotal, convertVal),
+         }
+      }
+
       if (status === "Not Synced") {
          hasNotSync = true;
          if (!$(`#not_synced tr[data-order-id="${order.orderId}"]`).length) {

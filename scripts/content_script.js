@@ -81,6 +81,10 @@ const addonComponent = `
                <button class="tablinks om-tablinks" data-name="add_tracking">
                   Add Tracking
                </button>
+
+               <button class="tablinks om-tablinks" data-name="settings">
+                  Settings
+               </button>
             </div>
 
             <div id="sync_order" class="tabcontent om-tabcontent"></div>
@@ -88,6 +92,27 @@ const addonComponent = `
             <div id="add_tracking" class="tabcontent om-tabcontent">
                <div class="om-fl-center om-mgt-15 btn-add-tracking-wrap">
                   <button id="add-trackings" class="om-btn">Add Trackings</button>
+               </div>
+            </div>
+            <div id="settings" class="tabcontent om-tabcontent">
+               <div class="settings_body">
+                  <div>
+                     <input type="checkbox" id="currency-convert">
+                     <label for="currency-convert">Currency convert</label>
+                  </div>
+                  <div class="settings_group_input">
+                     <div class="left">
+                        <input type="number" value="1" disabled />
+                        <span class="input-addon-suffix">$</span>
+                     </div>
+                     <span class="equal">=</span>
+                     <div class="right">
+                        <input type="number" min="0" id="change-result"/>
+                     </div>
+                  </div>
+                  <div>
+                     <button type="button" id="save-settings">Save</button>
+                  </div>
                </div>
             </div>
          </div>
@@ -117,7 +142,7 @@ const syncOrderComponent = `
 
 const initAddon = async () => {
    // embedding addon into etsy
-   if (!window.location.href.includes("/your/orders/sold")) return;
+   // if (!window.location.href.includes("/your/orders/sold")) return;
    // check has api token
    const apiKey = getCookie(mbApi);
    if (!apiKey || !apiKey.includes("etsyapi")) {

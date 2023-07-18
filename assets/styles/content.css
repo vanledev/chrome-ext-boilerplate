@@ -328,3 +328,83 @@ th {
    background-color: #bbe5b3;
    border-radius: 5px;
 }
+
+#settings .settings_body {
+   padding: 0.75rem 2rem 2rem;
+   display: flex;
+   flex-direction: column;
+   row-gap: 1rem;
+}
+
+#settings .settings_body div:has(input[type="checkbox"]) {
+   display: flex;
+   align-items: center;
+   column-gap: 0.5rem;
+}
+
+#settings input[type="checkbox"] {
+   transform: scale(1.2);
+}
+
+#settings input[type="checkbox"] + label {
+   cursor: pointer;
+}
+
+#settings .settings_group_input {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+}
+
+#settings input[type="number"] {
+   line-height: 1.25rem;
+   padding: 0.75rem 0.5rem;
+   background-color: #fff;
+   border-color: rgb(203 213 225/1);
+   border: 1px solid rgb(203 213 225/1);
+   border-radius: 0.375rem;
+   margin: 0;
+   box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 2px 0 #0000000d;
+   width: 100%;
+}
+
+#settings input[type="number"]:disabled {
+   cursor: not-allowed;
+}
+
+#settings .left,
+#settings .right {
+   flex: 1;
+}
+
+#settings .equal {
+   font-size: 25px;
+   margin: 0 1rem;
+}
+
+#settings .left {
+   position: relative;
+}
+
+#settings .input-addon-suffix {
+   position: absolute;
+   right: 10px;
+   top: 50%;
+   transform: translateY(-50%);
+   z-index: 1;
+   cursor: not-allowed;
+   color: rgb(170, 170, 170);
+}
+
+#settings button#save-settings {
+   font-weight: 600;
+   line-height: 1.25rem;
+   padding: 0.875rem 1.5rem;
+   box-shadow: rgba(0, 0, 0, 0) 0px 0px, rgba(0, 0, 0, 0) 0px 0px,
+      rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+   color: #fff;
+   background-color: rgb(0, 128, 96);
+   border: none;
+   border-radius: 5px;
+   cursor: pointer;
+}
