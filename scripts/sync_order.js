@@ -161,6 +161,7 @@ const appendOrdersIntoTable = (data) => {
          currencyConvert = JSON.parse(currencyConvert);
          convert = !!currencyConvert.checked;
          convertVal = currencyConvert.value;
+         if (convertVal) convertVal = parseFloat(convertVal)
       }
 
       if (convert && convertVal) {

@@ -142,7 +142,7 @@ const syncOrderComponent = `
 
 const initAddon = async () => {
    // embedding addon into etsy
-   // if (!window.location.href.includes("/your/orders/sold")) return;
+   if (!window.location.href.includes("/your/orders/sold")) return;
    // check has api token
    const apiKey = getCookie(mbApi);
    if (!apiKey || !apiKey.includes("etsyapi")) {
