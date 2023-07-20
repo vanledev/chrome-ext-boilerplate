@@ -137,43 +137,48 @@ const removeTableLoading = () => {
 
 const calcu = (val, convertVal) => {
    return Number((val / convertVal).toFixed(2));
-}
+};
 
 const appendOrdersIntoTable = (data) => {
    removeTableLoading();
    if (!data) return;
    const { orders, mbInfos = {} } = data;
    addStatusLabel(mbInfos);
-
    let hasNotSync = false;
    let hasIgnore = false;
    let hasTracking = false;
 
+   let convert = false;
+   let convertVal = 1;
+   let currencyConvert = getCookie("currencyConvert");
+   if (currencyConvert && typeof currencyConvert === "string") {
+      currencyConvert = JSON.parse(currencyConvert);
+      convert = !!currencyConvert.checked;
+      convertVal = currencyConvert.value;
+      if (convertVal) convertVal = parseFloat(convertVal);
+   }
    for (let order of orders) {
       // add order into not sync table
       if (!order || !mbInfos || !mbInfos[order.orderId]) continue;
       const { status, trackingCode } = mbInfos[order.orderId];
 
-      let convert = false;
-      let convertVal = 1;
-      let currencyConvert = getCookie("currencyConvert");
-      if (currencyConvert && typeof currencyConvert === "string") {
-         currencyConvert = JSON.parse(currencyConvert);
-         convert = !!currencyConvert.checked;
-         convertVal = currencyConvert.value;
-         if (convertVal) convertVal = parseFloat(convertVal)
-      }
-
       if (convert && convertVal) {
-         const { discountTotal, grandTotal, shippingTotal, subTotal, taxTotal, items } = order || {};
+         const {
+            discountTotal,
+            grandTotal,
+            shippingTotal,
+            subTotal,
+            taxTotal,
+            items,
+         } = order || {};
          const newItems = (items || []).map((item) => {
             const { price, shippingCost } = item || {};
             return {
                ...item,
                price: calcu(price, convertVal),
                shippingCost: calcu(shippingCost, convertVal),
-            }
-         })
+            };
+         });
 
          order = {
             ...order,
@@ -183,7 +188,7 @@ const appendOrdersIntoTable = (data) => {
             shippingTotal: calcu(shippingTotal, convertVal),
             subTotal: calcu(subTotal, convertVal),
             taxTotal: calcu(taxTotal, convertVal),
-         }
+         };
       }
 
       if (status === "Not Synced") {
