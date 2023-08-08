@@ -33,7 +33,8 @@ const addStatusLabel = (orderInfos) => {
    const ordersXpath = "#browse-view .panel-body-row";
    for (let i = 0; i < $(ordersXpath).length; i++) {
       const item = $(ordersXpath)?.eq(i);
-      const orderId = item?.find("h3 a:first-child")?.text()?.split("#")?.pop();
+      // const orderId = item?.find("h3 a:first-child")?.text()?.split("#")?.pop();
+      const orderId = item?.find('button[orderid]').attr('orderid');
       if (!orderId || !orderInfos[orderId]) continue;
       item
          .find(".flag-body.wt-vertical-align-top")
