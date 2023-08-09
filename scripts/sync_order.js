@@ -39,7 +39,12 @@ const addStatusLabel = (orderInfos) => {
       item
          .find(".flag-body.wt-vertical-align-top")
          .attr("data-order-id", orderId);
-      item.find(`.flag-img [role="tablist"]`).attr("data-order-id", orderId);
+      // item.find(`.flag-img [role="tablist"]`).attr("data-order-id", orderId);
+
+      // Set attribute data-order-id.
+      const btn = item?.find('button[orderid]')
+      const p = $(btn).closest('.flag-img');
+      $(p).attr("data-order-id", orderId);
       const addLabelXpath = ".flag .col-group .col-md-4";
       item
          .find(addLabelXpath)

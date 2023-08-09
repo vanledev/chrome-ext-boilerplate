@@ -108,7 +108,8 @@ const executeAddTracking = async (orderId, tracking) => {
       return;
    }
    // click btn update progress
-   const btnUpdateProgressXpath = `.flag-img [role="tablist"][data-order-id="${orderId}"] .wt-mb-xs-1:nth-child(2) button`;
+   // const btnUpdateProgressXpath = `.flag-img [role="tablist"][data-order-id="${orderId}"] .wt-mb-xs-1:nth-child(2) button`;
+   const btnUpdateProgressXpath = `.flag-img[data-order-id="${orderId}"] .wt-mb-xs-1:nth-child(2) button`;
    let timeOutBtnUpdateProgress = 0;
    while (true) {
       if (timeOutBtnUpdateProgress == 60) {
@@ -121,7 +122,7 @@ const executeAddTracking = async (orderId, tracking) => {
    }
    $(btnUpdateProgressXpath).trigger("click");
    // check has option progress
-   const progressOptionXpath = `.flag-img [role="tablist"][data-order-id="${orderId}"] .list-unstyled li:last-child .btn-primary`;
+   const progressOptionXpath = `.flag-img[data-order-id="${orderId}"] .list-unstyled li:last-child .btn-primary`;
    if ($(progressOptionXpath).length) {
       let timeOutOrderInfo = 0;
       while (true) {
