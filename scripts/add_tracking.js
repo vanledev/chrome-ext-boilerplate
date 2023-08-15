@@ -6,7 +6,9 @@ const detectCarrierCode = (tracking = "") => {
    if (tracking.startsWith("LG")) {
       return "royal-mail";
    }
-   if (tracking.startsWith("92")) {
+
+   // 420712919374811015300249592366
+   if (tracking.startsWith("92") || tracking.startsWith("420") && tracking.length === 30) {
       return "usps";
    }
    const allowedString = [
