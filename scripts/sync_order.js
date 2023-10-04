@@ -1,7 +1,7 @@
 const orderNotFound = `
    <div class="om-not-found-wrap">
       <div style="padding:20px 10px;"><img style="width:30px;object-fit:cover;" src="${chrome.runtime.getURL(
-         "assets/images/not-found.png"
+        "assets/images/not-found.png",
       )}"/></div>
       <div class="om-text-not-found" >Orders not found</div>
    </div>
@@ -10,7 +10,7 @@ const orderNotFound = `
 const syncedAllOrders = `
    <div class="om-synced-all-wrap">
       <div style="padding:20px 10px;"><img style="width:30px;object-fit:cover;" src="${chrome.runtime.getURL(
-         "assets/images/completed.png"
+        "assets/images/completed.png",
       )}"/></div>
       <div class="om-text-synced-all" >All orders were synced to MB</div>
    </div>
@@ -23,68 +23,68 @@ const statusLabel = (status, colorCode) => `
 `;
 
 const addStatusLabel = (orderInfos) => {
-   if (!orderInfos) return;
-   // orderInfos = {
-   //    [orderId]: {
-   //       status: String,
-   //       trackingCode: String
-   //    }
-   // }
-   const ordersXpath = "#browse-view .panel-body-row";
-   for (let i = 0; i < $(ordersXpath).length; i++) {
-      const item = $(ordersXpath)?.eq(i);
-      // const orderId = item?.find("h3 a:first-child")?.text()?.split("#")?.pop();
-      const orderId = item?.find('button[orderid]').attr('orderid');
-      if (!orderId || !orderInfos[orderId]) continue;
-      item
-         .find(".flag-body.wt-vertical-align-top")
-         .attr("data-order-id", orderId);
-      // item.find(`.flag-img [role="tablist"]`).attr("data-order-id", orderId);
+  if (!orderInfos) return;
+  // orderInfos = {
+  //    [orderId]: {
+  //       status: String,
+  //       trackingCode: String
+  //    }
+  // }
+  const ordersXpath = "#browse-view .panel-body-row";
+  for (let i = 0; i < $(ordersXpath).length; i++) {
+    const item = $(ordersXpath)?.eq(i);
+    // const orderId = item?.find("h3 a:first-child")?.text()?.split("#")?.pop();
+    const orderId = item?.find("button[orderid]").attr("orderid");
+    if (!orderId || !orderInfos[orderId]) continue;
+    item
+      .find(".flag-body.wt-vertical-align-top")
+      .attr("data-order-id", orderId);
+    // item.find(`.flag-img [role="tablist"]`).attr("data-order-id", orderId);
 
-      // Set attribute data-order-id.
-      const btn = item?.find('button[orderid]')
-      const p = $(btn).closest('.flag-img');
-      $(p).attr("data-order-id", orderId);
-      const addLabelXpath = ".flag .col-group .col-md-4";
-      item
-         .find(addLabelXpath)
-         .append(`<div class="wt-mt-xs-2 om-order-info"></div>`);
-      const elem = item.find(addLabelXpath + " .om-order-info");
-      const { status, trackingCode } = orderInfos[orderId];
-      switch (status) {
-         case "Synced":
-            if (!item.find(`[data-status="Synced"]`).length)
-               elem.append(statusLabel("Synced", "#008060"));
-            if (trackingCode) {
-               if (!item.find(`[data-status="Tracking Available"]`).length)
-                  elem.append(statusLabel("Tracking Available", "#008060"));
-            } else {
-               if (!item.find(`[data-status="Tracking Not Available"]`).length)
-                  elem.append(statusLabel("Tracking Not Available", "#f44336"));
-            }
-            break;
-         case "Not Synced":
-            if (!item.find(`[data-status="Not Synced"]`).length)
-               elem.append(statusLabel("Not Synced", "#f44336"));
-            break;
-         case "Ignored":
-            if (!item.find(`[data-status="Ignored"]`).length)
-               elem.append(statusLabel("MB Ignored", "#f44336"));
-            break;
-         default:
-            break;
-      }
-   }
+    // Set attribute data-order-id.
+    const btn = item?.find("button[orderid]");
+    const p = $(btn).closest(".flag-img");
+    $(p).attr("data-order-id", orderId);
+    const addLabelXpath = ".flag .col-group .col-md-4";
+    item
+      .find(addLabelXpath)
+      .append(`<div class="wt-mt-xs-2 om-order-info"></div>`);
+    const elem = item.find(addLabelXpath + " .om-order-info");
+    const { status, trackingCode } = orderInfos[orderId];
+    switch (status) {
+      case "Synced":
+        if (!item.find(`[data-status="Synced"]`).length)
+          elem.append(statusLabel("Synced", "#008060"));
+        if (trackingCode) {
+          if (!item.find(`[data-status="Tracking Available"]`).length)
+            elem.append(statusLabel("Tracking Available", "#008060"));
+        } else {
+          if (!item.find(`[data-status="Tracking Not Available"]`).length)
+            elem.append(statusLabel("Tracking Not Available", "#f44336"));
+        }
+        break;
+      case "Not Synced":
+        if (!item.find(`[data-status="Not Synced"]`).length)
+          elem.append(statusLabel("Not Synced", "#f44336"));
+        break;
+      case "Ignored":
+        if (!item.find(`[data-status="Ignored"]`).length)
+          elem.append(statusLabel("MB Ignored", "#f44336"));
+        break;
+      default:
+        break;
+    }
+  }
 };
 
 const removeTableLoading = () => {
-   // remove loading
-   $("#not_synced .loader-resp").remove();
-   $("#ignored .loader-resp").remove();
-   $("#add_tracking .loader-resp").remove();
-   // show not synced table
-   if (!$("#not_synced table").length)
-      $("#not_synced").prepend(`
+  // remove loading
+  $("#not_synced .loader-resp").remove();
+  $("#ignored .loader-resp").remove();
+  $("#add_tracking .loader-resp").remove();
+  // show not synced table
+  if (!$("#not_synced table").length)
+    $("#not_synced").prepend(`
           <div class="table_wrap">
              <table class="om-table">
                <thead>
@@ -101,9 +101,9 @@ const removeTableLoading = () => {
              </table>
           </div>
        `);
-   // show ignore table
-   if (!$("#ignored table").length)
-      $("#ignored").prepend(`
+  // show ignore table
+  if (!$("#ignored table").length)
+    $("#ignored").prepend(`
           <div class="table_wrap">
              <table class="om-table">
                <thead>
@@ -120,9 +120,9 @@ const removeTableLoading = () => {
              </table>
           </div>
        `);
-   // show tracking table
-   if (!$("#add_tracking table").length)
-      $("#add_tracking").prepend(`
+  // show tracking table
+  if (!$("#add_tracking table").length)
+    $("#add_tracking").prepend(`
          <div class="table_wrap add_track_table_wrap">
             <table class="om-table">
               <thead>
@@ -142,105 +142,105 @@ const removeTableLoading = () => {
 };
 
 const calcu = (val, convertVal) => {
-   return Number((val / convertVal).toFixed(2));
+  return Number((val / convertVal).toFixed(2));
 };
 
 const appendOrdersIntoTable = (data) => {
-   removeTableLoading();
-   if (!data) return;
-   const { orders, mbInfos = {} } = data;
-   addStatusLabel(mbInfos);
-   let hasNotSync = false;
-   let hasIgnore = false;
-   let hasTracking = false;
+  removeTableLoading();
+  if (!data) return;
+  const { orders, mbInfos = {} } = data;
+  addStatusLabel(mbInfos);
+  let hasNotSync = false;
+  let hasIgnore = false;
+  let hasTracking = false;
 
-   let convert = false;
-   let convertVal = 1;
-   let currencyConvert = getCookie("currencyConvert");
-   if (currencyConvert && typeof currencyConvert === "string") {
-      currencyConvert = JSON.parse(currencyConvert);
-      convert = !!currencyConvert.checked;
-      convertVal = currencyConvert.value;
-      if (convertVal) convertVal = parseFloat(convertVal);
-   }
-   for (let order of orders) {
-      // add order into not sync table
-      if (!order || !mbInfos || !mbInfos[order.orderId]) continue;
-      const { status, trackingCode } = mbInfos[order.orderId];
+  let convert = false;
+  let convertVal = 1;
+  let currencyConvert = getCookie("currencyConvert");
+  if (currencyConvert && typeof currencyConvert === "string") {
+    currencyConvert = JSON.parse(currencyConvert);
+    convert = !!currencyConvert.checked;
+    convertVal = currencyConvert.value;
+    if (convertVal) convertVal = parseFloat(convertVal);
+  }
+  for (let order of orders) {
+    // add order into not sync table
+    if (!order || !mbInfos || !mbInfos[order.orderId]) continue;
+    const { status, trackingCode } = mbInfos[order.orderId];
 
-      if (convert && convertVal) {
-         const {
-            discountTotal,
-            grandTotal,
-            shippingTotal,
-            subTotal,
-            taxTotal,
-            items,
-         } = order || {};
-         const newItems = (items || []).map((item) => {
-            const { price, shippingCost } = item || {};
-            return {
-               ...item,
-               price: calcu(price, convertVal),
-               shippingCost: calcu(shippingCost, convertVal),
-            };
-         });
+    if (convert && convertVal) {
+      const {
+        discountTotal,
+        grandTotal,
+        shippingTotal,
+        subTotal,
+        taxTotal,
+        items,
+      } = order || {};
+      const newItems = (items || []).map((item) => {
+        const { price, shippingCost } = item || {};
+        return {
+          ...item,
+          price: calcu(price, convertVal),
+          shippingCost: calcu(shippingCost, convertVal),
+        };
+      });
 
-         order = {
-            ...order,
-            items: newItems,
-            discountTotal: calcu(discountTotal, convertVal),
-            grandTotal: calcu(grandTotal, convertVal),
-            shippingTotal: calcu(shippingTotal, convertVal),
-            subTotal: calcu(subTotal, convertVal),
-            taxTotal: calcu(taxTotal, convertVal),
-         };
-      }
+      order = {
+        ...order,
+        items: newItems,
+        discountTotal: calcu(discountTotal, convertVal),
+        grandTotal: calcu(grandTotal, convertVal),
+        shippingTotal: calcu(shippingTotal, convertVal),
+        subTotal: calcu(subTotal, convertVal),
+        taxTotal: calcu(taxTotal, convertVal),
+      };
+    }
 
-      if (status === "Not Synced") {
-         hasNotSync = true;
-         if (!$(`#not_synced tr[data-order-id="${order.orderId}"]`).length) {
-            $("#not_synced .om-table tbody").append(`
+    if (status === "Not Synced") {
+      hasNotSync = true;
+      if (!$(`#not_synced tr[data-order-id="${order.orderId}"]`).length) {
+        $("#not_synced .om-table tbody").append(`
                <tr data-order-id="${order.orderId}">
                   <td class="force-sync-item"><input data-order="${b64Encode(
-                     order
+                    order,
                   )}" class="om-checkbox" type="checkbox"></td>
                   <td> <img class="om-img-50" src="${
-                     order.items[0].image
+                    order.items[0].image
                   }" /></td>
                   <td>${order.orderId}</td>
                   <td><button class="sync-order-item om-btn" data-order-id="${
-                     order.orderId
+                    order.orderId
                   }" data-order="${b64Encode(order)}">Sync</button></td>
                </tr>
             `);
-         }
       }
-      // add order into ignored table
-      if (status === "Ignored") {
-         hasIgnore = true;
-         if (!$(`#ignored tr[data-order-id="${order.orderId}"]`).length) {
-            $("#ignored .om-table tbody").append(`
+    }
+    // add order into ignored table
+    if (status === "Ignored") {
+      hasIgnore = true;
+      if (!$(`#ignored tr[data-order-id="${order.orderId}"]`).length) {
+        $("#ignored .om-table tbody").append(`
                <tr data-order-id="${order.orderId}">
                   <td class="force-revert-item"><input data-order="${b64Encode(
-                     order
+                    order,
                   )}" class="om-checkbox" type="checkbox"></td>
                   <td> <img class="om-img-50" src="${
-                     order.items[0].image
+                    order.items[0].image
                   }" /></td>
                   <td>${order.orderId}</td>
                   <td><button class="revert-order-item om-btn" data-order-id="${
-                     order.orderId
+                    order.orderId
                   }" data-order="${b64Encode(order)}">Revert</button></td>
                </tr>
             `);
-         }
       }
-      // add order into tracking table
-      if (trackingCode) {
-         hasTracking = true;
-         if (!$(`#add_tracking tr[data-order-id="${order.orderId}"]`).length) {
-            $("#add_tracking .om-table tbody").append(`
+    }
+    // add order into tracking table
+    if (trackingCode) {
+      hasTracking = true;
+      if (!$(`#add_tracking tr[data-order-id="${order.orderId}"]`).length) {
+        $("#add_tracking .om-table tbody").append(`
                <tr data-order-id="${order.orderId}">
                   <td class="force-add-tracking-item"><input data-tracking="${trackingCode}" data-order-id="${order.orderId}" class="om-checkbox" type="checkbox"></td>
                   <td> <img class="om-img-50" src="${order.items[0].image}" /></td>
@@ -251,313 +251,311 @@ const appendOrdersIntoTable = (data) => {
                   <td><button class="add-tracking-item om-btn" data-order-id="${order.orderId}" data-tracking="${trackingCode}">Add</button></td>
                </tr>
             `);
-         }
       }
-   }
-   $("#not_synced .om-not-found-wrap").remove();
-   $("#ignored .om-not-found-wrap").remove();
-   $("#add_tracking .om-not-found-wrap").remove();
-   if (hasNotSync) $(".btn-sync-order-wrap").css("display", "flex");
-   else {
-      if (!$("#not_synced .om-synced-all-wrap").length)
-         $("#not_synced .table_wrap").append(syncedAllOrders);
-      $("#not_synced .btn-sync-order-wrap").css("display", "none");
-   }
-   if (hasIgnore) $(".btn-revert-order-wrap").css("display", "flex");
-   else {
-      if (!$("#ignored .table_wrap .om-not-found-wrap").length)
-         $("#ignored .table_wrap").append(orderNotFound);
-      $("#ignored .btn-revert-order-wrap").css("display", "none");
-   }
-   if (hasTracking) $(".btn-add-tracking-wrap").css("display", "flex");
-   else {
-      if (!$("#add_tracking .table_wrap .om-not-found-wrap").length)
-         $("#add_tracking .table_wrap").append(orderNotFound);
-      $("#add_tracking .btn-add-tracking-wrap").css("display", "none");
-   }
+    }
+  }
+  $("#not_synced .om-not-found-wrap").remove();
+  $("#ignored .om-not-found-wrap").remove();
+  $("#add_tracking .om-not-found-wrap").remove();
+  if (hasNotSync) $(".btn-sync-order-wrap").css("display", "flex");
+  else {
+    if (!$("#not_synced .om-synced-all-wrap").length)
+      $("#not_synced .table_wrap").append(syncedAllOrders);
+    $("#not_synced .btn-sync-order-wrap").css("display", "none");
+  }
+  if (hasIgnore) $(".btn-revert-order-wrap").css("display", "flex");
+  else {
+    if (!$("#ignored .table_wrap .om-not-found-wrap").length)
+      $("#ignored .table_wrap").append(orderNotFound);
+    $("#ignored .btn-revert-order-wrap").css("display", "none");
+  }
+  if (hasTracking) $(".btn-add-tracking-wrap").css("display", "flex");
+  else {
+    if (!$("#add_tracking .table_wrap .om-not-found-wrap").length)
+      $("#add_tracking .table_wrap").append(orderNotFound);
+    $("#add_tracking .btn-add-tracking-wrap").css("display", "none");
+  }
 };
 
 const setTextBtnSync = () => {
-   let hasChecked = false;
-   $(".force-sync-item .om-checkbox").each(function () {
-      if ($(this).is(":checked")) {
-         hasChecked = true;
-         return false;
-      }
-   });
-   if (hasChecked) $("#sync-order").text("Sync Selected Orders");
-   else $("#sync-order").text("Sync Orders");
+  let hasChecked = false;
+  $(".force-sync-item .om-checkbox").each(function () {
+    if ($(this).is(":checked")) {
+      hasChecked = true;
+      return false;
+    }
+  });
+  if (hasChecked) $("#sync-order").text("Sync Selected Orders");
+  else $("#sync-order").text("Sync Orders");
 };
 
 const setTextBtnRevert = () => {
-   let hasChecked = false;
-   $(".force-revert-item .om-checkbox").each(function () {
-      if ($(this).is(":checked")) {
-         hasChecked = true;
-         return false;
-      }
-   });
-   if (hasChecked) $("#revert-order").text("Revert Selected Orders");
-   else $("#revert-order").text("Revert Orders");
+  let hasChecked = false;
+  $(".force-revert-item .om-checkbox").each(function () {
+    if ($(this).is(":checked")) {
+      hasChecked = true;
+      return false;
+    }
+  });
+  if (hasChecked) $("#revert-order").text("Revert Selected Orders");
+  else $("#revert-order").text("Revert Orders");
 };
 
 // listing event from background
 chrome.runtime.onMessage.addListener(async function (req, sender, res) {
-   const { message, data } = req || {};
-   if (message === "orders") {
-      res({ message: "received" });
-      if (!data) {
-         return;
-      }
-      const { error } = data || {};
-      if (error) {
-         notifyError("Check synced order: " + data.error);
-         return;
-      }
-      appendOrdersIntoTable(data);
-   }
+  const { message, data } = req || {};
+  if (message === "orders") {
+    res({ message: "received" });
+    if (!data) {
+      return;
+    }
+    const { error } = data || {};
+    if (error) {
+      notifyError("Check synced order: " + data.error);
+      return;
+    }
+    appendOrdersIntoTable(data);
+  }
 
-   if (message === "syncOrderToMB") {
-      res({ message: "received" });
-      $(".loader").removeClass("loader");
-      const {
-         data: { error: message },
-         error,
-         orders,
-      } = data;
-      let hasError = false;
-      if (error) {
-         notifyError(error);
-         return;
+  if (message === "syncOrderToMB") {
+    res({ message: "received" });
+    $(".loader").removeClass("loader");
+    const {
+      data: { error: message },
+      error,
+      orders,
+    } = data;
+    let hasError = false;
+    if (error) {
+      notifyError(error);
+      return;
+    }
+    for (const order of orders) {
+      if (message[order.orderId]) hasError = true;
+      else $(`tr[data-order-id="${order.orderId}"]`).remove();
+    }
+    if (!hasError) notifySuccess("Sync orders success.");
+    else {
+      for (const order of Object.entries(message)) {
+        notifySuccess(order[0] + ": " + order[1]);
       }
-      for (const order of orders) {
-         if (message[order.orderId]) hasError = true;
-         else $(`tr[data-order-id="${order.orderId}"]`).remove();
-      }
-      if (!hasError) notifySuccess("Sync orders success.");
-      else {
-         for (const order of Object.entries(message)) {
-            notifySuccess(order[0] + ": " + order[1]);
-         }
-      }
-      // If the order is out of stock, then add not found
-      if (!$("#not_synced tr[data-order-id]").length) {
-         if (!$("#not_synced .table_wrap .om-not-found-wrap").length)
-            $("#not_synced .table_wrap").append(orderNotFound);
-         $(".btn-sync-order-wrap").css("display", "none");
-      }
-      setTextBtnSync();
-   }
-   if (message === "deleteIgnoreEtsyOrder") {
-      res({ message: "received" });
-      $(".loader").removeClass("loader");
-      const { orders, data: result, error } = data;
-      if (error) {
-         notifyError("Delete ignore order: " + error);
-         return;
-      }
-      notifySuccess("Delete ignore order success.");
-      for (const order of orders) {
-         const status = result[order["orderId"]];
-         if (status !== "Ignored")
-            $(`#ignored tr[data-order-id="${order.orderId}"]`).remove();
-         if (status === "Not Synced")
-            if (!$(`#not_synced tr[data-order-id="${order.orderId}"]`).length) {
-               $("#not_synced .om-table").append(`
+    }
+    // If the order is out of stock, then add not found
+    if (!$("#not_synced tr[data-order-id]").length) {
+      if (!$("#not_synced .table_wrap .om-not-found-wrap").length)
+        $("#not_synced .table_wrap").append(orderNotFound);
+      $(".btn-sync-order-wrap").css("display", "none");
+    }
+    setTextBtnSync();
+  }
+  if (message === "deleteIgnoreEtsyOrder") {
+    res({ message: "received" });
+    $(".loader").removeClass("loader");
+    const { orders, data: result, error } = data;
+    if (error) {
+      notifyError("Delete ignore order: " + error);
+      return;
+    }
+    notifySuccess("Delete ignore order success.");
+    for (const order of orders) {
+      const status = result[order["orderId"]];
+      if (status !== "Ignored")
+        $(`#ignored tr[data-order-id="${order.orderId}"]`).remove();
+      if (status === "Not Synced")
+        if (!$(`#not_synced tr[data-order-id="${order.orderId}"]`).length) {
+          $("#not_synced .om-table").append(`
                   <tr data-order-id="${order.orderId}">
                      <td class="force-sync-item"><input data-order="${b64Encode(
-                        order
+                       order,
                      )}" class="om-checkbox" type="checkbox"></td>
                      <td> <img class="om-img-50" src="${
-                        order.items[0].image
+                       order.items[0].image
                      }" /></td>
                      <td>${order.orderId}</td>
                      <td><button class="sync-order-item om-btn" data-order-id="${
-                        order.orderId
+                       order.orderId
                      }" data-order="${b64Encode(order)}">Sync</button></td>
                   </tr>
                `);
-            }
-      }
-      if ($("#ignored tr[data-order-id]").length == 0) {
-         if (!$("#ignored .table_wrap .om-not-found-wrap").length)
-            $("#ignored .table_wrap").append(orderNotFound);
-         $("#ignored .btn-revert-order-wrap").css("display", "none");
-      }
-      setTextBtnRevert();
-   }
-   return;
+        }
+    }
+    if ($("#ignored tr[data-order-id]").length == 0) {
+      if (!$("#ignored .table_wrap .om-not-found-wrap").length)
+        $("#ignored .table_wrap").append(orderNotFound);
+      $("#ignored .btn-revert-order-wrap").css("display", "none");
+    }
+    setTextBtnRevert();
+  }
+  return;
 });
 
 // control tabs sync orders
 $(document).on("click", `.sync-order-wrap .tablinks`, function (e) {
-   $(".sync-order-wrap .tabcontent").each(function () {
-      $(this).css("display", "none");
-   });
-   $(".sync-order-wrap .tablinks").each(function () {
-      $(this).removeClass("om-active om-active-tab");
-   });
-   $(`#${$(this).attr("data-name")}`).css("display", "block");
-   $(this).addClass("om-active om-active-tab");
+  $(".sync-order-wrap .tabcontent").each(function () {
+    $(this).css("display", "none");
+  });
+  $(".sync-order-wrap .tablinks").each(function () {
+    $(this).removeClass("om-active om-active-tab");
+  });
+  $(`#${$(this).attr("data-name")}`).css("display", "block");
+  $(this).addClass("om-active om-active-tab");
 });
 
 // checked force sync orders
 $(document).on("click", ".force-sync-all-item .om-checkbox", function () {
-   if ($(this).is(":checked"))
-      $(".force-sync-item .om-checkbox").each(function () {
-         if (!$(this).is(":checked")) $(this).click();
-      });
-   else
-      $(".force-sync-item .om-checkbox").each(function () {
-         if ($(this).is(":checked")) $(this).click();
-      });
-   setTextBtnSync();
+  if ($(this).is(":checked"))
+    $(".force-sync-item .om-checkbox").each(function () {
+      if (!$(this).is(":checked")) $(this).click();
+    });
+  else
+    $(".force-sync-item .om-checkbox").each(function () {
+      if ($(this).is(":checked")) $(this).click();
+    });
+  setTextBtnSync();
 });
 
 // checked force sync order item
 $(document).on("click", ".force-sync-item .om-checkbox", function () {
-   setTextBtnSync();
+  setTextBtnSync();
 });
 
 // checked force revert orders
 $(document).on("click", ".force-revert-all-item .om-checkbox", function () {
-   if ($(this).is(":checked"))
-      $(".force-revert-item .om-checkbox").each(function () {
-         if (!$(this).is(":checked")) $(this).click();
-      });
-   else
-      $(".force-revert-item .om-checkbox").each(function () {
-         if ($(this).is(":checked")) $(this).click();
-      });
-   setTextBtnRevert();
+  if ($(this).is(":checked"))
+    $(".force-revert-item .om-checkbox").each(function () {
+      if (!$(this).is(":checked")) $(this).click();
+    });
+  else
+    $(".force-revert-item .om-checkbox").each(function () {
+      if ($(this).is(":checked")) $(this).click();
+    });
+  setTextBtnRevert();
 });
 
 // checked force revert order item
 $(document).on("click", ".force-revert-item .om-checkbox", function () {
-   setTextBtnRevert();
+  setTextBtnRevert();
 });
 
 // click sync orders
 $(document).on("click", "#sync-order", async function () {
-   const orders = [];
-   // check sync order specify
-   let isSyncOrderSpecify = false;
-   $(".force-sync-item .om-checkbox").each(function () {
-      if ($(this).is(":checked")) {
-         isSyncOrderSpecify = true;
-         return false;
-      }
-   });
-   $(".force-sync-item .om-checkbox").each(function () {
-      const orderString = $(this).attr("data-order");
-      if (!orderString) return true;
-      const order = b64Decode(orderString);
-      if (isSyncOrderSpecify) {
-         if ($(this).is(":checked")) orders.push(order);
-         return true;
-      }
-      orders.push(order);
-   });
-   if (orders.length == 0) {
-      notifyError("Order not found.");
-      return;
-   }
-   $(this).addClass("loader");
-   for (const order of orders) {
-      $(`.sync-order-item[data-order-id="${order.orderId}"]`).addClass(
-         "loader"
-      );
-   }
-   // send order ids to background
-   chrome.runtime.sendMessage({
-      message: "syncOrderToMB",
-      data: {
-         apiKey: getCookie(mbApi),
-         orders,
-      },
-   });
+  const orders = [];
+  // check sync order specify
+  let isSyncOrderSpecify = false;
+  $(".force-sync-item .om-checkbox").each(function () {
+    if ($(this).is(":checked")) {
+      isSyncOrderSpecify = true;
+      return false;
+    }
+  });
+  $(".force-sync-item .om-checkbox").each(function () {
+    const orderString = $(this).attr("data-order");
+    if (!orderString) return true;
+    const order = b64Decode(orderString);
+    if (isSyncOrderSpecify) {
+      if ($(this).is(":checked")) orders.push(order);
+      return true;
+    }
+    orders.push(order);
+  });
+  if (orders.length == 0) {
+    notifyError("Order not found.");
+    return;
+  }
+  $(this).addClass("loader");
+  for (const order of orders) {
+    $(`.sync-order-item[data-order-id="${order.orderId}"]`).addClass("loader");
+  }
+  // send order ids to background
+  chrome.runtime.sendMessage({
+    message: "syncOrderToMB",
+    data: {
+      apiKey: getCookie(mbApi),
+      orders,
+    },
+  });
 });
 
 // click force sync order
 $(document).on("click", ".sync-order-item", async function () {
-   const orders = [];
-   const orderString = $(this).attr("data-order");
-   if (!orderString) {
-      notifyError("Order not found.");
-      return;
-   }
-   orders.push(b64Decode(orderString));
-   $(this).addClass("loader");
-   $("#sync-order").addClass("loader");
-   // send order ids to background
-   chrome.runtime.sendMessage({
-      message: "syncOrderToMB",
-      data: {
-         apiKey: getCookie(mbApi),
-         orders,
-      },
-   });
+  const orders = [];
+  const orderString = $(this).attr("data-order");
+  if (!orderString) {
+    notifyError("Order not found.");
+    return;
+  }
+  orders.push(b64Decode(orderString));
+  $(this).addClass("loader");
+  $("#sync-order").addClass("loader");
+  // send order ids to background
+  chrome.runtime.sendMessage({
+    message: "syncOrderToMB",
+    data: {
+      apiKey: getCookie(mbApi),
+      orders,
+    },
+  });
 });
 
 // click revert orders
 $(document).on("click", "#revert-order", async function () {
-   const orders = [];
-   // check sync order specify
-   let isRevertOrderSpecify = false;
-   $(".force-revert-item .om-checkbox").each(function () {
-      if ($(this).is(":checked")) {
-         isSyncOrderSpecify = true;
-         return false;
-      }
-   });
-   $(".force-revert-item .om-checkbox").each(function () {
-      const orderString = $(this).attr("data-order");
-      if (!orderString) return true;
-      const order = b64Decode(orderString);
-      if (isRevertOrderSpecify) {
-         if ($(this).is(":checked")) orders.push(order);
-         return true;
-      }
-      orders.push(order);
-   });
-   if (orders.length == 0) {
-      notifyError("Order not found.");
-      return;
-   }
-   $(this).addClass("loader");
-   for (const order of orders) {
-      $(`.revert-order-item[data-order-id="${order.orderId}"]`).addClass(
-         "loader"
-      );
-   }
+  const orders = [];
+  // check sync order specify
+  let isRevertOrderSpecify = false;
+  $(".force-revert-item .om-checkbox").each(function () {
+    if ($(this).is(":checked")) {
+      isSyncOrderSpecify = true;
+      return false;
+    }
+  });
+  $(".force-revert-item .om-checkbox").each(function () {
+    const orderString = $(this).attr("data-order");
+    if (!orderString) return true;
+    const order = b64Decode(orderString);
+    if (isRevertOrderSpecify) {
+      if ($(this).is(":checked")) orders.push(order);
+      return true;
+    }
+    orders.push(order);
+  });
+  if (orders.length == 0) {
+    notifyError("Order not found.");
+    return;
+  }
+  $(this).addClass("loader");
+  for (const order of orders) {
+    $(`.revert-order-item[data-order-id="${order.orderId}"]`).addClass(
+      "loader",
+    );
+  }
 
-   // send order ids to background
-   chrome.runtime.sendMessage({
-      message: "deleteIgnoreOrder",
-      data: {
-         apiKey: getCookie(mbApi),
-         orders,
-      },
-   });
+  // send order ids to background
+  chrome.runtime.sendMessage({
+    message: "deleteIgnoreOrder",
+    data: {
+      apiKey: getCookie(mbApi),
+      orders,
+    },
+  });
 });
 
 // click force revert order
 $(document).on("click", ".revert-order-item", async function () {
-   const orders = [];
-   const orderString = $(this).attr("data-order");
-   if (!orderString) {
-      notifyError("Order not found.");
-      return;
-   }
-   orders.push(b64Decode(orderString));
-   $(this).addClass("loader");
-   $("#revert-order").addClass("loader");
-   // send order ids to background
-   chrome.runtime.sendMessage({
-      message: "deleteIgnoreOrder",
-      data: {
-         apiKey: getCookie(mbApi),
-         orders,
-      },
-   });
+  const orders = [];
+  const orderString = $(this).attr("data-order");
+  if (!orderString) {
+    notifyError("Order not found.");
+    return;
+  }
+  orders.push(b64Decode(orderString));
+  $(this).addClass("loader");
+  $("#revert-order").addClass("loader");
+  // send order ids to background
+  chrome.runtime.sendMessage({
+    message: "deleteIgnoreOrder",
+    data: {
+      apiKey: getCookie(mbApi),
+      orders,
+    },
+  });
 });
