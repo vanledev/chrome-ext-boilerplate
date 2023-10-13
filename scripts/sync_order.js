@@ -197,7 +197,8 @@ const appendOrdersIntoTable = (data) => {
       };
     }
 
-    if (status === "Not Synced") {
+    const style = "border: 1px solid #d9d9d9;border-radius: 5px;box-shadow: none;padding-left: 5px;width:50px;"
+    if (status === "Not Synced" || order.id == "3046911322") {
       hasNotSync = true;
       if (!$(`#not_synced tr[data-order-id="${order.orderId}"]`).length) {
         $("#not_synced .om-table tbody").append(`
@@ -209,9 +210,14 @@ const appendOrdersIntoTable = (data) => {
                     order.items[0].image
                   }" /></td>
                   <td>${order.orderId}</td>
-                  <td><button class="sync-order-item om-btn" data-order-id="${
-                    order.orderId
-                  }" data-order="${b64Encode(order)}">Sync</button></td>
+                  <td>
+                    <div style="display:flex;gap: 10px;">
+                      <button class="sync-order-item om-btn" data-order-id="${
+                        order.orderId
+                      }" data-order="${b64Encode(order)}">Sync</button>
+                      <input title="split count" type="number" class="split-order" value="1" min="1" style="${style}"/>
+                    </div>
+                  </td>
                </tr>
             `);
       }
@@ -496,6 +502,38 @@ $(document).on("click", ".sync-order-item", async function () {
     },
   });
 });
+
+
+// Split
+$(document).on('change', '.split-order', async function() {
+  const p = $(this).parent();
+  let val = $(this).val();
+  val = val ? parseInt(val) : 1;
+  if (val < 2) return;
+  
+  if (p?.length > 0) {
+    const btn = p.find('.sync-order-item');
+    if (btn?.length > 0) {
+      let data = $(btn).data('order');
+      if (data?.length > 0 ){
+        const order = b64Decode(data);
+        if (order && order.orderId) {
+          order.splitCount = val;
+          const encode = b64Encode(order);
+
+          $(btn).attr('data-order', encode);
+          const tr = $(this).closest(`tr[data-order-id="${order.orderId}"]`);
+          if (tr?.length > 0) {
+            const checkbox =  $(tr).find('.om-checkbox');
+            if (checkbox.length> 0) {
+              $(checkbox).attr('data-order', encode);
+            }
+          }
+        }
+      }
+    }
+  }
+})
 
 // click revert orders
 $(document).on("click", "#revert-order", async function () {

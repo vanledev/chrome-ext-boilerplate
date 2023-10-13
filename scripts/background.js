@@ -181,11 +181,35 @@ chrome.runtime.onMessage.addListener(async (req, sender, res) => {
   const { message, data } = req || {};
   if (message === "syncOrderToMB") {
     const { apiKey, orders } = data;
+   
     if (!apiKey || !orders || !orders.length) return;
+    // Split order
+    const newOrders = [];
+    for (let order of orders) {
+      if (!order || typeof order !== "object") continue;
+      const {splitCount, ...rest} = order;
+      if (!splitCount || splitCount === 1)  {
+        newOrders.push(rest);
+        continue;
+      }
+
+      // push first item;
+      const newItems = [];
+      for (let item of rest.items) {
+        for (let i = 0; i < splitCount; i++) {
+          let itemId = item.itemId;
+          itemId = i ? `${itemId}-${i}` : itemId
+          newItems.push({...item, itemId, qty: 1 })
+        }
+      }
+
+      newOrders.push({...rest, items: newItems})
+    }
+    console.log('newOrders create for MB:', newOrders);
     let query = JSON.stringify({
       operationName: "createEtsyOrder",
       variables: {
-        input: orders,
+        input: newOrders,
       },
       query:
         "mutation createEtsyOrder($input: [NewEtsyOrder!]!) {createEtsyOrder(input: $input){error}}",
