@@ -198,7 +198,7 @@ const appendOrdersIntoTable = (data) => {
     }
 
     const style = "border: 1px solid #d9d9d9;border-radius: 5px;box-shadow: none;padding-left: 5px;width:50px;"
-    if (status === "Not Synced" || order.id == "3046911322") {
+    if (status === "Not Synced") {
       hasNotSync = true;
       if (!$(`#not_synced tr[data-order-id="${order.orderId}"]`).length) {
         $("#not_synced .om-table tbody").append(`

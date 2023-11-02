@@ -170,11 +170,25 @@ const executeAddTracking = async (orderId, tracking) => {
       return;
    }
    // select carrier
-   const carrierElem = document.querySelector(carrierOptionXpath);
-   carrierElem.value = carrierCode;
+   // const carrierElem = document.querySelector(carrierOptionXpath);
+   // carrierElem.value = carrierCode;
+
+   // === 02/11/23
+   const $select = document.querySelector("#shipping-carrier-select");
+   const $options = Array.from($select.options);
+   for (let opt of $options) {
+     opt.selected = opt.value == carrierCode ? true : false;
+   }
+
+   $select.value = carrierCode;
+
    const carrierEvent = document.createEvent("HTMLEvents");
    carrierEvent.initEvent("change", true, true);
-   carrierElem.dispatchEvent(carrierEvent);
+   // carrierElem.dispatchEvent(carrierEvent);
+
+   $select.dispatchEvent(carrierEvent);
+
+
    await sleep(1000);
    // enter tracking
    const trackingXpath = `#mark-as-complete-overlay input[name="trackingCode-${orderId}"]`;
