@@ -7,7 +7,8 @@ const detectCarrierCode = (tracking = "") => {
       return "royal-mail";
    }
 
-   // 420712919374811015300249592366
+   // 420712919374811015300249592366 (22471845) => dhl_ecommerce | tracking_number => "https://webtrack.dhlglobalmail.com/orders?trackingNumber=420712919374811015300249592366"
+   // TODO: 420531859374811015300513088939 => dhl_ecommerce
    if (tracking.startsWith("92") || tracking.startsWith("420") && tracking.length === 30) {
       return "usps";
    }
@@ -91,7 +92,7 @@ const detectCarrierValue = (carrierCode = "") => {
    return 0;
 };
 
-const executeAddTracking = async (orderId, tracking) => {
+const executeAddTracking = async (orderId, tracking, carrier = "") => {
    if (!orderId) {
       notifyError("Order not found.");
       return;
@@ -104,7 +105,19 @@ const executeAddTracking = async (orderId, tracking) => {
       notifyError("Invalid Tracking Order.");
       return;
    }
-   const carrierCode = detectCarrierValue(detectCarrierCode(tracking));
+
+   // map carrierCode via `shipping_carrier_code` else detect from `tracking_number`
+   let carrierCode = "";
+   if (carrier) {
+      const carrierLowerCase = carrier.toLowerCase(); // case: Customcat return `coder` (vendor) is Uppercase 
+      carrierCode = detectCarrierValue(carrierLowerCase);
+   }
+
+   if (!carrierCode) {
+      carrierCode = detectCarrierValue(detectCarrierCode(tracking));
+   }
+
+   // const carrierCode = detectCarrierValue(detectCarrierCode(tracking));
    if (!carrierCode) {
       notifyError("Could not detect carrier from tracking.");
       return;
@@ -270,6 +283,7 @@ $(document).on("click", ".force-add-tracking-item .om-checkbox", function () {
 $(document).on("click", ".add-tracking-item", async function () {
    const orderId = $(this).attr("data-order-id");
    const tracking = $(this).attr("data-tracking");
+   const carrier = $(this).attr("data-carrier");
    if (!orderId) {
       notifyError("Order not found.");
       return;
@@ -285,7 +299,7 @@ $(document).on("click", ".add-tracking-item", async function () {
    }
    $("#add-trackings").addClass("loader");
    $(this).addClass("loader");
-   await executeAddTracking(orderId, tracking);
+   await executeAddTracking(orderId, tracking, carrier);
    $(this).removeClass("loader");
    $("#add-trackings").removeClass("loader");
 });
@@ -304,21 +318,22 @@ $(document).on("click", "#add-trackings", async function () {
    $(".force-add-tracking-item .om-checkbox").each(function () {
       const orderId = $(this).attr("data-order-id");
       const tracking = $(this).attr("data-tracking");
+      const carrier = $(this).attr("data-carrier");
       if (!orderId || !tracking) return true;
       if (isAddTrackingSpecify) {
-         if ($(this).is(":checked")) orders.push({ orderId, tracking });
+         if ($(this).is(":checked")) orders.push({ orderId, tracking, carrier });
          return true;
       }
-      orders.push({ orderId, tracking });
+      orders.push({ orderId, tracking, carrier });
    });
    if (orders.length == 0) {
       notifyError("Order not found.");
       return;
    }
    $(this).addClass("loader");
-   for (const { orderId, tracking } of orders) {
+   for (const { orderId, tracking, carrier } of orders) {
       $(`.add-tracking-item[data-order-id="${orderId}"]`).addClass("loader");
-      await executeAddTracking(orderId, tracking);
+      await executeAddTracking(orderId, tracking, carrier);
       await sleep(4000);
       $(`.add-tracking-item[data-order-id="${orderId}"]`).removeClass("loader");
    }
@@ -426,3 +441,8 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
       trackChinaToUS.fetched = true;
    }
 });
+
+
+const compareValues = (val1, val2) => {
+   return (val1 || "").toLowerCase() === (val2 || "").toLowerCase();
+}

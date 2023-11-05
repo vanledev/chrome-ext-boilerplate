@@ -166,7 +166,7 @@ const appendOrdersIntoTable = (data) => {
   for (let order of orders) {
     // add order into not sync table
     if (!order || !mbInfos || !mbInfos[order.orderId]) continue;
-    const { status, trackingCode } = mbInfos[order.orderId];
+    const { status, trackingCode, shippingCarrierCode } = mbInfos[order.orderId];
 
     if (convert && convertVal) {
       const {
@@ -245,16 +245,18 @@ const appendOrdersIntoTable = (data) => {
     // add order into tracking table
     if (trackingCode) {
       hasTracking = true;
+      let carrier = shippingCarrierCode ? shippingCarrierCode : "";
+
       if (!$(`#add_tracking tr[data-order-id="${order.orderId}"]`).length) {
         $("#add_tracking .om-table tbody").append(`
                <tr data-order-id="${order.orderId}">
-                  <td class="force-add-tracking-item"><input data-tracking="${trackingCode}" data-order-id="${order.orderId}" class="om-checkbox" type="checkbox"></td>
+                  <td class="force-add-tracking-item"><input data-tracking="${trackingCode}" data-carrier="${carrier}" data-order-id="${order.orderId}" class="om-checkbox" type="checkbox"></td>
                   <td> <img class="om-img-50" src="${order.items[0].image}" /></td>
                   <td>
                      <span class="om-order-id-tag">${order.orderId}</span>
                      <span class="om-tracking-tag">${trackingCode}</span>
                   </td>
-                  <td><button class="add-tracking-item om-btn" data-order-id="${order.orderId}" data-tracking="${trackingCode}">Add</button></td>
+                  <td><button class="add-tracking-item om-btn" data-order-id="${order.orderId}" data-tracking="${trackingCode}" data-carrier="${carrier}">Add</button></td>
                </tr>
             `);
       }
