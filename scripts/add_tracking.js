@@ -7,11 +7,16 @@ const detectCarrierCode = (tracking = "") => {
       return "royal-mail";
    }
 
-   // 420712919374811015300249592366 (22471845) => dhl_ecommerce | tracking_number => "https://webtrack.dhlglobalmail.com/orders?trackingNumber=420712919374811015300249592366"
+   // 420712919374811015300249592366 (22471845) => dhl_ecommerce | tracking_url => "https://webtrack.dhlglobalmail.com/orders?trackingNumber=420712919374811015300249592366"
    // TODO: 420531859374811015300513088939 => dhl_ecommerce
-   if (tracking.startsWith("92") || tracking.startsWith("420") && tracking.length === 30) {
+   if (tracking.startsWith("92")) {
       return "usps";
    }
+
+   if (tracking.startsWith("420") && tracking.length === 30) {
+      return "dhl";
+   }
+   
    const allowedString = [
       "GM",
       "LX",
