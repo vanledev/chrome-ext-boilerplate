@@ -4,9 +4,22 @@ const addonCollapsible = "AddonCollapsible";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const setCookie = (name, value) => {
+   // remove cookie
+   const cookieArr = document.cookie.split(";");
+   for (var i = 0; i < cookieArr.length; i++) {
+      const cookiePair = cookieArr[i].split("=");
+      if ([mbApi, addonCollapsible].includes(cookiePair[0].trim())) {
+         cookieArr.splice(i, 1);
+         document.cookie = name + "=" +
+         ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
+      }
+   }
+
    let cookie = name + "=" + encodeURIComponent(value);
    cookie += "; max-age=" + 365 * 24 * 60 * 60;
-   document.cookie = cookie;
+   cookieArr.push(cookie)
+   const cookieArrStr = cookieArr.join(';')
+   document.cookie = cookieArrStr;
 };
 
 const getCookie = (name) => {

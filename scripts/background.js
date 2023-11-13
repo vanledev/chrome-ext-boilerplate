@@ -67,6 +67,12 @@ const getOrders = (data) => {
 
   for (const order of data.orders) {
     if (order.is_canceled) continue;
+
+    // case: order's completed (`order.fulfillment.is_complete` = true) => skip
+    if (order.fulfillment && order.fulfillment.is_complete)  {
+      continue;
+    }
+
     const buyer = mapBuyer[order.buyer_id];
     const shipping = order.fulfillment.to_address;
     const payment = order.payment.cost_breakdown;
