@@ -4,65 +4,61 @@ const addonCollapsible = "AddonCollapsible";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const setCookie = (name, value) => {
-   // remove cookie
-   const cookieArr = document.cookie.split(";");
-   for (var i = 0; i < cookieArr.length; i++) {
-      const cookiePair = cookieArr[i].split("=");
-      if ([mbApi, addonCollapsible].includes(cookiePair[0].trim())) {
-         cookieArr.splice(i, 1);
-         document.cookie = name + "=" +
-         ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
-      }
-   }
+  // remove cookie
+  const cookieArr = document.cookie.split(";");
+  for (var i = 0; i < cookieArr.length; i++) {
+    const cookiePair = cookieArr[i].split("=");
+    if ([mbApi, addonCollapsible].includes(cookiePair[0].trim())) {
+      document.cookie = name + "=" + ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
+    }
+  }
 
-   let cookie = name + "=" + encodeURIComponent(value);
-   cookie += "; max-age=" + 365 * 24 * 60 * 60;
-   cookieArr.push(cookie)
-   const cookieArrStr = cookieArr.join(';')
-   document.cookie = cookieArrStr;
+  let cookie = name + "=" + encodeURIComponent(value);
+  cookie += "; max-age=" + 365 * 24 * 60 * 60;
+  document.cookie = cookie;
 };
 
 const getCookie = (name) => {
-   const cookieArr = document.cookie.split(";");
-   for (var i = 0; i < cookieArr.length; i++) {
-      const cookiePair = cookieArr[i].split("=");
-      if (name == cookiePair[0].trim()) {
-         return decodeURIComponent(cookiePair[1]);
-      }
-   }
-   return null;
+  const cookieArr = document.cookie.split(";");
+  for (var i = 0; i < cookieArr.length; i++) {
+    const cookiePair = cookieArr[i].split("=");
+    if (name == cookiePair[0].trim()) {
+      return decodeURIComponent(cookiePair[1]);
+    }
+  }
+  return null;
 };
 
 const notifySuccess = (message) => {
-   $.toast({
-      heading: message,
-      position: "bottom-center",
-      showHideTransition: "slide",
-      loader: false,
-      textAlign: "center",
-   });
+  $.toast({
+    heading: message,
+    position: "bottom-center",
+    showHideTransition: "slide",
+    loader: false,
+    textAlign: "center",
+  });
 };
 
 const notifyError = (message) => {
-   $.toast({
-      heading: message,
-      position: "bottom-center",
-      showHideTransition: "slide",
-      loader: false,
-      textAlign: "center",
-      bgColor: " #d82c0d",
-   });
+  $.toast({
+    heading: message,
+    position: "bottom-center",
+    showHideTransition: "slide",
+    loader: false,
+    textAlign: "center",
+    bgColor: " #d82c0d",
+  });
 };
 
 const checkAddonCollapse = async () => {
-   const isOpen = getCookie(addonCollapsible);
-   if (isOpen === false) {
-      if ($("#om-collapsible").hasClass("om-active"))
-         $("#om-collapsible").click();
-   } else {
-      if (!$("#om-collapsible").hasClass("om-active"))
-         $("#om-collapsible").click();
-   }
+  const isOpen = getCookie(addonCollapsible);
+  if (isOpen === false) {
+    if ($("#om-collapsible").hasClass("om-active"))
+      $("#om-collapsible").click();
+  } else {
+    if (!$("#om-collapsible").hasClass("om-active"))
+      $("#om-collapsible").click();
+  }
 };
 
 const addonComponent = `
@@ -154,120 +150,120 @@ const syncOrderComponent = `
 `;
 
 const initAddon = async () => {
-   // embedding addon into etsy
-   if (!window.location.href.includes("/your/orders/sold")) return;
-   // check has api token
-   const apiKey = getCookie(mbApi);
-   if (!apiKey || !apiKey.includes("etsyapi")) {
-      notifyError("Please enter MB api key.");
-      return;
-   }
-   if ($(".om-addon").length) return;
-   $("body").append(addonComponent);
-   await checkAddonCollapse();
+  // embedding addon into etsy
+  if (!window.location.href.includes("/your/orders/sold")) return;
+  // check has api token
+  const apiKey = getCookie(mbApi);
+  if (!apiKey || !apiKey.includes("etsyapi")) {
+    notifyError("Please enter MB api key.");
+    return;
+  }
+  if ($(".om-addon").length) return;
+  $("body").append(addonComponent);
+  await checkAddonCollapse();
 
-   // active tab sync order
-   $('[data-name="sync_order"]').click();
-   $("#sync_order").append(syncOrderComponent);
-   $(".btn-sync-order-wrap").css("display", "none");
-   $(".btn-revert-order-wrap").css("display", "none");
-   $(".btn-add-tracking-wrap").css("display", "none");
+  // active tab sync order
+  $('[data-name="sync_order"]').click();
+  $("#sync_order").append(syncOrderComponent);
+  $(".btn-sync-order-wrap").css("display", "none");
+  $(".btn-revert-order-wrap").css("display", "none");
+  $(".btn-add-tracking-wrap").css("display", "none");
 
-   // loading tabs until receive orders
-   $("#not_synced").prepend(
-      `<div style="position:relative;height:100px" class="loader-resp"></div>`
-   );
-   $("#ignored").prepend(
-      `<div style="position:relative;height:100px" class="loader-resp"></div>`
-   );
-   $("#add_tracking").prepend(
-      `<div style="position:relative;height:100px" class="loader-resp"></div>`
-   );
-   // active tab not synced
-   $('[data-name="not_synced"]').click();
+  // loading tabs until receive orders
+  $("#not_synced").prepend(
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
+  );
+  $("#ignored").prepend(
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
+  );
+  $("#add_tracking").prepend(
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
+  );
+  // active tab not synced
+  $('[data-name="not_synced"]').click();
 };
 
 const b64Encode = (obj) => {
-   const strObj = JSON.stringify(obj);
-   return btoa(unescape(encodeURIComponent(strObj)));
+  const strObj = JSON.stringify(obj);
+  return btoa(unescape(encodeURIComponent(strObj)));
 };
 
 const b64Decode = (b64String) => {
-   const objStr = decodeURIComponent(escape(window.atob(b64String)));
-   return JSON.parse(objStr);
+  const objStr = decodeURIComponent(escape(window.atob(b64String)));
+  return JSON.parse(objStr);
 };
 
 // collapse
 $(document).on("click", "#om-collapsible", function () {
-   this.classList.toggle("om-active");
-   var content = this.nextElementSibling;
-   if (content.style.width) {
-      content.style.width = null;
-      setTimeout(() => {
-         content.style.height = null;
-         content.style.padding = null;
-      }, 300);
-   } else {
-      content.style.width = "500px";
-      content.style.height = "auto";
-   }
-   if ($(this).hasClass("om-active")) setCookie(addonCollapsible, true);
-   else setCookie(addonCollapsible, false);
+  this.classList.toggle("om-active");
+  var content = this.nextElementSibling;
+  if (content.style.width) {
+    content.style.width = null;
+    setTimeout(() => {
+      content.style.height = null;
+      content.style.padding = null;
+    }, 300);
+  } else {
+    content.style.width = "500px";
+    content.style.height = "auto";
+  }
+  if ($(this).hasClass("om-active")) setCookie(addonCollapsible, true);
+  else setCookie(addonCollapsible, false);
 });
 
 // open tabs
 $(document).on("click", `.om-tablinks`, function (e) {
-   $(".om-tabcontent").each(function () {
-      $(this).css("display", "none");
-   });
-   $(".om-tablinks").each(function () {
-      $(this).removeClass("om-active om-active-tab");
-   });
-   $(`#${$(this).attr("data-name")}`).css("display", "block");
-   $(this).addClass("om-active om-active-tab");
+  $(".om-tabcontent").each(function () {
+    $(this).css("display", "none");
+  });
+  $(".om-tablinks").each(function () {
+    $(this).removeClass("om-active om-active-tab");
+  });
+  $(`#${$(this).attr("data-name")}`).css("display", "block");
+  $(this).addClass("om-active om-active-tab");
 });
 
 // capture event from background
 chrome.runtime.onMessage.addListener(async function (req, sender, res) {
-   const { message, data } = req || {};
-   switch (message) {
-      case "getApiKey":
-         res({ message: "received" });
-         chrome.runtime.sendMessage({
-            message: "getApiKey",
-            data: getCookie(mbApi),
-         });
-         break;
-      default:
-         break;
-   }
+  const { message, data } = req || {};
+  switch (message) {
+    case "getApiKey":
+      res({ message: "received" });
+      chrome.runtime.sendMessage({
+        message: "getApiKey",
+        data: getCookie(mbApi),
+      });
+      break;
+    default:
+      break;
+  }
 });
 
 // capture event from popup
 chrome.runtime.onMessage.addListener(async function (req, sender, res) {
-   const { message, data } = req || {};
-   switch (message) {
-      case "popupSaveApiKey":
-         res({ message: "received" });
-         setCookie(mbApi, data);
-         initAddon();
-         chrome.runtime.sendMessage({
-            message: "listedSaveApiKey",
-            data: getCookie(mbApi),
-         });
-         break;
-      case "popupGetApiKey":
-         res({ message: "received" });
-         chrome.runtime.sendMessage({
-            message: "popupGetApiKeyValue",
-            data: getCookie(mbApi),
-         });
-         break;
-      default:
-         break;
-   }
+  const { message, data } = req || {};
+  switch (message) {
+    case "popupSaveApiKey":
+      res({ message: "received" });
+      setCookie(mbApi, data);
+      initAddon();
+      chrome.runtime.sendMessage({
+        message: "listedSaveApiKey",
+        data: getCookie(mbApi),
+      });
+      break;
+    case "popupGetApiKey":
+      res({ message: "received" });
+      chrome.runtime.sendMessage({
+        message: "popupGetApiKeyValue",
+        data: getCookie(mbApi),
+      });
+      break;
+    default:
+      break;
+  }
 });
 
 $(document).ready(function () {
-   initAddon();
+  initAddon();
 });
