@@ -48,7 +48,9 @@ const getMBApiKey = () =>
     });
   });
 
-const getOrders = (data) => {
+const API_KEY_SPECIAL = ["etsyapi-962d89a0-f2f9-4919-9854-e9be5f3325ca"]
+
+const getOrders = (data, mbApiKey) => {
   const orders = [];
   const mapBuyer = {};
   if (!data.buyers || !data.orders) return;
@@ -69,8 +71,10 @@ const getOrders = (data) => {
     if (order.is_canceled) continue;
 
     // case: order's completed (`order.fulfillment.is_complete` = true) => skip
-    if (order.fulfillment && order.fulfillment.is_complete)  {
-      continue;
+    if (!API_KEY_SPECIAL.includes(mbApiKey)) {
+      if (order.fulfillment && order.fulfillment.is_complete) {
+        continue;
+      }
     }
 
     const buyer = mapBuyer[order.buyer_id];
@@ -187,14 +191,14 @@ chrome.runtime.onMessage.addListener(async (req, sender, res) => {
   const { message, data } = req || {};
   if (message === "syncOrderToMB") {
     const { apiKey, orders } = data;
-   
+
     if (!apiKey || !orders || !orders.length) return;
     // Split order
     const newOrders = [];
     for (let order of orders) {
       if (!order || typeof order !== "object") continue;
-      const {splitCount, ...rest} = order;
-      if (!splitCount || splitCount === 1)  {
+      const { splitCount, ...rest } = order;
+      if (!splitCount || splitCount === 1) {
         newOrders.push(rest);
         continue;
       }
@@ -204,14 +208,13 @@ chrome.runtime.onMessage.addListener(async (req, sender, res) => {
       for (let item of rest.items) {
         for (let i = 0; i < splitCount; i++) {
           let itemId = item.itemId;
-          itemId = i ? `${itemId}-${i}` : itemId
-          newItems.push({...item, itemId, qty: 1 })
+          itemId = i ? `${itemId}-${i}` : itemId;
+          newItems.push({ ...item, itemId, qty: 1 });
         }
       }
 
-      newOrders.push({...rest, items: newItems})
+      newOrders.push({ ...rest, items: newItems });
     }
-    console.log('newOrders create for MB:', newOrders);
     let query = JSON.stringify({
       operationName: "createEtsyOrder",
       variables: {
@@ -286,8 +289,11 @@ chrome.runtime.onConnect.addListener(function (port) {
     const { message, data } = msg || {};
     switch (message) {
       case "orderInfo":
+        const mbApiKey = await getMBApiKey();
+        if (!mbApiKey) return;
+        console.log("data:", data);
         if (!data) break;
-        const orders = getOrders(data);
+        const orders = getOrders(data, mbApiKey);
         const resp = {
           orders,
           mbInfos: {},
@@ -299,8 +305,8 @@ chrome.runtime.onConnect.addListener(function (port) {
           return;
         }
         // check synced orders
-        const mbApiKey = await getMBApiKey();
-        if (!mbApiKey) return;
+
+        console.log("orders:", orders);
         const query = JSON.stringify({
           query: `
                   query{
@@ -316,6 +322,7 @@ chrome.runtime.onConnect.addListener(function (port) {
           : null;
         resp.error = result.errors ? result.errors[0].message : null;
 
+        console.log("resp:", resp);
         sendToContentScript("orders", resp);
         break;
       default:
