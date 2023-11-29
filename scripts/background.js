@@ -48,7 +48,15 @@ const getMBApiKey = () =>
     });
   });
 
-const API_KEY_SPECIAL = ["etsyapi-962d89a0-f2f9-4919-9854-e9be5f3325ca"]
+const API_KEY_SPECIAL = ["etsyapi-962d89a0-f2f9-4919-9854-e9be5f3325ca"];
+
+const convertTime = (orderDate) => {
+  let dateStr = orderDate + "";
+  if (dateStr.length < 13) {
+    dateStr += "0".repeat(13 - dateStr.length);
+  }
+  return new Date(parseInt(dateStr)).toISOString();
+};
 
 const getOrders = (data, mbApiKey) => {
   const orders = [];
@@ -89,6 +97,7 @@ const getOrders = (data, mbApiKey) => {
     }
     const newOrder = {
       orderId: String(order.order_id),
+      orderDate: convertTime(order.order_date || ""),
       buyer: {
         email: buyer?.email,
         name: buyer?.name,
@@ -291,9 +300,9 @@ chrome.runtime.onConnect.addListener(function (port) {
       case "orderInfo":
         const mbApiKey = await getMBApiKey();
         if (!mbApiKey) return;
-        console.log("data:", data);
         if (!data) break;
         const orders = getOrders(data, mbApiKey);
+        console.log('orders:', orders);
         const resp = {
           orders,
           mbInfos: {},
@@ -305,8 +314,6 @@ chrome.runtime.onConnect.addListener(function (port) {
           return;
         }
         // check synced orders
-
-        console.log("orders:", orders);
         const query = JSON.stringify({
           query: `
                   query{
@@ -322,7 +329,6 @@ chrome.runtime.onConnect.addListener(function (port) {
           : null;
         resp.error = result.errors ? result.errors[0].message : null;
 
-        console.log("resp:", resp);
         sendToContentScript("orders", resp);
         break;
       default:
