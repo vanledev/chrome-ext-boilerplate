@@ -100,7 +100,7 @@ const addonComponent = `
 
             <div id="add_tracking" class="tabcontent om-tabcontent">
                <div class="om-fl-center om-mgt-15 btn-add-tracking-wrap">
-                  <button id="add-trackings" class="om-btn">Add Trackings</button>
+                  <button id="add-trackings" class="om-main-cta-button-wrapper om-btn">Add Trackings</button>
                </div>
             </div>
             <div id="settings" class="tabcontent om-tabcontent">
@@ -131,18 +131,21 @@ const addonComponent = `
 
 const syncOrderComponent = `
    <div class="sync-order-wrap">
-      <h3 style="text-align:center;" >Orders Statistic</h3>
+      <div class="om-heading">
+        <h3 style="text-align:center;" >Orders Statistic</h3> 
+      </div>
+      
       <div class="om-tab">
          <button class="tablinks" data-name="not_synced">Not Synced</button>
          <button class="tablinks" data-name="ignored">Ignored</button>
       </div>
       <div id="not_synced" class="tabcontent">
-         <div class="om-fl-center om-mgt-15 btn-sync-order-wrap">
+         <div class="om-main-cta-button-wrapper om-fl-center    btn-sync-order-wrap">
             <button id="sync-order" class="om-btn">Sync Orders</button>
          </div>
       </div>
       <div id="ignored" class="tabcontent">
-         <div class="om-fl-center om-mgt-15 btn-revert-order-wrap">
+         <div class="om-main-cta-button-wrapper om-fl-center   btn-revert-order-wrap">
             <button id="revert-order" class="om-btn">Revert Orders</button>
          </div>
       </div>
@@ -171,13 +174,13 @@ const initAddon = async () => {
 
   // loading tabs until receive orders
   $("#not_synced").prepend(
-    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`
   );
   $("#ignored").prepend(
-    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`
   );
   $("#add_tracking").prepend(
-    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`
   );
   // active tab not synced
   $('[data-name="not_synced"]').click();
@@ -267,3 +270,43 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
 $(document).ready(function () {
   initAddon();
 });
+
+function setDivHeight() {
+  const tabContent = document.querySelector(".table_wrap");
+  const tabNames = [...document.querySelectorAll(".om-tab")];
+
+  const heading = document.querySelector(".om-heading");
+  const button = document.querySelector(".om-main-cta-button-wrapper");
+  const omProcessing = document.querySelector(".om-processing");
+  if (tabContent) {
+    const blankSpace =
+      window.innerHeight -
+      tabNames[0].clientHeight -
+      tabNames[1].clientHeight -
+      heading.clientHeight -
+      button.clientHeight -
+      (omProcessing ? omProcessing.clientHeight : 0) -
+      5;
+
+    tabContent.style.height = blankSpace + "px";
+
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function debounce(func, timeout = 500) {
+  let timer;
+  return (...args) => {
+    timer && clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, timeout);
+  };
+}
+ 
+window.addEventListener(
+  "resize",
+  debounce(() => setDivHeight())
+);

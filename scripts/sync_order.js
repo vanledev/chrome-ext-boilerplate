@@ -1,7 +1,7 @@
 const orderNotFound = `
    <div class="om-not-found-wrap">
       <div style="padding:20px 10px;"><img style="width:30px;object-fit:cover;" src="${chrome.runtime.getURL(
-        "assets/images/not-found.png",
+        "assets/images/not-found.png"
       )}"/></div>
       <div class="om-text-not-found" >Orders not found</div>
    </div>
@@ -10,7 +10,7 @@ const orderNotFound = `
 const syncedAllOrders = `
    <div class="om-synced-all-wrap">
       <div style="padding:20px 10px;"><img style="width:30px;object-fit:cover;" src="${chrome.runtime.getURL(
-        "assets/images/completed.png",
+        "assets/images/completed.png"
       )}"/></div>
       <div class="om-text-synced-all" >All orders were synced to MB</div>
    </div>
@@ -166,7 +166,8 @@ const appendOrdersIntoTable = (data) => {
   for (let order of orders) {
     // add order into not sync table
     if (!order || !mbInfos || !mbInfos[order.orderId]) continue;
-    const { status, trackingCode, shippingCarrierCode } = mbInfos[order.orderId];
+    const { status, trackingCode, shippingCarrierCode } =
+      mbInfos[order.orderId];
 
     if (convert && convertVal) {
       const {
@@ -197,14 +198,15 @@ const appendOrdersIntoTable = (data) => {
       };
     }
 
-    const style = "border: 1px solid #d9d9d9;border-radius: 5px;box-shadow: none;padding-left: 5px;width:50px;"
+    const style =
+      "border: 1px solid #d9d9d9;border-radius: 5px;box-shadow: none;padding-left: 5px;width:50px;";
     if (status === "Not Synced") {
       hasNotSync = true;
       if (!$(`#not_synced tr[data-order-id="${order.orderId}"]`).length) {
         $("#not_synced .om-table tbody").append(`
                <tr data-order-id="${order.orderId}">
                   <td class="force-sync-item"><input data-order="${b64Encode(
-                    order,
+                    order
                   )}" class="om-checkbox" type="checkbox"></td>
                   <td> <img class="om-img-50" src="${
                     order.items[0].image
@@ -229,7 +231,7 @@ const appendOrdersIntoTable = (data) => {
         $("#ignored .om-table tbody").append(`
                <tr data-order-id="${order.orderId}">
                   <td class="force-revert-item"><input data-order="${b64Encode(
-                    order,
+                    order
                   )}" class="om-checkbox" type="checkbox"></td>
                   <td> <img class="om-img-50" src="${
                     order.items[0].image
@@ -323,6 +325,7 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
       return;
     }
     appendOrdersIntoTable(data);
+    setDivHeight();
   }
 
   if (message === "syncOrderToMB") {
@@ -374,7 +377,7 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
           $("#not_synced .om-table").append(`
                   <tr data-order-id="${order.orderId}">
                      <td class="force-sync-item"><input data-order="${b64Encode(
-                       order,
+                       order
                      )}" class="om-checkbox" type="checkbox"></td>
                      <td> <img class="om-img-50" src="${
                        order.items[0].image
@@ -505,37 +508,36 @@ $(document).on("click", ".sync-order-item", async function () {
   });
 });
 
-
 // Split
-$(document).on('change', '.split-order', async function() {
+$(document).on("change", ".split-order", async function () {
   const p = $(this).parent();
   let val = $(this).val();
   val = val ? parseInt(val) : 1;
   if (val < 2) return;
-  
+
   if (p?.length > 0) {
-    const btn = p.find('.sync-order-item');
+    const btn = p.find(".sync-order-item");
     if (btn?.length > 0) {
-      let data = $(btn).data('order');
-      if (data?.length > 0 ){
+      let data = $(btn).data("order");
+      if (data?.length > 0) {
         const order = b64Decode(data);
         if (order && order.orderId) {
           order.splitCount = val;
           const encode = b64Encode(order);
 
-          $(btn).attr('data-order', encode);
+          $(btn).attr("data-order", encode);
           const tr = $(this).closest(`tr[data-order-id="${order.orderId}"]`);
           if (tr?.length > 0) {
-            const checkbox =  $(tr).find('.om-checkbox');
-            if (checkbox.length> 0) {
-              $(checkbox).attr('data-order', encode);
+            const checkbox = $(tr).find(".om-checkbox");
+            if (checkbox.length > 0) {
+              $(checkbox).attr("data-order", encode);
             }
           }
         }
       }
     }
   }
-})
+});
 
 // click revert orders
 $(document).on("click", "#revert-order", async function () {
@@ -565,7 +567,7 @@ $(document).on("click", "#revert-order", async function () {
   $(this).addClass("loader");
   for (const order of orders) {
     $(`.revert-order-item[data-order-id="${order.orderId}"]`).addClass(
-      "loader",
+      "loader"
     );
   }
 
