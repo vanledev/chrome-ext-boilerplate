@@ -149,6 +149,15 @@ const appendOrdersIntoTable = (data) => {
   removeTableLoading();
   if (!data) return;
   const { orders, mbInfos = {} } = data;
+  const countUnsyncOrders = Object.values(mbInfos).filter(
+    (item) => item.status === "Not Synced"
+  ).length;
+  if (countUnsyncOrders == 0) {
+    $(".om-table tbody").empty();
+    $(".om-synced-all-wrap").show();
+  } else {
+    $(".om-synced-all-wrap").hide();
+  }
   addStatusLabel(mbInfos);
   let hasNotSync = false;
   let hasIgnore = false;
