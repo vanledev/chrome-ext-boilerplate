@@ -26,7 +26,8 @@
             "scripts/content_script.js",
             "scripts/sync_order.js",
             "scripts/add_tracking.js",
-            "scripts/settings.js"
+            "scripts/settings.js",
+            "scripts/etsy-marketing/change-style.js"
          ],
          "css": ["assets/styles/jquery.toast.css", "assets/styles/content.css"],
          "run_at": "document_end"
@@ -50,7 +51,8 @@
       {
          "resources": [
             "assets/images/not-found.png",
-            "assets/images/completed.png"
+            "assets/images/completed.png",
+            "assets/styles/etsy-marketing/style.css"
          ],
          "matches": ["https://www.etsy.com/*", "https://www.yuntrack.com/*"]
       }

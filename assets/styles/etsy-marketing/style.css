@@ -1,0 +1,4 @@
+table.wt-table .wt-table__row .wt-table__row__cell:nth-child(1) {
+  white-space: wrap !important;
+  width: 50% !important;
+}
