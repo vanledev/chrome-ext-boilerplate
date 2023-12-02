@@ -99,8 +99,8 @@ const addonComponent = `
             <div id="sync_order" class="tabcontent om-tabcontent"></div>
 
             <div id="add_tracking" class="tabcontent om-tabcontent">
-               <div class="om-fl-center om-mgt-15 btn-add-tracking-wrap">
-                  <button id="add-trackings" class="om-main-cta-button-wrapper om-btn">Add Trackings</button>
+               <div class="om-main-cta-button-wrapper  om-fl-center om-mgt-15 btn-add-tracking-wrap">
+                  <button id="add-trackings" class="om-btn">Add Trackings</button>
                </div>
             </div>
             <div id="settings" class="tabcontent om-tabcontent">
@@ -305,7 +305,7 @@ function debounce(func, timeout = 500) {
     }, timeout);
   };
 }
- 
+
 window.addEventListener(
   "resize",
   debounce(() => setDivHeight())
