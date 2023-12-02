@@ -1,4 +1,10 @@
-table.wt-table .wt-table__row .wt-table__row__cell:nth-child(1) {
+table.wt-table .wt-table__row .wt-table__row__cell {
   white-space: wrap !important;
-  width: 50% !important;
+  word-break: break-all;
+  width: 10% !important;
+  padding: 10px !important;
+}
+
+table.wt-table .wt-table__row .wt-table__row__cell:nth-child(1) {
+  width: 40% !important;
 }
