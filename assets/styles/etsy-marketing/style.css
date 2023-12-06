@@ -18,3 +18,73 @@
   .wt-table__row__cell:nth-child(1) {
   width: 40% !important;
 }
+
+/* Custom dropdown */
+.filter-status-wrap {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 10px; /* demo only */
+}
+.filter-status-wrap option {
+  padding: 10px;
+}
+.filter-status-wrap select {
+  background-color: #f1f1f1;
+  color: #000;
+  font-size: inherit;
+  padding: 0.5em;
+  padding-right: 2.5em;
+  border: 0;
+  margin: 0;
+  border-radius: 3px;
+  text-indent: 0.01px;
+  text-overflow: "";
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.filter-status-wrap::before,
+.filter-status-wrap::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.filter-status-wrap::after {
+  /*  Custom dropdown arrow */
+  content: "\25BC";
+  height: 1em;
+  font-size: 0.625em;
+  line-height: 1;
+  right: 1.2em;
+  top: 50%;
+  margin-top: -0.5em;
+}
+
+.filter-status-wrap::before {
+  /*  Custom dropdown arrow cover */
+  width: 2em;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 0 3px 3px 0;
+}
+
+.filter-status-wrap select[disabled] {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.filter-status-wrap select[disabled]::after {
+  color: rgba(0, 0, 0, 0.1);
+}
+
+.filter-status-wrap::before {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.filter-status-wrap::after {
+  color: rgba(0, 0, 0, 0.4);
+}

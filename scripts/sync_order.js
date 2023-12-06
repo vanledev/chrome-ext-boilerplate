@@ -406,7 +406,7 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
     }
     setTextBtnRevert();
   }
-  return;
+  // return;
 });
 
 // control tabs sync orders

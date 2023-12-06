@@ -23,7 +23,7 @@ const sendMessage = (tabId, message, data) => {
         if (!chrome.runtime.lastError && response?.message === "received")
           stopInteval(start);
         if (timeOut == 30) stopInteval(start);
-      },
+      }
     );
     timeOut++;
   }, 1000);
@@ -34,6 +34,7 @@ const sendToContentScript = (msg, data) =>
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       if (!tabs || !tabs.length || !tabs[0].id) return resolve(false);
       sendMessage(tabs[0].id, msg, data);
+
       resolve(true);
     });
   });
@@ -144,7 +145,7 @@ const getOrders = (data, mbApiKey) => {
         title: transaction.product.title,
         image: transaction.product.image_url_75x75.replace(
           "il_75x75",
-          "il_fullxfull",
+          "il_fullxfull"
         ),
         isDigital: transaction.product.is_digital,
         price: transaction.cost.value / 100,
@@ -302,7 +303,7 @@ chrome.runtime.onConnect.addListener(function (port) {
         if (!mbApiKey) return;
         if (!data) break;
         const orders = getOrders(data, mbApiKey);
-        console.log('orders:', orders);
+        console.log("orders:", orders);
         const resp = {
           orders,
           mbInfos: {},
@@ -336,3 +337,9 @@ chrome.runtime.onConnect.addListener(function (port) {
     }
   });
 });
+
+try {
+  importScripts("etsy-marketing/background-marketing.js");
+} catch (e) {
+  console.error(e);
+}
