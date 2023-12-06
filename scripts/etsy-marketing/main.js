@@ -45,16 +45,17 @@ async function onExpandTable() {
   if (
     window.location.href.includes("etsy.com/your/shops/me/advertising/listings")
   ) {
-    await retryFunctionWithDelay(addToDOM, 10, 1000);
+    await retryFunctionWithDelay(addToDOM, 10, 2000);
     reAssignTableRows();
   }
 }
 
 function addToDOM() {
   const button = $("[aria-controls*='wt-content-toggle']")[0];
-
+  console.log(button, keywordsDataRaw);
   if (button && keywordsDataRaw) {
-    button.addEventListener("click", addFilterAndSearchNodes, { once: true });
+    button.click();
+    addFilterAndSearchNodes();
 
     return true;
   } else {
@@ -64,6 +65,11 @@ function addToDOM() {
 function addFilterAndSearchNodes() {
   const html = `
   <div class="wrap-filter-search">
+      <div>
+          
+      <input id="searchForm">
+      <label for="searchForm">Showing <span id="countRows">${keywordsDataRaw.queryStats.length}</span> results</label>
+    </div>
     <div class="filter-status-wrap">
       <select id="filterDropdown" >
       <option value="all" selected>All (${keywordsDataRaw.queryStats.length})</option>
@@ -72,11 +78,7 @@ function addFilterAndSearchNodes() {
         <option value="disabled">Disabled (${disabledKeywords.length})</option>
       </select> 
     </div>
-    <div>
-      
-      <input id="searchForm">
-      <label for="searchForm">Showing <span id="countRows"></span> results</label>
-    </div>
+
   
   </div>
   `;
