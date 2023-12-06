@@ -34,14 +34,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .map((keywordData) => keywordData.stemmedQuery);
     currentKeywordsPool = getCurrentKeywordsPool();
     if (!fuse) {
-      fuse = initSearchObject();
+      updateFuse();
     }
   }
 });
 
 // Wait to the button that show keywords to appear in DOM, then addEventListener to it
-addListenerToButton();
-async function addListenerToButton() {
+onExpandTable();
+async function onExpandTable() {
   if (
     window.location.href.includes("etsy.com/your/shops/me/advertising/listings")
   ) {
@@ -53,73 +53,50 @@ async function addListenerToButton() {
 function addToDOM() {
   const button = $("[aria-controls*='wt-content-toggle']")[0];
 
-  if (button) {
-    button.addEventListener(
-      "click",
-      () => {
-        const html = `<div class="filter-status-wrap">
-            <select id="filterDropdown" >
-            <option value="all" selected>All (${keywordsDataRaw.queryStats.length})</option>
-              <option value="enabled" >Enabled (${enabledKeywords.length})</option>
-          
-              <option value="disabled">Disabled (${disabledKeywords.length})</option>
-            </select> </div>
-            `;
-        $(keywordTableSelector).parent().before($(html));
-        const html2 = `<input id="searchForm">`;
-        $(keywordTableSelector).parent().before($(html2));
-
-        $("#filterDropdown").on("change", () => {
-          changeCurrentKeywordsPool();
-          filterKeywords();
-          // reAssignTableRows(); khiến mỗi lần click chọn Enabled and Disabled lại ko cập nhật được nữa
-        });
-
-        $("#searchForm").on("input", debounce(search, 500));
-      },
-      { once: true }
-    );
+  if (button && keywordsDataRaw) {
+    button.addEventListener("click", addFilterAndSearchNodes, { once: true });
 
     return true;
   } else {
     return false;
   }
 }
+function addFilterAndSearchNodes() {
+  const html = `
+  <div class="wrap-filter-search">
+    <div class="filter-status-wrap">
+      <select id="filterDropdown" >
+      <option value="all" selected>All (${keywordsDataRaw.queryStats.length})</option>
+        <option value="enabled" >Enabled (${enabledKeywords.length})</option>
 
-function debounce(func, timeout = 500) {
-  let timer;
-  return (...args) => {
-    timer && clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, timeout);
-  };
+        <option value="disabled">Disabled (${disabledKeywords.length})</option>
+      </select> 
+    </div>
+    <div>
+      
+      <input id="searchForm">
+      <label for="searchForm">Showing <span id="countRows"></span> results</label>
+    </div>
+  
+  </div>
+  `;
+  $(keywordTableSelector).parent().before($(html));
+
+  $("#filterDropdown").on("change", onChangeFilter);
+
+  $("#searchForm").on("input", debounce(onChangeSearchForm, 500));
 }
-
-async function retryFunctionWithDelay(childFunction, count, delay) {
-  let attempts = 0;
-
-  while (true) {
-    console.log(attempts);
-    const res = childFunction();
-    if (res == true || attempts > count) break;
-    attempts++;
-    await sleep(delay);
-  }
-  console.log("Done retry function");
-  return true;
-}
-function initSearchObject() {
+function updateFuse() {
   // Configuration options
   const options = {
     threshold: 0, // Adjust the fuzzy search threshold (0 to 1)
   };
   const currentKeywordsPool = getCurrentKeywordsPool();
-  console.log("current keywords ", currentKeywordsPool);
+
   // Create a Fuse instance
-  const fuse = new Fuse(currentKeywordsPool, options);
-  console.log("init search object");
-  return fuse;
+  const newFuse = new Fuse(currentKeywordsPool, options);
+
+  fuse = newFuse;
 }
 function getCurrentStatus() {
   const chosenStatus = $("#filterDropdown").val();
@@ -136,15 +113,38 @@ function getCurrentKeywordsPool() {
   } else if (status == "disabled") {
     keywords = disabledKeywords;
   }
-  let currentKeywordsPool = new Set(keywords);
-  return currentKeywordsPool;
+
+  return keywords;
 }
 function changeCurrentKeywordsPool() {
   currentKeywordsPool = getCurrentKeywordsPool();
-  console.log("change current keyword pool");
+
+  updateFuse();
+
+  console.log("change current keyword pool to", currentKeywordsPool);
 }
 
 function reAssignTableRows() {
   tableRows = $(keywordTableSelector + " tbody tr");
-  console.log("jquery table rows updated", tableRows);
+  console.log("jquery table rows updated");
+}
+
+function resetSearchForm() {
+  $("#searchForm").val("");
+}
+
+function updateTable(keywordsShouldShow) {
+  $("#countRows").html(keywordsShouldShow.length);
+  tableRows.each(function () {
+    const keywordInRow = $(this)
+      .find("th")
+      .contents()
+      .filter(function () {
+        return this.nodeType === 3; // Filter out non-text nodes
+      })
+      .text()
+      .trim()
+      .slice(1, -1);
+    $(this).toggle(keywordsShouldShow.includes(keywordInRow));
+  });
 }

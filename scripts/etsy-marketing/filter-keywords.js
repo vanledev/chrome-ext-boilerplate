@@ -1,19 +1,11 @@
-
-function filterKeywords() {
-  console.log("filter keyword will fiter ", tableRows);
-  tableRows.each(function () {
-    const searchText = $(this)
-      .find("th")
-      .contents()
-      .filter(function () {
-        return this.nodeType === 3; // Filter out non-text nodes
-      })
-      .text()
-      .trim()
-      .slice(1, -1);
-    $(this).toggle(currentKeywordsPool.has(searchText));
-  });
+function onChangeFilter() {
+  changeCurrentKeywordsPool();
+  updateTable(currentKeywordsPool);
+  resetSearchForm();
+  // reAssignTableRows(); khiến mỗi lần click chọn Enabled and Disabled lại ko cập nhật được nữa
 }
+
+
 
 // function printRow({
 //   word,

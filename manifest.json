@@ -35,8 +35,8 @@
       "matches": ["https://www.etsy.com/your/shops/me/advertising/listings/*"],
       "js": [
         "assets/libs/search/fuse.js",
-        "scripts/etsy-marketing/globals.js",
-
+        "scripts/etsy-marketing/helpers.js",
+        "scripts/etsy-marketing/main.js",
         "scripts/etsy-marketing/filter-keywords.js",
 
         "scripts/etsy-marketing/search.js"

@@ -88,3 +88,7 @@
 .filter-status-wrap::after {
   color: rgba(0, 0, 0, 0.4);
 }
+
+.wrap-filter-search {
+  display: flex;
+}
