@@ -3,18 +3,24 @@ chrome.devtools.panels.create(
   "../../assets/images/48.png",
   "devtool/htmls/panel.html",
   function (panel) {
-    console.log("i'm devtool");
+    console.log("Devtool Panel created");
   }
 );
 
-//Created a port with background page for continous message communication
-var portForEtsyMarketing = chrome.runtime.connect({
+let portForEtsyMarketing = chrome.runtime.connect({
   name: "portForEtsyMarketing",
 });
-// capture response request get orders
-chrome.devtools.network.onRequestFinished.addListener(async function (
-  netevent
-) {
+
+portForEtsyMarketing.onDisconnect.addListener(() => {
+  console.log("port disconnect");
+
+  portForEtsyMarketing = chrome.runtime.connect({
+    name: "portForEtsyMarketing",
+  });
+});
+chrome.devtools.network.onRequestFinished.addListener(onConnectHandler);
+
+async function onConnectHandler(netevent) {
   const request = await netevent.request;
   const response = await netevent.response;
   if (
@@ -24,18 +30,11 @@ chrome.devtools.network.onRequestFinished.addListener(async function (
   )
     return;
 
-  // send response to background
   netevent.getContent(function (body) {
     const data = JSON.parse(body);
-
     portForEtsyMarketing.postMessage({
       message: "ads-keywords",
       data,
     });
-
-    // chrome.runtime.sendMessage({
-    //   message: "ads-keywords",
-    //   data,
-    // });
   });
-});
+}

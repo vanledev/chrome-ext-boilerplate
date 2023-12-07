@@ -1,11 +1,10 @@
 function updateFuse() {
-  
   const options = {
-    threshold: 0, 
+    threshold: 0,
+    ignoreLocation: true,
   };
   const currentKeywordsPool = getCurrentKeywordsPool();
 
-  
   const newFuse = new Fuse(currentKeywordsPool, options);
 
   fuse = newFuse;
@@ -32,10 +31,7 @@ function updateCurrentKeywordsPool() {
   currentKeywordsPool = getCurrentKeywordsPool();
 
   updateFuse();
-
-  
 }
 function reAssignTableRowsToJqueryElement() {
   tableRows = $(keywordTableSelector + " tbody tr");
-  
 }

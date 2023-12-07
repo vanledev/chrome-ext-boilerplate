@@ -1,10 +1,9 @@
 let executed = false;
-chrome.runtime.onMessage.addListener(runtimeOnMessage, { once: true });
+chrome.runtime.onMessage.addListener(runtimeOnMessage);
 function runtimeOnMessage(request, sender, sendResponse) {
   if (request.message == "ads-keywords" && executed == false) {
-    console.time("Execute runtime On Message Handler");
     executed = true;
-    console.log("receive message ", request);
+    console.log("Content script receive message ", request);
     sendResponse({ message: "success" });
     keywordsDataRaw = request.data;
     allKeywords = keywordsDataRaw.queryStats.map(
@@ -21,6 +20,5 @@ function runtimeOnMessage(request, sender, sendResponse) {
     if (!fuse) {
       updateFuse();
     }
-    console.timeEnd("Execute runtime On Message Handler");
   }
 }
