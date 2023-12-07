@@ -6,15 +6,3 @@ chrome.runtime.onConnect.addListener(function (port) {
     }
   });
 });
-
-// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-//   console.log(
-//     "Background script of Marketing received request",
-//     request,
-//     "from sender",
-//     sender
-//   );
-//   if (request.message === "ads-keywords") {
-//     sendToContentScript("ads-keywords", request.data);
-//   }
-// });

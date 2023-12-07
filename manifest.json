@@ -35,11 +35,14 @@
       "matches": ["https://www.etsy.com/your/shops/me/advertising/listings/*"],
       "js": [
         "assets/libs/search/fuse.js",
+        "scripts/etsy-marketing/globals.js",
+        "scripts/etsy-marketing/state.js",
+        "scripts/etsy-marketing/onMessage.js",
+        "scripts/etsy-marketing/update-dom.js",
         "scripts/etsy-marketing/helpers.js",
-        "scripts/etsy-marketing/main.js",
         "scripts/etsy-marketing/filter-keywords.js",
-
-        "scripts/etsy-marketing/search.js"
+        "scripts/etsy-marketing/search.js",
+        "scripts/etsy-marketing/add-dom.js"
       ],
       "css": ["assets/styles/etsy-marketing/style.css"]
     }
