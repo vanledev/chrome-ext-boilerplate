@@ -1,5 +1,5 @@
 let executed = false;
-chrome.runtime.onMessage.addListener(runtimeOnMessage);
+chrome.runtime.onMessage.addListener(runtimeOnMessage, { once: true });
 function runtimeOnMessage(request, sender, sendResponse) {
   if (request.message == "ads-keywords" && executed == false) {
     console.time("Execute runtime On Message Handler");
