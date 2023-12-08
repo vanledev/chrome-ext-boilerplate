@@ -174,13 +174,13 @@ const initAddon = async () => {
 
   // loading tabs until receive orders
   $("#not_synced").prepend(
-    `<div style="position:relative;height:100px" class="loader-resp"></div>`
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
   );
   $("#ignored").prepend(
-    `<div style="position:relative;height:100px" class="loader-resp"></div>`
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
   );
   $("#add_tracking").prepend(
-    `<div style="position:relative;height:100px" class="loader-resp"></div>`
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
   );
   // active tab not synced
   $('[data-name="not_synced"]').click();
@@ -224,6 +224,7 @@ $(document).on("click", `.om-tablinks`, function (e) {
   });
   $(`#${$(this).attr("data-name")}`).css("display", "block");
   $(this).addClass("om-active om-active-tab");
+  setAddTrackingHeight();
 });
 
 // capture event from background
@@ -295,6 +296,26 @@ function setDivHeight() {
     return false;
   }
 }
+// etsyapi-bb0c9050-9b72-4b5a-bbc4-d1397e1875bb
+const tabSelector = ".om-container .content > .om-tab";
+const btnSelector = ".om-container #add_tracking .om-main-cta-button-wrapper";
+const headingSelecotr = "#add_tracking .om-table thead";
+function setAddTrackingHeight() {
+  const tabContent = document.querySelector("#add_tracking .table_wrap");
+
+  if (tabContent) {
+    const tab = (document.querySelector(tabSelector) || {}).clientHeight;
+    const button = (document.querySelector(btnSelector) || {}).clientHeight;
+    const tableHeading = (document.querySelector(headingSelecotr) || {})
+      .clientHeight;
+
+    const height = window.innerHeight - tab - button - tableHeading - 20; // margin-top
+    const tbody = tabContent.querySelector(".table_wrap tbody");
+    if (tbody) {
+      tbody.style.height = height + "px";
+    }
+  }
+}
 
 function debounce(func, timeout = 500) {
   let timer;
@@ -308,5 +329,8 @@ function debounce(func, timeout = 500) {
 
 window.addEventListener(
   "resize",
-  debounce(() => setDivHeight())
+  debounce(() => {
+    setDivHeight();
+    setAddTrackingHeight();
+  }),
 );
