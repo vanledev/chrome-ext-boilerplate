@@ -1,24 +1,23 @@
-async function main() {
+async function addToDom() {
   if (
     window.location.href.includes("etsy.com/your/shops/me/advertising/listings")
   ) {
-    await retryFunctionWithDelay(addListenerToButtonWhenReady, 10, 2000);
-    reAssignTableRowsToJqueryElement();
+    await retryFunctionWithDelay(waitForPlace, 10, 2000);
   }
 }
-main();
-function addListenerToButtonWhenReady() {
-  const button = $("[aria-controls*='wt-content-toggle']")[0];
-  if (button) {
-    console.log("button", button);
-    button.addEventListener(
-      "click",
-      () => {
-        console.log("click");
-        retryFunctionWithDelay(addToDomWhenKeywordsReady, 10, 1000);
-      },
-      { once: true }
-    );
+
+async function waitForPlace() {
+  const place = $('p:contains("Search terms and orders for this ad")')[0];
+  if (place) {
+    // console.log("button", button);
+    // button.addEventListener("click", () => {
+    //   console.log("click");
+    //   if (!$("#filterDropdown")[0]) {
+    //     retryFunctionWithDelay(waitForKeywords, 10, 1000);
+    //   }
+    // });
+
+    await retryFunctionWithDelay(waitForKeywords, 10, 1000);
     return true;
   } else {
     console.log("no button");
@@ -26,11 +25,13 @@ function addListenerToButtonWhenReady() {
   }
 }
 
-function addToDomWhenKeywordsReady() {
+async function waitForKeywords() {
   if (keywordsDataRaw) {
     addFilterAndSearchNodes();
+    console.log("done adding filter and search to dom");
     return true;
   } else {
+    console.log('no data keywords yet')
     return false;
   }
 }
@@ -54,9 +55,13 @@ function addFilterAndSearchNodes() {
     
     </div>
     `;
-  $(keywordTableSelector).parent().before($(html));
+  $('p:contains("Search terms and orders for this ad")')
+    .parent()
+    .before($(html));
 
   $("#filterDropdown").on("change", onChangeFilter);
 
   $("#searchForm").on("input", debounce(onChangeSearchForm, 500));
+
+  // content.js
 }

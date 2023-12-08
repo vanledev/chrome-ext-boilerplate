@@ -32,6 +32,4 @@ function updateCurrentKeywordsPool() {
 
   updateFuse();
 }
-function reAssignTableRowsToJqueryElement() {
-  tableRows = $(keywordTableSelector + " tbody tr");
-}
+ 

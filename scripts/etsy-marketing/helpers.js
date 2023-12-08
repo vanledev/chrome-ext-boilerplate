@@ -12,12 +12,13 @@ async function retryFunctionWithDelay(childFunction, count, delay) {
   let attempts = 0;
 
   while (true) {
-    
-    const res = childFunction();
+    const res = await childFunction();
+    console.log(attempts);
     if (res == true || attempts > count) break;
     attempts++;
+
     await sleep(delay);
   }
-  
+
   return true;
 }

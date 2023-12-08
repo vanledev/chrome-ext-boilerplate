@@ -24,17 +24,16 @@ async function onConnectHandler(netevent) {
   const request = await netevent.request;
   const response = await netevent.response;
   if (
-    !request?.url?.includes("prolist/listings/querystats") ||
-    response.status !== 200 ||
-    !response?.content?.mimeType?.includes("application/json")
-  )
-    return;
-
-  netevent.getContent(function (body) {
-    const data = JSON.parse(body);
-    portForEtsyMarketing.postMessage({
-      message: "ads-keywords",
-      data,
+    request?.url?.includes("prolist/listings/querystats") &&
+    response.status == 200 &&
+    response?.content?.mimeType?.includes("application/json")
+  ) {
+    netevent.getContent(function (body) {
+      const data = JSON.parse(body);
+      portForEtsyMarketing.postMessage({
+        message: "ads-keywords",
+        data,
+      });
     });
-  });
+  }
 }

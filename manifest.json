@@ -61,7 +61,7 @@
     "http://127.0.0.1:8080/*",
     "https://www.yuntrack.com/*"
   ],
-  "permissions": ["scripting", "activeTab"],
+  "permissions": ["scripting", "activeTab", "webNavigation"],
   "web_accessible_resources": [
     {
       "resources": [
