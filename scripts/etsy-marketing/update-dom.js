@@ -8,7 +8,6 @@ function updateTable(keywordsShouldShow) {
   // Now 'table' variable contains the reference to the desired table.
 
   $(keywordTableSelector + " tbody tr").each(function () {
-    console.log(this);
     const keywordInRow = $(this)
       .find("th")
       .contents()
