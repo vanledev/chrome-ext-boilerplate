@@ -2,7 +2,7 @@ function resetSearchForm() {
   $("#searchForm").val("");
 }
 
-function updateTable(keywordsShouldShow) {
+function updateDOMTable(keywordsShouldShow) {
   $("#countRows").html(keywordsShouldShow.length);
 
   // Now 'table' variable contains the reference to the desired table.

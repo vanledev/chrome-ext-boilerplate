@@ -20,16 +20,16 @@
 }
 
 /* Custom dropdown */
-.filter-status-wrap {
+.om-select-style {
   position: relative;
   display: inline-block;
   vertical-align: middle;
   margin: 10px; /* demo only */
 }
-.filter-status-wrap option {
+.om-select-style option {
   padding: 10px;
 }
-.filter-status-wrap select {
+.om-select-style select {
   font-weight: bold;
   font-size: 15px;
   background-color: #f1f1f1;
@@ -48,14 +48,14 @@
   appearance: none;
 }
 
-.filter-status-wrap::before,
-.filter-status-wrap::after {
+.om-select-style::before,
+.om-select-style::after {
   content: "";
   position: absolute;
   pointer-events: none;
 }
 
-.filter-status-wrap::after {
+.om-select-style::after {
   /*  Custom dropdown arrow */
   content: "\25BC";
   height: 1em;
@@ -66,7 +66,7 @@
   margin-top: -0.5em;
 }
 
-.filter-status-wrap::before {
+.om-select-style::before {
   /*  Custom dropdown arrow cover */
   width: 2em;
   right: 0;
@@ -76,19 +76,19 @@
   height: 36px;
 }
 
-.filter-status-wrap select[disabled] {
+.om-select-style select[disabled] {
   color: rgba(0, 0, 0, 0.3);
 }
 
-.filter-status-wrap select[disabled]::after {
+.om-select-style select[disabled]::after {
   color: rgba(0, 0, 0, 0.1);
 }
 
-.filter-status-wrap::before {
+.om-select-style::before {
   background-color: rgba(0, 0, 0, 0.15);
 }
 
-.filter-status-wrap::after {
+.om-select-style::after {
   color: rgba(0, 0, 0, 0.4);
 }
 
@@ -113,4 +113,13 @@ label[for="searchForm"] {
 }
 #countRows {
   font-weight: bold;
+}
+
+.om-search {
+  display: flex;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
 }

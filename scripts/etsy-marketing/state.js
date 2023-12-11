@@ -2,6 +2,7 @@ function updateFuse() {
   const options = {
     threshold: 0,
     ignoreLocation: true,
+    useExtendedSearch: true,
   };
   const currentKeywordsPool = getCurrentKeywordsPool();
 
@@ -10,9 +11,15 @@ function updateFuse() {
   fuse = newFuse;
 }
 function getCurrentStatus() {
-  const chosenStatus = $("#filterDropdown").val();
+  const chosenStatus = $("#om-keyword-status").val();
   return chosenStatus ? chosenStatus : "all";
 }
+
+function getSearchOption() {
+  const option = $("#om-search-option").val();
+  return option ? option : "contain";
+}
+
 function getCurrentKeywordsPool() {
   const status = getCurrentStatus();
 
@@ -32,4 +39,3 @@ function updateCurrentKeywordsPool() {
 
   updateFuse();
 }
- 

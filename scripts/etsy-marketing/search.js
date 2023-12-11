@@ -1,11 +1,25 @@
-function onChangeSearchForm(event) {
-  let searchText = event.target.value;
+function changeKeywordResult() {
+  let searchText = $("#searchForm").val();
+  console.log(searchText);
   if (searchText === "") {
     updateCurrentKeywordsPool();
-    updateTable(currentKeywordsPool);
+    updateDOMTable(currentKeywordsPool);
   } else {
-    const result = fuse.search(searchText);
-    const arr = result.map((item) => item.item);
-    updateTable(arr);
+    const searchOption = getSearchOption();
+
+    let fuseResult;
+    switch (searchOption) {
+      case "contain":
+        fuseResult = fuse.search(searchText);
+
+        break;
+      case "exclude":
+        fuseResult = fuse.search("!" + searchText);
+        break;
+    }
+
+    let arr = fuseResult.map((item) => item.item);
+
+    updateDOMTable(arr);
   }
 }

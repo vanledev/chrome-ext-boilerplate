@@ -12,7 +12,7 @@ async function waitForPlace() {
     // console.log("button", button);
     // button.addEventListener("click", () => {
     //   console.log("click");
-    //   if (!$("#filterDropdown")[0]) {
+    //   if (!$("#om-keyword-status")[0]) {
     //     retryFunctionWithDelay(waitForKeywords, 10, 1000);
     //   }
     // });
@@ -38,30 +38,45 @@ async function waitForKeywords() {
 function addFilterAndSearchNodes() {
   const html = `
     <div class="wrap-filter-search">
-        <div>
-            
-        <input id="searchForm">
-        <label for="searchForm">Showing <span id="countRows">${keywordsDataRaw.queryStats.length}</span> results</label>
-      </div>
-      <div class="filter-status-wrap">
-        <select id="filterDropdown" >
+
+        <div class="flex">
+                  <div class="om-search om-select-style">
+                    <select id="om-search-option" >
+                      <option value="contain" selected>Contain </option>
+                      <option value="exclude" > Exclude  </option>        
+                    </select> 
+                  </div>
+
+                  <div>
+                    <input id="searchForm">
+                  
+                  </div>
+                  <label for="searchForm">Showing <span id="countRows">${keywordsDataRaw.queryStats.length}</span> results</label>
+        </div> 
+    
+
+ 
+
+    <div class="om-select-style">
+        <select id="om-keyword-status" >
         <option value="all" selected>All (${keywordsDataRaw.queryStats.length})</option>
           <option value="enabled" >Enabled (${enabledKeywords.length})</option>
-  
           <option value="disabled">Disabled (${disabledKeywords.length})</option>
         </select> 
-      </div>
+    </div>
   
     
-    </div>
+  </div>
     `;
   $('p:contains("Search terms and orders for this ad")')
     .parent()
     .before($(html));
 
-  $("#filterDropdown").on("change", onChangeFilter);
+  $("#om-keyword-status").on("change", onChangeFilter);
+  $("#om-keyword-status").on("change", changeKeywordResult);
 
-  $("#searchForm").on("input", debounce(onChangeSearchForm, 500));
+  $("#searchForm").on("input", debounce(changeKeywordResult, 500));
+  $("#om-search-option").on("change", changeKeywordResult);
   if ($(".wrap-filter-search").length > 1) {
     for (let i = 1; i < $(".wrap-filter-search").length; i++) {
       $($(".wrap-filter-search")[i]).remove();

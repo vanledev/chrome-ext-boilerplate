@@ -1,7 +1,5 @@
 function onChangeFilter() {
-  resetSearchForm();
-
   updateCurrentKeywordsPool();
 
-  updateTable(currentKeywordsPool);
+  // updateDOMTable(currentKeywordsPool);
 }
