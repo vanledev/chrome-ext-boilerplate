@@ -26,6 +26,7 @@ function runtimeOnMessage(request, sender, sendResponse) {
     updateFuse();
   } else if (request.message == "ads-add-to-dom") {
     console.log("content script receive message ads-add-to-dom");
+
     addToDom();
   }
 }

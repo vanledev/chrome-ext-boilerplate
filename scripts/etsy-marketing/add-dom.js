@@ -31,7 +31,7 @@ async function waitForKeywords() {
     console.log("done adding filter and search to dom");
     return true;
   } else {
-    console.log('no data keywords yet')
+    console.log("no data keywords yet");
     return false;
   }
 }
@@ -62,6 +62,11 @@ function addFilterAndSearchNodes() {
   $("#filterDropdown").on("change", onChangeFilter);
 
   $("#searchForm").on("input", debounce(onChangeSearchForm, 500));
+  if ($(".wrap-filter-search").length > 1) {
+    for (let i = 1; i < $(".wrap-filter-search").length; i++) {
+      $($(".wrap-filter-search")[i]).remove();
+    }
+  }
 
   // content.js
 }

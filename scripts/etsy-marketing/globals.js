@@ -7,4 +7,4 @@ let tableRows;
 let fuse;
 
 const keywordTableSelector =
-  ".wt-grid > .wt-grid__item-xs-12:last-child > div:nth-child(2) .wt-table";
+  "table:has(th:has(p:contains('Buyers searched for')))";

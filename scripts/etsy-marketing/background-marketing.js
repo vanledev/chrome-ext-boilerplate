@@ -12,20 +12,19 @@ chrome.runtime.onConnect.addListener(function (port) {
     });
   }
 });
-
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (
     tab.status == "complete" &&
     tab.url?.includes("your/shops/me/advertising/listings")
   ) {
-    console.log(tab);
-    chrome.tabs.sendMessage(tabId, { message: "ads-add-to-dom", data: null });
-    console.log("send message ");
-    // executeOnTabCompleted(tabId);
+    chrome.tabs.sendMessage(tab.id, {
+      message: "ads-add-to-dom",
+      data: null,
+    });
   }
 });
 
-function executeOnTabCompleted(tabId) {
+function executeScriptOnTabCompleted(tabId) {
   chrome.scripting.executeScript({
     target: { tabId },
     function: function () {
@@ -34,21 +33,3 @@ function executeOnTabCompleted(tabId) {
     },
   });
 }
-
-chrome.webNavigation.onHistoryStateUpdated.addListener(function (details) {
-  if (details.frameId === 0) {
-    // Fires only when details.url === currentTab.url
-    chrome.tabs.get(details.tabId, function (tab) {
-      if (tab.url === details.url) {
-        console.log("onHistoryStateUpdated");
-      }
-    });
-  }
-});
-
-chrome.webNavigation.onCommitted.addListener(function (details) {
-  if (details.frameId === 0 && details.transitionType === "reload") {
-    console.log("Page reloaded:", details.url);
-    // Additional code for handling page reload event
-  }
-});

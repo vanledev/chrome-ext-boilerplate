@@ -1,4 +1,4 @@
-const isProduction = true;
+const isProduction = false;
 const MBUrl = isProduction
   ? "https://api.merchbridge.com/query"
   : "https://api-dev.merchbridge.com/query";

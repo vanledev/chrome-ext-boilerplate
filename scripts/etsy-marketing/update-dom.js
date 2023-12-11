@@ -3,10 +3,12 @@ function resetSearchForm() {
 }
 
 function updateTable(keywordsShouldShow) {
-  console.log("update table with keywords should show ", keywordsShouldShow);
-
   $("#countRows").html(keywordsShouldShow.length);
-  $($(keywordTableSelector + " tbody tr")).each(function () {
+
+  // Now 'table' variable contains the reference to the desired table.
+
+  $(keywordTableSelector + " tbody tr").each(function () {
+    console.log(this);
     const keywordInRow = $(this)
       .find("th")
       .contents()
