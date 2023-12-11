@@ -123,3 +123,12 @@ label[for="searchForm"] {
   display: flex;
   align-items: center;
 }
+
+.additional-metrics {
+  margin-top: 12px;
+  padding: 0 20px;
+}
+
+.wt-tab[aria-label*="Interactive graph with Etsy Ads"] {
+  flex-wrap: wrap;
+}

@@ -2,6 +2,7 @@ async function addToDom() {
   if (
     window.location.href.includes("etsy.com/your/shops/me/advertising/listings")
   ) {
+    addMetricsToDOM();
     await retryFunctionWithDelay(waitForPlace, 10, 2000);
   }
 }
@@ -82,6 +83,4 @@ function addFilterAndSearchNodes() {
       $($(".wrap-filter-search")[i]).remove();
     }
   }
-
-  // content.js
 }

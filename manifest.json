@@ -42,7 +42,8 @@
         "scripts/etsy-marketing/helpers.js",
         "scripts/etsy-marketing/filter-keywords.js",
         "scripts/etsy-marketing/search.js",
-        "scripts/etsy-marketing/add-dom.js"
+        "scripts/etsy-marketing/add-dom.js",
+        "scripts/etsy-marketing/calculator.js"
       ],
       "css": ["assets/styles/etsy-marketing/style.css"]
     }
