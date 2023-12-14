@@ -3,7 +3,7 @@ chrome.runtime.onConnect.addListener(function (port) {
     port.onMessage.addListener(async (portData) => {
       if (portData.message == "ads-keywords") {
         const [tab] = await chrome.tabs.query({ active: true });
-
+        await sleep(5000);
         chrome.tabs.sendMessage(tab.id, {
           message: "ads-keywords",
           data: portData.data,
@@ -18,7 +18,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     tab.url?.includes("your/shops/me/advertising/listings")
   ) {
     chrome.tabs.sendMessage(tab.id, {
-      message: "ads-add-to-dom",
+      message: "tab-update-complete",
       data: null,
     });
   }

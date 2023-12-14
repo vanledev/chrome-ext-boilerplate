@@ -1,8 +1,7 @@
-async function addToDom() {
+async function addSearchFilterToDOM() {
   if (
     window.location.href.includes("etsy.com/your/shops/me/advertising/listings")
   ) {
-    addMetricsToDOM();
     await retryFunctionWithDelay(waitForPlace, 10, 2000);
   }
 }
@@ -10,14 +9,6 @@ async function addToDom() {
 async function waitForPlace() {
   const place = $('p:contains("Search terms and orders for this ad")')[0];
   if (place) {
-    // console.log("button", button);
-    // button.addEventListener("click", () => {
-    //   console.log("click");
-    //   if (!$("#om-keyword-status")[0]) {
-    //     retryFunctionWithDelay(waitForKeywords, 10, 1000);
-    //   }
-    // });
-
     await retryFunctionWithDelay(waitForKeywords, 10, 1000);
     return true;
   } else {
@@ -49,7 +40,7 @@ function addFilterAndSearchNodes() {
                   </div>
 
                   <div>
-                    <input id="searchForm">
+                    <input class="om-input" id="searchForm">
                   
                   </div>
                   <label for="searchForm">Showing <span id="countRows">${keywordsDataRaw.queryStats.length}</span> results</label>
@@ -78,9 +69,5 @@ function addFilterAndSearchNodes() {
 
   $("#searchForm").on("input", debounce(changeKeywordResult, 500));
   $("#om-search-option").on("change", changeKeywordResult);
-  if ($(".wrap-filter-search").length > 1) {
-    for (let i = 1; i < $(".wrap-filter-search").length; i++) {
-      $($(".wrap-filter-search")[i]).remove();
-    }
-  }
+  removeDoubleEle(".wrap-filter-search");
 }

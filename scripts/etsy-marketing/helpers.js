@@ -22,3 +22,10 @@ async function retryFunctionWithDelay(childFunction, count, delay) {
 
   return true;
 }
+function removeDoubleEle(selector) {
+  if ($(selector).length > 1) {
+    for (let i = 0; i < $(selector).length - 1; i++) {
+      $($(selector)[i]).remove();
+    }
+  }
+}

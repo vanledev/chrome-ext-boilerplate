@@ -339,7 +339,8 @@ chrome.runtime.onConnect.addListener(function (port) {
 });
 
 try {
-  importScripts("etsy-marketing/background-marketing.js");
+  importScripts("etsy-marketing/search-filter/background-marketing.js");
+  importScripts("etsy-marketing/metric/local-storage.js");
 } catch (e) {
   console.error(e);
 }

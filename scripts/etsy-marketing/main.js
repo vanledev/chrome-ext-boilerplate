@@ -24,9 +24,10 @@ function runtimeOnMessage(request, sender, sendResponse) {
     currentKeywordsPool = getCurrentKeywordsPool();
 
     updateFuse();
-  } else if (request.message == "ads-add-to-dom") {
-    console.log("content script receive message ads-add-to-dom");
+  } else if (request.message == "tab-update-complete") {
+    console.log("content script receive message tab-update-complete");
 
-    addToDom();
+    addSearchFilterToDOM();
+    addMetricToDom();
   }
 }

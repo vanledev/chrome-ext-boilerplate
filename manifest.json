@@ -35,15 +35,19 @@
       "matches": ["https://www.etsy.com/your/shops/me/advertising/listings/*"],
       "js": [
         "assets/libs/search/fuse.js",
-        "scripts/etsy-marketing/globals.js",
-        "scripts/etsy-marketing/state.js",
-        "scripts/etsy-marketing/onMessage.js",
-        "scripts/etsy-marketing/update-dom.js",
         "scripts/etsy-marketing/helpers.js",
-        "scripts/etsy-marketing/filter-keywords.js",
-        "scripts/etsy-marketing/search.js",
-        "scripts/etsy-marketing/add-dom.js",
-        "scripts/etsy-marketing/calculator.js"
+        "scripts/etsy-marketing/globals.js",
+        "scripts/etsy-marketing/search-filter/state.js",
+        "scripts/etsy-marketing/main.js",
+        "scripts/etsy-marketing/search-filter/update-dom.js",
+        "scripts/etsy-marketing/search-filter/filter-keywords.js",
+        "scripts/etsy-marketing/search-filter/search.js",
+        "scripts/etsy-marketing/search-filter/add-dom.js",
+        "scripts/etsy-marketing/metric/globals.js",
+        "scripts/etsy-marketing/metric/update-dom.js",
+        "scripts/etsy-marketing/metric/calculator.js",
+
+        "scripts/etsy-marketing/metric/add-to-dom.js"
       ],
       "css": ["assets/styles/etsy-marketing/style.css"]
     }
@@ -62,7 +66,7 @@
     "http://127.0.0.1:8080/*",
     "https://www.yuntrack.com/*"
   ],
-  "permissions": ["scripting", "activeTab", "webNavigation"],
+  "permissions": ["scripting", "activeTab", "webNavigation", "storage"],
   "web_accessible_resources": [
     {
       "resources": [

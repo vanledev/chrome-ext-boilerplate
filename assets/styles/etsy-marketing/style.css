@@ -18,7 +18,11 @@
   .wt-table__row__cell:nth-child(1) {
   width: 40% !important;
 }
-
+table.wt-table .wt-table__row__cell,
+table.wt-table .wt-table__head__cell {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
 /* Custom dropdown */
 .om-select-style {
   position: relative;
@@ -98,7 +102,7 @@
   padding: 10px 30px;
 }
 
-#searchForm {
+.om-input {
   height: 36px;
   border-radius: 13px;
   border: 1px solid #848181;
@@ -131,4 +135,27 @@ label[for="searchForm"] {
 
 .wt-tab[aria-label*="Interactive graph with Etsy Ads"] {
   flex-wrap: wrap;
+}
+
+.om-general-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.om-metric-input {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.om-input-manual-metric {
+  font-size: 20px;
+  width: 200px;
+}
+.om-metric-input div {
+  margin-right: 10px;
+}
+.om-metric-input input {
+  margin-top: 15px;
 }
