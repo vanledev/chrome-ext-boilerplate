@@ -302,7 +302,7 @@ chrome.runtime.onConnect.addListener(function (port) {
         if (!mbApiKey) return;
         if (!data) break;
         const orders = getOrders(data, mbApiKey);
-        console.log('orders:', orders);
+        console.log("orders:", orders);
         const resp = {
           orders,
           mbInfos: {},
@@ -335,4 +335,45 @@ chrome.runtime.onConnect.addListener(function (port) {
         break;
     }
   });
+});
+
+// message from `content_script`
+chrome.runtime.onMessage.addListener(async (req) => {
+  const { message, data } = req || {};
+  switch (message) {
+    case "orderInfo":
+      const mbApiKey = await getMBApiKey();
+      if (!mbApiKey) return;
+      if (!data) break;
+      const orders = getOrders(data, mbApiKey);
+      console.log("orders:", orders);
+      const resp = {
+        orders,
+        mbInfos: {},
+        error: null,
+      };
+
+      if (orders.length === 0) {
+        sendToContentScript("orders", resp);
+        return;
+      }
+      // check synced orders
+      const query = JSON.stringify({
+        query: `
+          query{
+            checkEtsyOrderSyncedByIds(
+              ids: ${JSON.stringify(orders.map((o) => o["orderId"]))}
+            )
+          }
+        `,
+      });
+      const result = await sendRequestToMB(null, mbApiKey, query);
+      resp.mbInfos = result.data ? result.data.checkEtsyOrderSyncedByIds : null;
+      resp.error = result.errors ? result.errors[0].message : null;
+
+      sendToContentScript("orders", resp);
+      break;
+    default:
+      break;
+  }
 });

@@ -1,7 +1,7 @@
 {
    "manifest_version": 3,
    "name": "MerchBridge Etsy Helper",
-   "version": "1.3.21",
+   "version": "1.3.22",
    "description": "An extension to help you fulfill Etsy orders easier with MerchBridge.",
    "devtools_page": "devtool/devtool.html",
    "icons": {
@@ -52,7 +52,8 @@
          "resources": [
             "assets/images/not-found.png",
             "assets/images/completed.png",
-            "assets/styles/etsy-marketing/style.css"
+            "assets/styles/etsy-marketing/style.css",
+            "injected.js"
          ],
          "matches": ["https://www.etsy.com/*", "https://www.yuntrack.com/*"]
       }

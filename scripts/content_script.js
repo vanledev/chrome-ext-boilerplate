@@ -225,6 +225,7 @@ $(document).on("click", `.om-tablinks`, function (e) {
   $(`#${$(this).attr("data-name")}`).css("display", "block");
   $(this).addClass("om-active om-active-tab");
   setAddTrackingHeight();
+  setDivHeight();
 });
 
 // capture event from background
@@ -274,18 +275,21 @@ $(document).ready(function () {
 
 function setDivHeight() {
   const tabContent = document.querySelector(".table_wrap");
-  const tabNames = [...document.querySelectorAll(".om-tab")];
 
   const heading = document.querySelector(".om-heading");
   const button = document.querySelector(".om-main-cta-button-wrapper");
   const omProcessing = document.querySelector(".om-processing");
+
+  const tabTop = document.querySelector(".content .om-tab");
+  const syncedTab = document.querySelector(".sync-order-wrap .om-tab");
+
   if (tabContent) {
     const blankSpace =
       window.innerHeight -
-      tabNames[0].clientHeight -
-      tabNames[1].clientHeight -
-      heading.clientHeight -
-      button.clientHeight -
+      tabTop?.clientHeight -
+      (syncedTab?.clientHeight || 47) -
+      (heading.clientHeight || 39) -
+      (button.clientHeight || 64) -
       (omProcessing ? omProcessing.clientHeight : 0) -
       5;
 
@@ -334,3 +338,18 @@ window.addEventListener(
     setAddTrackingHeight();
   }),
 );
+
+// === INJECT injected script
+var s = document.createElement("script");
+s.src = chrome.runtime.getURL("injected.js");
+s.onload = function () {};
+(document.head || document.documentElement).appendChild(s);
+
+// receive message from injected script
+window.addEventListener("message", function (e) {
+  const { data } = e.data || {};
+  chrome.runtime.sendMessage({
+    message: "orderInfo",
+    data,
+  });
+});
