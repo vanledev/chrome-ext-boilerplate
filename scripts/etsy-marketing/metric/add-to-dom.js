@@ -2,7 +2,6 @@ async function addMetricToDom() {
   if (
     window.location.href.includes("etsy.com/your/shops/me/advertising/listings")
   ) {
-    addNewColHead();
     await sleep(2000);
     await addMetrics();
   }
@@ -46,28 +45,31 @@ async function addMetrics() {
 
   // add individual metrics for keywords
   addTd();
+  addNewColHead();
   updateInvidualMetricsToDOM(metrics);
 }
 function addNewColHead() {
-  const clickColumn = $(
-    keywordTableSelector + '  thead th:has(button:contains("Click"))'
-  );
-
-  const clicksRateCol = $(
-    `<th class="wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable">Clicks Rate</button></th>`
-  );
-
-  clicksRateCol.insertAfter(clickColumn.next());
-
   const ordersColumn = $(
     keywordTableSelector + '  thead th:has(button:contains("Order"))'
   );
-
-  const poasCol = $(
-    `<th class="wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable"> POAS®</button></th>`
+  const releCol = $(
+    keywordTableSelector + '  thead th:has(button:contains("Relevant keyword"))'
   );
 
-  poasCol.insertAfter(ordersColumn.next());
+  const clicksRateCol = $(
+    `<th class="col-head-clickRate wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable">Clicks Rate</button></th>`
+  );
+
+  const poasCol = $(
+    `<th class="col-head-poas wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable"> POAS®</button></th>`
+  );
+
+  clicksRateCol.insertBefore(ordersColumn);
+
+  poasCol.insertBefore(releCol);
+
+  removeDoubleEle(".col-head-poas");
+  removeDoubleEle(".col-head-clickRate");
 }
 
 async function onInputBasecostShipping(event) {

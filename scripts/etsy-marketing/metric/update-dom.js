@@ -6,8 +6,13 @@ function addTd() {
     $(
       `<td class="om-individual-metric-poas wt-table__row__cell wt-pr-lg-3 wt-text-left-xs wt-text-right-lg wt-pl-xs-2 wt-pl-lg-0"></td>`
     ).insertAfter($(this).find('td:contains("Orders")').next());
-    // removeDoubleEle(".om-individual-metric-click-rate");
-    // removeDoubleEle(".om-individual-metric-poas");
+
+    $(this)
+      .find(".om-individual-metric-click-rate" + ":not(:last)")
+      .remove();
+    $(this)
+      .find(".om-individual-metric-poas" + ":not(:last)")
+      .remove();
   });
 }
 
