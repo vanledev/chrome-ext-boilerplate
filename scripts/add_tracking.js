@@ -12,7 +12,7 @@ const detectCarrierCode = (tracking = "") => {
    // 64XM724WNCWHEKJDJQFF3D
    // 1ZLSR5ANJXWDWR03JZEKV8
    // 3QYRX9FKXXJ2RJ7RDPSYMJ
-   if (trackLen === 22) {
+   if (trackLen === 22 && !["92", "93", "94"].some((i) => tracking.startsWith(i))) {
       // Asendia USA
       return "asendia-usa";
    }
@@ -20,6 +20,7 @@ const detectCarrierCode = (tracking = "") => {
    // LF068163130FR |
    // LF068162678FR
    // LV771053632US
+   // LF068324279FR
    if (tracking.startsWith("L") && trackLen == 13) {
       return "asendia";
    }
