@@ -2,12 +2,15 @@ chrome.runtime.onConnect.addListener(function (port) {
   if (port.name == "portForEtsyMarketing") {
     port.onMessage.addListener(async (portData) => {
       if (portData.message == "ads-keywords") {
-        const [tab] = await chrome.tabs.query({ active: true });
-        await sleep(5000);
-        chrome.tabs.sendMessage(tab.id, {
-          message: "ads-keywords",
-          data: portData.data,
+        chrome.storage.local.set({
+          adsKeywords: portData.data,
         });
+        // const [tab] = await chrome.tabs.query({ active: true });
+        // await sleep(5000);
+        // chrome.tabs.sendMessage(tab.id, {
+        //   message: "ads-keywords",
+        //   data: portData.data,
+        // });
       }
     });
   }
@@ -20,6 +23,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     chrome.tabs.sendMessage(tab.id, {
       message: "tab-update-complete",
       data: null,
+    });
+
+    chrome.storage.local.get(["adsKeywords"], (obj) => {
+      console.log(obj);
+      chrome.tabs.sendMessage(tab.id, {
+        message: "ads-keywords",
+        data: obj.adsKeywords,
+      });
     });
   }
 });
