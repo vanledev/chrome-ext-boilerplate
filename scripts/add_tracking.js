@@ -1,10 +1,28 @@
 const detectCarrierCode = (tracking = "") => {
    tracking = String(tracking).trim();
+   const trackLen = tracking.length;
    if (tracking.startsWith("RS")) {
       return "deutsche-post";
    }
    if (tracking.startsWith("LG")) {
       return "royal-mail";
+   }
+
+   // 6WAAO66AYD0PNL1CP6L8AV
+   // 64XM724WNCWHEKJDJQFF3D
+   // 1ZLSR5ANJXWDWR03JZEKV8
+   // 3QYRX9FKXXJ2RJ7RDPSYMJ
+   if (trackLen === 22 && !["92", "93", "94"].some((i) => tracking.startsWith(i))) {
+      // Asendia USA
+      return "asendia-usa";
+   }
+
+   // LF068163130FR |
+   // LF068162678FR
+   // LV771053632US
+   // LF068324279FR
+   if (tracking.startsWith("L") && trackLen == 13) {
+      return "asendia";
    }
 
    // 420712919374811015300249592366 (22471845) => dhl_ecommerce | tracking_url => "https://webtrack.dhlglobalmail.com/orders?trackingNumber=420712919374811015300249592366"
@@ -13,10 +31,11 @@ const detectCarrierCode = (tracking = "") => {
       return "usps";
    }
 
-   if (tracking.startsWith("420") && tracking.length === 30) {
+   // 4206401592748903198293100006411915
+   if (tracking.startsWith("420") && (trackLen === 30 || trackLen === 34)) {
       return "dhl";
    }
-   
+
    const allowedString = [
       "GM",
       "LX",
@@ -91,12 +110,26 @@ const detectCarrierValue = (carrierCode = "") => {
          return 3;
       case "dhl":
          return 4;
+      case "asendia-usa":
+         return 114;
+      case "asendia":
+         return -1;
       default:
          break;
    }
    return 0;
 };
 
+const mapCarrierName = (carrier) => {
+   switch (carrier) {
+      case "asendia":
+         return "Asendia";
+      default:
+         break;
+   }
+};
+
+// etsyapi-e9928cd4-43d3-41c5-98d9-0388e1fb4908
 const executeAddTracking = async (orderId, tracking, carrier = "") => {
    if (!orderId) {
       notifyError("Order not found.");
@@ -113,13 +146,16 @@ const executeAddTracking = async (orderId, tracking, carrier = "") => {
 
    // map carrierCode via `shipping_carrier_code` else detect from `tracking_number`
    let carrierCode = "";
+   let carrierName = "";
    if (carrier) {
-      const carrierLowerCase = carrier.toLowerCase(); // case: Customcat return `coder` (vendor) is Uppercase 
+      const carrierLowerCase = carrier.toLowerCase(); // case: Customcat return `coder` (vendor) is Uppercase
       carrierCode = detectCarrierValue(carrierLowerCase);
+      carrierName = mapCarrierName(carrierLowerCase);
    }
 
    if (!carrierCode) {
       carrierCode = detectCarrierValue(detectCarrierCode(tracking));
+      carrierName = mapCarrierName(detectCarrierCode(tracking));
    }
 
    // const carrierCode = detectCarrierValue(detectCarrierCode(tracking));
@@ -195,7 +231,7 @@ const executeAddTracking = async (orderId, tracking, carrier = "") => {
    const $select = document.querySelector("#shipping-carrier-select");
    const $options = Array.from($select.options);
    for (let opt of $options) {
-     opt.selected = opt.value == carrierCode ? true : false;
+      opt.selected = opt.value == carrierCode ? true : false;
    }
 
    $select.value = carrierCode;
@@ -206,8 +242,27 @@ const executeAddTracking = async (orderId, tracking, carrier = "") => {
 
    $select.dispatchEvent(carrierEvent);
 
-
+   if (carrierCode === -1 && carrierName) {
+      await sleep(1000);
+      const carrierXpath = `#mark-as-complete-overlay input[name="carrierName-${orderId}"]`;
+      let timeOutTrackingInput = 0;
+      while (true) {
+         if (timeOutTrackingInput == 30) {
+            notifyError("Could not find carrier input.");
+            return;
+         }
+         if ($(carrierXpath).length) break;
+         await sleep(500);
+         timeOutTrackingInput++;
+      }
+      const carrierInputEle = $(carrierXpath);
+      carrierInputEle.focus();
+      carrierInputEle.val("");
+      document.execCommand("insertText", false, carrierName);
+      carrierInputEle.blur();
+   }
    await sleep(1000);
+
    // enter tracking
    const trackingXpath = `#mark-as-complete-overlay input[name="trackingCode-${orderId}"]`;
    let timeOutTrackingInput = 0;
@@ -225,6 +280,7 @@ const executeAddTracking = async (orderId, tracking, carrier = "") => {
    trackingInputElem.val("");
    document.execCommand("insertText", false, tracking);
    trackingInputElem.blur();
+
    await sleep(1000);
    // submit add tracking
    const btnXpath =
@@ -277,7 +333,7 @@ $(document).on(
             if ($(this).is(":checked")) $(this).click();
          });
       setTextBtnAddTrack();
-   }
+   },
 );
 
 // checked force add all tracking
@@ -326,7 +382,8 @@ $(document).on("click", "#add-trackings", async function () {
       const carrier = $(this).attr("data-carrier");
       if (!orderId || !tracking) return true;
       if (isAddTrackingSpecify) {
-         if ($(this).is(":checked")) orders.push({ orderId, tracking, carrier });
+         if ($(this).is(":checked"))
+            orders.push({ orderId, tracking, carrier });
          return true;
       }
       orders.push({ orderId, tracking, carrier });
@@ -357,7 +414,7 @@ const fetchTrackChinaToUS = async () => {
    });
    if (trackings.length == 0) return;
    const endpoint = `https://www.yuntrack.com/parcelTracking?id=${trackings.join(
-      ","
+      ",",
    )}`;
    chrome.runtime.sendMessage({
       message: "fetchTrackChinaToUS",
@@ -375,24 +432,24 @@ const fetchTrackChinaToUS = async () => {
          if (tracking == oldTrack) {
             isValid = true;
             const orderId = $(
-               `.force-add-tracking-item [data-tracking="${oldTrack}"] `
+               `.force-add-tracking-item [data-tracking="${oldTrack}"] `,
             ).attr("data-order-id");
             $(`.force-add-tracking-item [data-tracking="${oldTrack}"]`).attr(
                "data-tracking",
-               newTrack
+               newTrack,
             );
             $(
-               `#add_tracking [data-order-id="${orderId}"] .om-tracking-tag:last-child`
+               `#add_tracking [data-order-id="${orderId}"] .om-tracking-tag:last-child`,
             ).text(newTrack);
             $(`.add-tracking-item [data-tracking="${oldTrack}"]`).attr(
                "data-tracking",
-               newTrack
+               newTrack,
             );
          }
       }
       if (!isValid) {
          const orderId = $(
-            `.force-add-tracking-item [data-tracking="${tracking}"] `
+            `.force-add-tracking-item [data-tracking="${tracking}"] `,
          ).attr("data-order-id");
          $(`#add_tracking tr[data-order-id="${orderId}"]`).remove();
       }
@@ -423,10 +480,10 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
       if (isValid) {
          for (let i = 1; i <= $(".el-table__row").length; i++) {
             let oldTrack = $(
-               `.el-table__row:nth-child(${i}) td:nth-child(2) .cell>div:nth-child(1)`
+               `.el-table__row:nth-child(${i}) td:nth-child(2) .cell>div:nth-child(1)`,
             ).text();
             let newTrack = $(
-               `.el-table__row:nth-child(${i}) td:nth-child(4) .cell>div:nth-child(1)`
+               `.el-table__row:nth-child(${i}) td:nth-child(4) .cell>div:nth-child(1)`,
             ).text();
             if (!oldTrack || !newTrack) continue;
             newTrack = newTrack.trim();
@@ -447,7 +504,44 @@ chrome.runtime.onMessage.addListener(async function (req, sender, res) {
    }
 });
 
-
 const compareValues = (val1, val2) => {
    return (val1 || "").toLowerCase() === (val2 || "").toLowerCase();
+};
+
+{
+   /* <optgroup label="Select shipping carrier">
+  <option value="1">USPS</option>
+  <option value="115">LaserShip</option>
+  <option value="116">ABF Freight</option>
+  <option value="120">OnTrac</option>
+  <option value="112">Direct Link</option>
+  <option value="113">YRC Freight</option>
+  <option value="114">Asendia USA</option>
+  <option value="121">UPS Freight</option>
+  <option value="331">Skynet Worldwide Express</option>
+  <option value="122">Evergreen</option>
+  <option value="123">Estes</option>
+  <option value="124">RL Carriers</option>
+  <option value="308">i-parcel</option>
+  <option value="311">APC Postal Logistics</option>
+  <option value="326">Greyhound</option>
+  <option value="353">uShip</option>
+  <option value="354">Amazon Logistics US</option>
+  <option value="356">Freightquote by C. H. Robinson</option>
+  <option value="365">Courier Express</option>
+  <option value="368">ePost Global</option>
+  <option value="370">FedEx Cross Border</option>
+  <option value="371">UDS</option>
+  <option value="372">Spee-Dee</option>
+  <option value="373">Better Trucks</option>
+  <option value="374">GSO</option>
+  <option value="375">CDL</option>
+  <option value="4">DHL</option>
+  <option value="110">TNT</option>
+  <option value="111">Aramex</option>
+  <option value="3">FedEx</option>
+  <option value="2">UPS</option>
+  <option value="-1">Other</option>
+  <option value="-2">Not Available</option>
+</optgroup>; */
 }

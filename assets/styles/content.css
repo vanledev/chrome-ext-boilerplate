@@ -249,13 +249,12 @@
 
 .table_wrap {
   width: 100%;
-
   overflow-y: auto;
 }
 
 .table_wrap td,
-th {
-  border-bottom: 1px solid #e1e3e5;
+.table_wrap th {
+  border-bottom: 1px solid #e1e3e5 !important;
   padding: 1rem;
   text-align: left;
 }
@@ -415,7 +414,9 @@ th {
 }
 .om-main-cta-button-wrapper {
   padding: 15px 0;
+  border-top: 1px solid #e1e3e5 !important;
 }
+
 .om-table tbody {
   display: block;
   margin-top: 42px;
@@ -444,4 +445,8 @@ th {
 .om-table th,
 .om-table td {
   padding: 1rem !important;
+}
+
+.om-container table {
+  border: none !important;
 }
