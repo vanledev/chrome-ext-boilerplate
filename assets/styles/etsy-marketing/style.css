@@ -128,11 +128,6 @@ label[for="searchForm"] {
   align-items: center;
 }
 
-.additional-metrics {
-  margin-top: 12px;
-  padding: 0 20px;
-}
-
 .wt-tab[aria-label*="Interactive graph with Etsy Ads"] {
   flex-wrap: wrap;
 }
@@ -158,4 +153,14 @@ label[for="searchForm"] {
 }
 .om-metric-input input {
   margin-top: 15px;
+}
+
+.additional-metrics .wt-text-heading {
+  font-size: 28px;
+}
+
+.additional-metrics {
+  margin-top: 12px;
+  padding: 0;
+  margin-right: 25px;
 }

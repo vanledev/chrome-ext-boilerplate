@@ -63,11 +63,13 @@ function addNewColHead() {
   const poasCol = $(
     `<th class="col-head-poas wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable"> POAS®</button></th>`
   );
-
+  const spendCol = $(
+    `<th class="col-head-spend wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable"> Spend</button></th>`
+  );
   clicksRateCol.insertBefore(ordersColumn);
 
   poasCol.insertBefore(releCol);
-
+  spendCol.insertAfter(clicksRateCol);
   removeDoubleEle(".col-head-poas");
   removeDoubleEle(".col-head-clickRate");
 }
