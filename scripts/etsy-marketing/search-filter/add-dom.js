@@ -69,5 +69,6 @@ function addFilterAndSearchNodes() {
 
   $("#searchForm").on("input", debounce(changeKeywordResult, 500));
   $("#om-search-option").on("change", changeKeywordResult);
-  removeDoubleEle(".wrap-filter-search");
+
+  $(".wrap-filter-search" + ":not(:first)").remove();
 }

@@ -1,7 +1,3 @@
-function resetSearchForm() {
-  $("#searchForm").val("");
-}
-
 function updateDOMTable(keywordsShouldShow) {
   $("#countRows").html(keywordsShouldShow.length);
 

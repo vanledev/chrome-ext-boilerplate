@@ -1,5 +1,6 @@
 const ENDPOINTS = [
   "/mission-control/orders\\?filters", // get list orders
+  "prolist/listings/querystats",
 ];
 
 const { fetch: originFetch } = window;
@@ -12,12 +13,10 @@ window.fetch = async (...args) => {
       .clone()
       .json()
       .then((data) => {
-        window.postMessage({ data: data });
+        window.postMessage({ data: data, url });
       })
       .catch((e) => console.log(e?.toString()));
   }
 
   return res;
 };
-
-

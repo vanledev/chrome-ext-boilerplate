@@ -1,20 +1,27 @@
-chrome.runtime.onConnect.addListener(function (port) {
-  if (port.name == "portForEtsyMarketing") {
-    port.onMessage.addListener(async (portData) => {
-      if (portData.message == "ads-keywords") {
-        chrome.storage.local.set({
-          adsKeywords: portData.data,
-        });
-        // const [tab] = await chrome.tabs.query({ active: true });
-        // await sleep(5000);
-        // chrome.tabs.sendMessage(tab.id, {
-        //   message: "ads-keywords",
-        //   data: portData.data,
-        // });
-      }
-    });
+let adsKeywords;
+chrome.runtime.onMessage.addListener(
+  ({ message, data }, sender, sendResponse) => {
+    switch (message) {
+      case "ads-keyword":
+        console.log("background receive", data);
+        adsKeywords = data;
+        break;
+      case "getAdsKeywords":
+        if (adsKeywords) {
+          console.log("adsKeyword global variable in bg script", adsKeywords);
+          const data = adsKeywords;
+          adsKeywords = null;
+          console.log("adsKeywords after set null", adsKeywords);
+          sendResponse(data);
+        } else {
+          console.log("no ads keywords var");
+          sendResponse(false);
+        }
+        break;
+    }
   }
-});
+);
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (
     tab.status == "complete" &&
@@ -23,14 +30,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     chrome.tabs.sendMessage(tab.id, {
       message: "tab-update-complete",
       data: null,
-    });
-
-    chrome.storage.local.get(["adsKeywords"], (obj) => {
-      console.log(obj);
-      chrome.tabs.sendMessage(tab.id, {
-        message: "ads-keywords",
-        data: obj.adsKeywords,
-      });
     });
   }
 });

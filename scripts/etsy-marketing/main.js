@@ -1,16 +1,21 @@
-// let executed_ads_keywords = false;
-// let executed_ads_add_to_dom = false;
-
 chrome.runtime.onMessage.addListener(runtimeOnMessage);
-function runtimeOnMessage(request, sender, sendResponse) {
-  if (
-    request.message == "ads-keywords"
-    //  && executed_ads_keywords == false
-  ) {
-    // executed_ads_keywords = true;
-    console.log("Content script receive message ", request);
-    sendResponse({ message: "success" });
-    keywordsDataRaw = request.data;
+async function runtimeOnMessage(request, sender, sendResponse) {
+  switch (request.message) {
+    case "tab-update-complete":
+      console.log("content script receive message tab-update-complete");
+      const res = await handleKeywordData();
+      if (res) {
+        addSearchFilterToDOM();
+        addMetricToDom();
+      }
+  }
+}
+
+async function handleKeywordData() {
+  // update global variable keywordsDataRaw
+  keywordsDataRaw = await retryFunctionWithDelay(checkKeywordData, 10, 2000);
+  console.log("keyword data from local storage", keywordsDataRaw);
+  if (keywordsDataRaw) {
     allKeywords = keywordsDataRaw.queryStats.map(
       (keywordData) => keywordData.stemmedQuery
     );
@@ -24,10 +29,21 @@ function runtimeOnMessage(request, sender, sendResponse) {
     currentKeywordsPool = getCurrentKeywordsPool();
 
     updateFuse();
-  } else if (request.message == "tab-update-complete") {
-    console.log("content script receive message tab-update-complete");
-
-    addSearchFilterToDOM();
-    addMetricToDom();
+    return true;
+  } else {
+    return false;
   }
+}
+
+async function checkKeywordData() {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ message: "getAdsKeywords" }, (response) => {
+      console.log("response getAdsKeywords from background script", response);
+      if (response) {
+        resolve(response);
+      } else {
+        resolve(false);
+      }
+    });
+  });
 }

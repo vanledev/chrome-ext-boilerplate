@@ -22,7 +22,7 @@ function getSearchOption() {
 
 function getCurrentKeywordsPool() {
   const status = getCurrentStatus();
-
+  // console.log("status la", status);
   let keywords;
   if (status == "all") {
     keywords = allKeywords;
@@ -36,6 +36,6 @@ function getCurrentKeywordsPool() {
 }
 function updateCurrentKeywordsPool() {
   currentKeywordsPool = getCurrentKeywordsPool();
-
+  console.log("keyword pool sau khi update", currentKeywordsPool);
   updateFuse();
 }

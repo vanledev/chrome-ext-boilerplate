@@ -10,17 +10,17 @@ function debounce(func, timeout = 500) {
 
 async function retryFunctionWithDelay(childFunction, count, delay) {
   let attempts = 0;
-
+  let res;
   while (true) {
-    const res = await childFunction();
-    console.log(attempts);
-    if (res == true || attempts > count) break;
+    res = await childFunction();
+    // console.log(attempts, res, childFunction);
+    if (res !== false || attempts > count) break;
     attempts++;
 
     await sleep(delay);
   }
 
-  return true;
+  return res;
 }
 function removeDoubleEle(selector) {
   $(selector + ":not(:last)").remove();

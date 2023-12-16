@@ -174,13 +174,13 @@ const initAddon = async () => {
 
   // loading tabs until receive orders
   $("#not_synced").prepend(
-    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`
   );
   $("#ignored").prepend(
-    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`
   );
   $("#add_tracking").prepend(
-    `<div style="position:relative;height:100px" class="loader-resp"></div>`,
+    `<div style="position:relative;height:100px" class="loader-resp"></div>`
   );
   // active tab not synced
   $('[data-name="not_synced"]').click();
@@ -336,20 +336,31 @@ window.addEventListener(
   debounce(() => {
     setDivHeight();
     setAddTrackingHeight();
-  }),
+  })
 );
 
 // === INJECT injected script
 var s = document.createElement("script");
 s.src = chrome.runtime.getURL("injected.js");
-s.onload = function () {};
+s.onload = function () {
+  this.remove();
+};
 (document.head || document.documentElement).appendChild(s);
 
 // receive message from injected script
 window.addEventListener("message", function (e) {
   const { data } = e.data || {};
-  chrome.runtime.sendMessage({
-    message: "orderInfo",
-    data,
-  });
+
+  console.log("data", data);
+  if (data?.queryStats) {
+    chrome.runtime.sendMessage({
+      message: "ads-keyword",
+      data,
+    });
+  } else {
+    chrome.runtime.sendMessage({
+      message: "orderInfo",
+      data,
+    });
+  }
 });
