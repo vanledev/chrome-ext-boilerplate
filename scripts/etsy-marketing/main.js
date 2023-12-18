@@ -1,4 +1,5 @@
 chrome.runtime.onMessage.addListener(runtimeOnMessage);
+
 async function runtimeOnMessage(request, sender, sendResponse) {
   switch (request.message) {
     case "tab-update-complete":
@@ -11,10 +12,30 @@ async function runtimeOnMessage(request, sender, sendResponse) {
   }
 }
 
-async function handleKeywordData() {
+window.addEventListener("message", async function (event) {
+  // Your event handling logic goes here
+
+  const { data } = event.data || {};
+
+  console.log("window on message receive data", data);
+  if (data?.queryStats) {
+    const res = await handleKeywordData(data);
+    if (res) {
+      const metrics = await getMetrics();
+      updateInvidualMetricsToDOM(metrics);
+    }
+  }
+});
+
+async function handleKeywordData(data) {
   // update global variable keywordsDataRaw
-  keywordsDataRaw = await retryFunctionWithDelay(checkKeywordData, 10, 2000);
-  console.log("keyword data from local storage", keywordsDataRaw);
+  if (!data) {
+    keywordsDataRaw = await retryFunctionWithDelay(checkKeywordData, 10, 2000);
+    console.log("keyword data from local storage", keywordsDataRaw);
+  } else {
+    keywordsDataRaw = data;
+  }
+
   if (keywordsDataRaw) {
     allKeywords = keywordsDataRaw.queryStats.map(
       (keywordData) => keywordData.stemmedQuery
