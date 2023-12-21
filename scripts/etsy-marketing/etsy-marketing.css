@@ -96,6 +96,13 @@
   top: 9px;
   width: 20px;
 }
+.close-icon {
+  cursor: pointer;
+  opacity: 0.6;
+}
+.close-icon:hover {
+  opacity: 1;
+}
 label[for="searchForm"] {
   padding-left: 5px;
   padding-top: 5px;
