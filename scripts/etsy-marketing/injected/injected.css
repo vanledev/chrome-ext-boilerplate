@@ -1,0 +1,188 @@
+/* Custom dropdown */
+.om-select-style {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 10px; /* demo only */
+}
+.om-select-style option {
+  padding: 10px;
+}
+.om-select-style select {
+  font-weight: bold;
+  font-size: 15px;
+  background-color: #f1f1f1;
+  color: #000;
+
+  padding: 0.5em;
+  padding-right: 2.5em;
+  border: 0;
+  margin: 0;
+  border-radius: 3px;
+  text-indent: 0.01px;
+  text-overflow: "";
+  height: 36px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.om-select-style::before,
+.om-select-style::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.om-select-style::after {
+  /*  Custom dropdown arrow */
+  content: "\25BC";
+  height: 1em;
+  font-size: 0.625em;
+  line-height: 1;
+  right: 1.2em;
+  top: 50%;
+  margin-top: -0.5em;
+}
+
+.om-select-style::before {
+  /*  Custom dropdown arrow cover */
+  width: 2em;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 0 3px 3px 0;
+  height: 36px;
+}
+
+.om-select-style select[disabled] {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.om-select-style select[disabled]::after {
+  color: rgba(0, 0, 0, 0.1);
+}
+
+.om-select-style::before {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.om-select-style::after {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.wrap-filter-search {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 30px;
+}
+
+.om-input {
+  height: 36px;
+  border-radius: 13px;
+  border: 1px solid #848181;
+  padding: 10px;
+  font-size: 14px;
+  color: #000;
+}
+
+label[for="searchForm"] {
+  padding-left: 5px;
+  padding-top: 5px;
+}
+#countRows {
+  font-weight: bold;
+}
+
+.om-search {
+  display: flex;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.wt-tab[aria-label*="Interactive graph with Etsy Ads"] {
+  flex-wrap: wrap;
+}
+
+.om-general-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.om-metric-input {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.om-input-manual-metric {
+  font-size: 20px;
+  width: 200px;
+}
+.om-metric-input div {
+  margin-right: 10px;
+}
+.om-metric-input input {
+  margin-top: 15px;
+}
+
+.additional-metrics .wt-text-heading {
+  font-size: 28px;
+}
+
+.additional-metrics {
+  margin-top: 12px;
+  padding: 0;
+  margin-right: 25px;
+}
+
+@media only screen and (min-width: 0) and (max-width: 899px) {
+  .wt-table.wt-table--responsive-md .wt-table--responsive__title {
+    display: none;
+  }
+  .wt-table.wt-table--responsive-md .wt-table__row {
+    display: block;
+    padding-bottom: 0;
+  }
+}
+
+.keyword-table thead {
+  display: none;
+}
+
+.injected-table th {
+  text-align: left;
+}
+
+.injected-table th {
+  cursor: pointer;
+}
+.injected-table th:first-child,
+.injected-table th:last-child {
+  cursor: text;
+}
+
+.keyword-table td,
+.injected-table th {
+  white-space: wrap !important;
+  word-break: break-all;
+  width: 7% !important;
+  padding: 10px !important;
+}
+
+.injected-table th:first-child,
+.keyword-table tbody th {
+  width: 25% !important;
+}
+
+.keyword-table th,
+.keyword-table td,
+.injected-table th,
+.injected-table td {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}

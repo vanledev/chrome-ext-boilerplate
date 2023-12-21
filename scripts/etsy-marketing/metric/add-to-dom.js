@@ -52,19 +52,20 @@ function addNewColHead() {
   const ordersColumn = $(
     keywordTableSelector + '  thead th:has(button:contains("Order"))'
   );
+
   const releCol = $(
     keywordTableSelector + '  thead th:has(button:contains("Relevant keyword"))'
   );
 
   const clicksRateCol = $(
-    `<th class="col-head-clickRate wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable">Clicks Rate</button></th>`
+    `<th class="col-head-clickRate wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class=" sadx-clickable">Clicks Rate</button></th>`
   );
 
   const poasCol = $(
-    `<th class="col-head-poas wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable"> POAS®</button></th>`
+    `<th class="col-head-poas wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class=" sadx-clickable"> POAS®</button></th>`
   );
   const spendCol = $(
-    `<th class="col-head-spend wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable"> Spend</button></th>`
+    `<th class="col-head-spend wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable "> Spend</button></th>`
   );
   clicksRateCol.insertBefore(ordersColumn);
 
@@ -72,6 +73,8 @@ function addNewColHead() {
   spendCol.insertAfter(clicksRateCol);
   removeDoubleEle(".col-head-poas");
   removeDoubleEle(".col-head-clickRate");
+
+ 
 }
 
 async function onInputBasecostShipping(event) {

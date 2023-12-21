@@ -3,6 +3,7 @@ chrome.runtime.onMessage.addListener(runtimeOnMessage);
 async function runtimeOnMessage(request, sender, sendResponse) {
   switch (request.message) {
     case "tab-update-complete":
+      // inject();
       console.log("content script receive message tab-update-complete");
       const res = await handleKeywordData();
       if (res) {

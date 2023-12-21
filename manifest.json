@@ -34,12 +34,15 @@
     {
       "matches": ["https://www.etsy.com/your/shops/me/advertising/listings/*"],
       "js": [
+        "scripts/etsy-marketing/injector.js",
         "assets/libs/search/fuse.js",
+
         "scripts/etsy-marketing/helpers.js",
         "scripts/etsy-marketing/globals.js",
         "scripts/etsy-marketing/search-filter/state.js",
         "scripts/etsy-marketing/main.js",
         "scripts/etsy-marketing/search-filter/update-dom.js",
+        "scripts/etsy-marketing/search-filter/fuse.js",
         "scripts/etsy-marketing/search-filter/filter-keywords.js",
         "scripts/etsy-marketing/search-filter/search.js",
         "scripts/etsy-marketing/search-filter/add-dom.js",
@@ -73,7 +76,11 @@
         "assets/images/not-found.png",
         "assets/images/completed.png",
         "assets/styles/etsy-marketing/style.css",
-        "injected.js"
+        "injected.js",
+        "scripts/etsy-marketing/injected/ads-injected.js",
+        "assets/libs/jquery.min.js",
+        "assets/libs/jquery-ui.min.js",
+        "scripts/etsy-marketing/injected/injected.css"
       ],
       "matches": ["https://www.etsy.com/*", "https://www.yuntrack.com/*"]
     }

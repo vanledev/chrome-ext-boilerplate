@@ -9,4 +9,4 @@ let isContain;
 let basecost;
 let shipping;
 const keywordTableSelector =
-  "table:has(th:has(p:contains('Buyers searched for')))";
+  "table:has(th:has(p:contains('Buyers searched for'))) ";
