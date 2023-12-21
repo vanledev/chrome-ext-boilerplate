@@ -3,7 +3,7 @@ chrome.runtime.onMessage.addListener(runtimeOnMessage);
 async function runtimeOnMessage(request, sender, sendResponse) {
   switch (request.message) {
     case "tab-update-complete":
-      // inject();
+      inject();
       console.log("content script receive message tab-update-complete");
       const res = await handleKeywordData();
       if (res) {
@@ -18,11 +18,12 @@ window.addEventListener("message", async function (event) {
 
   const { data } = event.data || {};
 
-  console.log("window on message receive data", data);
+  console.log("window on message receive data", event);
   if (data?.queryStats) {
     const res = await handleKeywordData(data);
     if (res) {
       const metrics = await getMetrics();
+      console.log("metrics", metrics);
       updateInvidualMetricsToDOM(metrics);
     }
   }

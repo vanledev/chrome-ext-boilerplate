@@ -24,8 +24,8 @@ if (!injectScript) {
     function replaceTh() {
       $(keywordTableSelector).addClass("keyword-table");
       $(keywordTableSelector + " tbody th").removeClass();
-
       $(keywordTableSelector + " tbody td").removeClass();
+
       $(`<table class="injected-table"><thead> </thead></table>`).insertBefore(
         keywordTableSelector
       );
@@ -54,6 +54,8 @@ if (!injectScript) {
       });
 
       tableHead.append(newRow);
+      console.log("thead moi add vao", $(".injected-table"));
+      $(".injected-table:not(:last)").remove();
     }
 
     function makeTableSortable() {
