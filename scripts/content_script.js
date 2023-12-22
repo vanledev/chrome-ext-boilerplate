@@ -352,12 +352,7 @@ window.addEventListener("message", function (e) {
   const { data } = e.data || {};
 
   console.log("data", data);
-  if (data?.queryStats) {
-    chrome.runtime.sendMessage({
-      message: "ads-keyword",
-      data,
-    });
-  } else {
+  if (!data?.queryStats) {
     chrome.runtime.sendMessage({
       message: "orderInfo",
       data,
