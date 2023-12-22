@@ -78,6 +78,6 @@ function addFilterAndSearchNodes() {
   $(".wrap-filter-search" + ":not(:first)").remove();
 
   $(".close-icon-for-text").on("click", function () {
-    $(this).parent().find("input").val("");
+    $(this).parent().find("input").val("").trigger("input");
   });
 }
