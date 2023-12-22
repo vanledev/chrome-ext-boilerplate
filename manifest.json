@@ -32,7 +32,7 @@
       "run_at": "document_end"
     },
     {
-      "matches": ["https://www.etsy.com/your/shops/me/advertising/listings/*"],
+      "matches": ["https://www.etsy.com/your/shops/me/advertising*"],
       "js": [
         "scripts/etsy-marketing/sort/injector.js",
         "assets/libs/search/fuse.js",
