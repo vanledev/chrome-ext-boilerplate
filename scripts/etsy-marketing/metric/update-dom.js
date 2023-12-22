@@ -60,10 +60,8 @@ async function updateInvidualMetricsToDOM(metrics) {
 
     $(this)
       .find("[data-id='om-individual-metric-spend']")
-      .text(poas.toFixed(2));
-    $(this)
-      .find("[data-id='om-individual-metric-poas']")
       .text(spend.toFixed(2));
+    $(this).find("[data-id='om-individual-metric-poas']").text(poas.toFixed(2));
   });
 }
 
