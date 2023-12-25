@@ -4,7 +4,6 @@ window.addEventListener("message", async function (event) {
   const { data } = event.data || {};
 
   if (data?.queryStats) {
-    inject();
     console.log("content script receive keywords from window");
     const res = await handleKeywordData(data);
     if (res) {
@@ -15,9 +14,8 @@ window.addEventListener("message", async function (event) {
 });
 
 async function handleKeywordData(data) {
-  
-    keywordsDataRaw = data;
-  
+  keywordsDataRaw = data;
+
   if (keywordsDataRaw) {
     allKeywords = keywordsDataRaw.queryStats.map(
       (keywordData) => keywordData.stemmedQuery
@@ -37,5 +35,3 @@ async function handleKeywordData(data) {
     return false;
   }
 }
-
- 

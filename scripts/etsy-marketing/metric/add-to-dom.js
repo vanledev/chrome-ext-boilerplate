@@ -71,34 +71,117 @@ async function addMetrics() {
 
   // add individual metrics for keywords
   addTd();
-  addNewColHead();
+  replaceThead();
   updateInvidualMetricsToDOM(metrics);
 }
-function addNewColHead() {
-  const ordersColumn = $(
-    keywordTableSelector + '  thead th:has(button:contains("Order"))'
-  );
+function replaceThead() {
+  main();
 
-  const releCol = $(
-    keywordTableSelector + '  thead th:has(button:contains("Relevant keyword"))'
-  );
+  async function main() {
+    const res = await retryFunctionWithDelay(waitForTable, 10, 2000);
+    if (res) {
+      replaceTh();
+      makeTableSortable();
+    }
+  }
 
-  const clicksRateCol = $(
-    `<th class="col-head-clickRate wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class=" sadx-clickable">Clicks Rate</button></th>`
-  );
+  async function waitForTable() {
+    const table = $(keywordTableSelector);
+    if (table.length == 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  function replaceTh() {
+    $(keywordTableSelector).addClass("keyword-table");
+    $(keywordTableSelector + " tbody th").removeClass();
+    $(keywordTableSelector + " tbody td").removeClass();
 
-  const poasCol = $(
-    `<th class="col-head-poas wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class=" sadx-clickable"> POAS®</button></th>`
-  );
-  const spendCol = $(
-    `<th class="col-head-spend wt-table__head__cell wt-text-left-xs wt-text-right-lg wt-no-wrap wt-pr-xs-0 wt-mr-xs-0" scope="col"><button class="sadx-clickable "> Spend</button></th>`
-  );
-  clicksRateCol.insertBefore(ordersColumn);
+    $(`<table class="injected-table"><thead> </thead></table>`).insertBefore(
+      keywordTableSelector
+    );
 
-  poasCol.insertBefore(releCol);
-  spendCol.insertAfter(clicksRateCol);
-  removeDoubleEle(".col-head-poas");
-  removeDoubleEle(".col-head-clickRate");
+    const headerTextArray = [
+      "Buyers searched for",
+      "Views",
+      "Clicks",
+      "",
+      "Click Rate",
+      "Spend",
+      "Orders",
+      "",
+      "POAS",
+      "Relevant",
+    ];
+    const tableHead = $(".injected-table thead");
+    const newRow = $("<tr class='injected-tr'>");
+
+    // Loop through the header text array and create <th> elements
+    headerTextArray.forEach(function (text) {
+      const newHeader = $("<th class='wt-table__head__cell wt-no-wrap'>").html(
+        text + '<span class="injected-icon"></span> '
+      );
+      newRow.append(newHeader);
+    });
+
+    tableHead.append(newRow);
+    console.log("thead moi add vao", $(".injected-table"));
+    $(".injected-table:not(:last)").remove();
+  }
+
+  function makeTableSortable() {
+    $(".injected-table thead th").click(function () {
+      if ([0, 3, 7, 9].includes($(this).index())) {
+        return;
+      }
+
+      const thIndex = $(this).index();
+
+      $(".injected-table thead th").each(function (index) {
+        // Check if the index is different from 4
+        if (index !== thIndex) {
+          // Set the HTML content of the current TH element to empty
+          $(this).find(".injected-icon").html("");
+        }
+      });
+
+      var rows = $(keywordTableSelector)
+        .find("tr:gt(0)")
+        .toArray()
+        .sort(comparer($(this).index()));
+
+      this.asc = !this.asc;
+      if (!this.asc) {
+        rows = rows.reverse();
+        $(this).find(".injected-icon").text("⬇");
+      } else {
+        $(this).find(".injected-icon").text("⬆");
+      }
+      $(keywordTableSelector).find("tbody").empty();
+      for (var i = 0; i < rows.length; i++) {
+        $(keywordTableSelector).append(rows[i]);
+      }
+    });
+
+    function comparer(index) {
+      // column index
+      return function (a, b) {
+        var valA = getCellValue(a, index);
+        var valB = getCellValue(b, index);
+
+        return valA - valB;
+      };
+    }
+
+    function getCellValue(row, index) {
+      const val = $($(row).children()[index])
+        .text()
+        .match(/[+-]?\d+(\.\d+)?/);
+
+      return parseFloat(val);
+    }
+  }
 }
 
 async function onInputBasecostShipping(event) {

@@ -34,7 +34,6 @@
     {
       "matches": ["https://www.etsy.com/your/shops/me/advertising*"],
       "js": [
-        "scripts/etsy-marketing/sort/injector.js",
         "assets/libs/search/fuse.js",
 
         "scripts/etsy-marketing/helpers.js",
@@ -76,7 +75,7 @@
         "assets/images/not-found.png",
         "assets/images/completed.png",
         "injected.js",
-        "scripts/etsy-marketing/sort/injected-for-sort.js",
+
         "assets/libs/jquery.min.js",
         "assets/libs/jquery-ui.min.js",
         "scripts/etsy-marketing/etsy-marketing.css"
