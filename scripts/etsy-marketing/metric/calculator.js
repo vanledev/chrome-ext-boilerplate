@@ -62,8 +62,16 @@ async function setManualMetric(event) {
     );
   });
 }
-
 async function getManualMetric(metricName) {
+  const input = $(
+    '.om-input-manual-metric[data-variable-name="' + metricName + '"]'
+  );
+
+  const val = input.val();
+  console.log("val", val);
+  return val;
+}
+async function getManualMetric_old(metricName) {
   const res = await chrome.runtime.sendMessage({
     action: "getLocalStorage",
     metricName,
@@ -78,16 +86,11 @@ async function getManualMetric(metricName) {
 }
 async function getMetrics() {
   const basecost = parseFloat(await getManualMetric("basecost"));
-  const shipping = parseFloat(await getManualMetric("shipping"));
+  const shipping = parseFloat(await getManualMetric("shipping"));  
   const views = convertAbbreviatedNumber(
     $("#impressions-tab-content .wt-text-heading").text()
   );
-  console.log(
-    "noi dung div view la",
-    $("#impressions-tab-content .wt-text-heading").text(),
-    "view la",
-    views
-  );
+
   const clicks = convertAbbreviatedNumber(
     $("#clicks-tab-content  .wt-text-heading").text()
   );
