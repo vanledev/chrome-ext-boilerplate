@@ -64,14 +64,17 @@ async function setManualMetric(event) {
 }
 
 async function getManualMetric(metricName) {
-  return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage(
-      { action: "getLocalStorage", metricName },
-      function (response) {
-        resolve(response.data[metricName]);
-      }
-    );
+  const res = await chrome.runtime.sendMessage({
+    action: "getLocalStorage",
+    metricName,
   });
+
+  if (res) {
+    console.log("running callback of sendmessage getlocalstorage", res);
+    return res.data[metricName];
+  } else {
+    console.log("not receive anything", res);
+  }
 }
 async function getMetrics() {
   const basecost = parseFloat(await getManualMetric("basecost"));
