@@ -45,7 +45,7 @@
         "scripts/etsy-marketing/search-filter/filter-keywords.js",
         "scripts/etsy-marketing/search-filter/search.js",
         "scripts/etsy-marketing/search-filter/add-dom.js",
-        "scripts/etsy-marketing/metric/globals.js",
+       
         "scripts/etsy-marketing/metric/update-dom.js",
         "scripts/etsy-marketing/metric/calculator.js",
 

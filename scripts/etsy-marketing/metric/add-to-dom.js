@@ -150,9 +150,9 @@ function replaceThead() {
       this.asc = !this.asc;
       if (!this.asc) {
         rows = rows.reverse();
-        $(this).find(".injected-icon").text("⬇");
-      } else {
         $(this).find(".injected-icon").text("⬆");
+      } else {
+        $(this).find(".injected-icon").text("⬇");
       }
       $(keywordTableSelector).find("tbody").empty();
       for (var i = 0; i < rows.length; i++) {
@@ -166,7 +166,7 @@ function replaceThead() {
         var valA = getCellValue(a, index);
         var valB = getCellValue(b, index);
 
-        return valA - valB;
+        return valB - valA;
       };
     }
 
