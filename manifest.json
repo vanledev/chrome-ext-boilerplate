@@ -45,7 +45,7 @@
         "scripts/etsy-marketing/search-filter/filter-keywords.js",
         "scripts/etsy-marketing/search-filter/search.js",
         "scripts/etsy-marketing/search-filter/add-dom.js",
-       
+
         "scripts/etsy-marketing/metric/update-dom.js",
         "scripts/etsy-marketing/metric/calculator.js",
 
@@ -74,6 +74,7 @@
       "resources": [
         "assets/images/not-found.png",
         "assets/images/completed.png",
+        "assets/images/loading.gif",
         "injected.js",
 
         "assets/libs/jquery.min.js",

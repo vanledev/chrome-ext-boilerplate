@@ -203,3 +203,18 @@ label[for="searchForm"] {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+.keyword-table {
+  position: relative;
+}
+#om-table-loading {
+  position: absolute;
+  top: 20px;
+  left: 45%;
+  display: block;
+}
+#om-table-loading.hide-loading {
+  display: none;
+}
+#om-table-loading img {
+  width: 100px;
+}

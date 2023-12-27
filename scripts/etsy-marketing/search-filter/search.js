@@ -3,6 +3,7 @@ function changeKeywordResult() {
   console.log(searchText);
   if (searchText === "") {
     updateCurrentKeywordsPool();
+
     updateDOMTable(currentKeywordsPool);
   } else {
     const searchOption = getSearchOption();
@@ -22,4 +23,5 @@ function changeKeywordResult() {
 
     updateDOMTable(arr);
   }
+  
 }

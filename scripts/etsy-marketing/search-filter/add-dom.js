@@ -28,7 +28,13 @@ async function waitForKeywords() {
   }
 }
 function addFilterAndSearchNodes() {
+  $(keywordTableSelector).prepend(`
+  <div id="om-table-loading" class="hide-loading">
+    <img src="${chrome.runtime.getURL("assets/images/loading.gif")}"></img>
+  </div>
+  `);
   const html = `
+
     <div class="wrap-filter-search">
 
         <div class="flex">

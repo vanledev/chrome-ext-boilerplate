@@ -36,6 +36,6 @@ function getCurrentKeywordsPool() {
 }
 function updateCurrentKeywordsPool() {
   currentKeywordsPool = getCurrentKeywordsPool();
-  console.log("keyword pool sau khi update", currentKeywordsPool);
+  // console.log("keyword pool sau khi update", currentKeywordsPool);
   updateFuse();
 }
