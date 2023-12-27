@@ -11,6 +11,10 @@ function returnMetricHTML(metric) {
 }
 
 function convertAbbreviatedNumber(abbreviatedNumber) {
+  // be careful with number as: US$-90,4K. Have to convert K to 1000, delete comma, and delete the currency, sometimes currency is $ and sometimes it is US$
+  let numericPart = abbreviatedNumber;
+  const regex = /-?\d+(?:,\d+)*(?:\.\d+)?[kmbt]?/gi;
+  numericPart = numericPart.match(regex)[0];
   const multipliersData = {
     k: 1000,
     m: 1000000,
@@ -27,8 +31,6 @@ function convertAbbreviatedNumber(abbreviatedNumber) {
     }
     return false;
   }
-
-  let numericPart = abbreviatedNumber;
 
   if (containsMultiplier(abbreviatedNumber)) {
     numericPart = numericPart.replace(/,/g, ""); // Remove commas
@@ -47,21 +49,6 @@ function convertAbbreviatedNumber(abbreviatedNumber) {
   return numericPart;
 }
 
-async function setManualMetric(event) {
-  const metricName = $(event.target).data("variable-name");
-  const metricValue = $(event.target).val();
-  const data = {};
-  data[metricName] = metricValue;
-  return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage(
-      { action: "setLocalStorage", data },
-      function (response) {
-        resolve(response.message);
-        $(event.target).blur();
-      }
-    );
-  });
-}
 async function getManualMetric(metricName) {
   const input = $(
     '.om-input-manual-metric[data-variable-name="' + metricName + '"]'
@@ -71,22 +58,10 @@ async function getManualMetric(metricName) {
   console.log("val", val);
   return val;
 }
-async function getManualMetric_old(metricName) {
-  const res = await chrome.runtime.sendMessage({
-    action: "getLocalStorage",
-    metricName,
-  });
 
-  if (res) {
-    console.log("running callback of sendmessage getlocalstorage", res);
-    return res.data[metricName];
-  } else {
-    console.log("not receive anything", res);
-  }
-}
 async function getMetrics() {
   const basecost = parseFloat(await getManualMetric("basecost"));
-  const shipping = parseFloat(await getManualMetric("shipping"));  
+  const shipping = parseFloat(await getManualMetric("shipping"));
   const views = convertAbbreviatedNumber(
     $("#impressions-tab-content .wt-text-heading").text()
   );
@@ -98,10 +73,10 @@ async function getMetrics() {
     $("#conversions-tab-content  .wt-text-heading").text()
   );
   const revenue = convertAbbreviatedNumber(
-    $("#revenue-tab-content  .wt-text-heading").text().substring(1)
+    $("#revenue-tab-content  .wt-text-heading").text()
   );
   const spend = convertAbbreviatedNumber(
-    $("#spent-tab-content  .wt-text-heading").text().substring(1)
+    $("#spent-tab-content  .wt-text-heading").text()
   );
 
   const clicksRate = clicks / views;
