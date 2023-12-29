@@ -19,16 +19,18 @@
   "content_scripts": [
     {
       "matches": ["https://www.etsy.com/your/shops/me/advertising*"],
-      "js": ["scripts/etsy-marketing/injector.js"],
+      "js": [
+        "scripts/etsy-marketing/globals.js",
+        "scripts/etsy-marketing/injector.js"
+      ],
       "run_at": "document_start"
     },
     {
       "matches": ["https://www.etsy.com/your/shops/me/advertising*"],
       "js": [
-     
         "assets/libs/jquery.min.js",
         "assets/libs/search/fuse.js",
-        "scripts/etsy-marketing/globals.js",
+
         "scripts/etsy-marketing/helpers.js",
         "scripts/etsy-marketing/noti/noti.js",
         "scripts/etsy-marketing/search-filter/state.js",

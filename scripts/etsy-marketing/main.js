@@ -5,23 +5,9 @@ window.addEventListener("message", async function (event) {
 
   if (url?.includes("prolist/listings/querystats")) {
     console.log("content script receive keywords from window");
-    const res = await handleKeywordData(data);
-
-    if (res) {
-      fillTable();
-      addSearchFilterToDOM();
-      addMetricToDom();
-    }
-  } else if (url?.includes("prolist/stats/listings")) {
-    owner_id = data.listing.listingImages[0].ownerId;
-    listing_id = data.listing.listingId;
-  }
-});
-
-async function handleKeywordData(data) {
-  keywordsDataRaw = data;
-
-  if (keywordsDataRaw) {
+    console.log("keywordsDataRaw", keywordsDataRaw);
+    keywordsDataRaw = data;
+    console.log("keywordsDataRaw", keywordsDataRaw);
     allKeywords = keywordsDataRaw.queryStats.map(
       (keywordData) => keywordData.stemmedQuery
     );
@@ -35,21 +21,26 @@ async function handleKeywordData(data) {
     currentKeywordsPool = getCurrentKeywordsPool();
 
     updateFuse();
-    return true;
-  } else {
-    return false;
+
+    fillTable();
+    addSearchFilterToDOM();
+    addMetricToDom();
+  } else if (url?.includes("prolist/stats/listings")) {
+    owner_id = data.listing.listingImages[0].ownerId;
+    listing_id = data.listing.listingId;
   }
-}
+});
+
 async function fillTable() {
-  //   for (let keyword of keywordsDataRaw.queryStats) {
-  //     $("#new-table tbody").append(`
-  //     <tr>
-  //       <td data-index-td=" ">
-  // ${keyword.stemmedQuery}
-  //       </td>
-  //     </tr>
-  //     `);
-  //   }
+  for (let keyword of keywordsDataRaw.queryStats) {
+    $("#new-table tbody").append(`
+      <tr>
+        <td data-index-td=" ">
+  ${keyword.stemmedQuery}
+        </td>
+      </tr>
+      `);
+  }
 }
 
 async function addNewTable() {

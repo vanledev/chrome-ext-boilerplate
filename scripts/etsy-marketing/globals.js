@@ -1,4 +1,4 @@
-let keywordsDataRaw;
+let keywordsDataRaw = 2222;
 let allKeywords;
 let enabledKeywords;
 let disabledKeywords;
