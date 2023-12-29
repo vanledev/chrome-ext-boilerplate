@@ -40,31 +40,31 @@ async function fillTable() {
   for (let keyword of keywordsDataRaw.queryStats) {
     $("#new-table tbody").append(`
       <tr>
-        <td data-index-td="">
+        <td data-name="stemmedQuery">
           ${keyword.stemmedQuery}
         </td>
-        <td data-index-td="">
+        <td data-name="">
         ${keyword.impressionCounts}
       </td>
-      <td data-index-td="">
+      <td data-name="">
       ${keyword.clickCount}
     </td>
-    <td data-index-td="">
-    ${keyword.meetsHighThresholdCtr}
+    <td data-name="">
+    ${keyword.meetsHighThresholdCtr ? high : ""}
   </td>
-  <td data-index-td="">
+  <td data-name="">
   
 </td>
-<td data-index-td="">
+<td data-name="">
  
 </td>
-<td data-index-td="">
+<td data-name="">
 ${keyword.orderCount}
 </td>
-<td data-index-td="">
- ${keyword.meetsHighThresholdOrderRate}
+<td data-name="">
+ ${keyword.meetsHighThresholdOrderRate ? high : ""}
 </td>
-<td data-index-td="">
+<td data-name="">
  
 </td>
 <td>
@@ -76,6 +76,7 @@ ${keyword.orderCount}
       </tr>
       `);
   }
+  $('#new-table tbody input[type="checkbox"]').on("change", onCheckbox);
 }
 
 async function addNewTable() {
@@ -85,9 +86,9 @@ async function addNewTable() {
     return;
   }
   console.log("place for add table", place);
-  $(`<div class="new-table-container"><table id="new-table"><thead> </thead><tbody></tbody><table></div>`).insertAfter(
-    place.parent()
-  );
+  $(
+    `<div class="new-table-container"><table id="new-table"><thead> </thead><tbody></tbody><table></div>`
+  ).insertAfter(place.parent());
 
   const headerTextArray = [
     "Buyers searched for",
@@ -113,4 +114,29 @@ async function addNewTable() {
   });
 
   tableHead.append(newRow);
+}
+
+async function onCheckbox() {
+  const old_value = JSON.parse($(this).attr("value"));
+
+  $(this).attr("value", !old_value);
+  const tr = $(this).parent().parent();
+  const trkeyword = tr.find('td[data-name="stemmedQuery"]').text().trim();
+
+  const res = await fetchToEtsy(trkeyword, !old_value);
+  console.log(res);
+  if (res.status == 201) {
+    $("#wt-toast-feed")
+      .html(
+        writeSuccessText(
+          `${trkeyword} has been ${old_value ? "turned off" : "turned on"}`
+        )
+      )
+      .show();
+  } else {
+  }
+
+  setTimeout(function () {
+    $("#wt-toast-feed").hide();
+  }, 2000);
 }

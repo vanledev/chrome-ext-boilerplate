@@ -8,11 +8,10 @@ async function main2() {
   $("#send-request-to-etsy").on("click", fetchToEtsy);
 }
 
-async function fetchToEtsy() {
+async function fetchToEtsy(keyword, is_relevant) {
   let csrf = $("meta[name='csrf_nonce']").attr("content");
 
-  const keyword = `crochet patterns`;
-  const is_relevant = `false`;
+ 
 
   const res = await fetch(
     `https://www.etsy.com/api/v3/ajax/shop/${owner_id}/prolist/listing-query`,
@@ -28,8 +27,5 @@ async function fetchToEtsy() {
       credentials: "include",
     }
   );
-  console.log("response keyword toggle", res);
-  if (res.status == 201) {
-    showNoti("toggleKeywordSuccess");
-  }
+  return res;
 }
