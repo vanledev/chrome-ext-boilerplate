@@ -42,7 +42,12 @@ async function updateInvidualMetricsToDOM(metrics) {
     const spend = clicks * metrics.cpc.metricValue;
 
     let poas;
-    if (clicks == 0 || metrics.cpc.metricValue == 0) {
+    if (
+      clicks == 0 ||
+      metrics.cpc.metricValue == 0 ||
+      typeof metrics.aov.metricValue !== "number" ||
+      typeof metrics.eFeePerOrder.metricValue !== "number"
+    ) {
       poas = 0;
     } else {
       poas =
