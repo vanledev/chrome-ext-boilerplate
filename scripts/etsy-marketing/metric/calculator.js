@@ -1,13 +1,14 @@
 function returnMetricHTML(metric) {
   let value = metric.metricValue;
-  if (metric.symbol == "%") {
-    value = metric.metricValue * 100;
+  if (typeof value === "number") {
+    if (metric.symbol == "%") {
+      value = metric.metricValue * 100;
+    }
+    const prefixes = metric.symbol == "$" ? "$" : "";
+    const suffixes = metric.symbol == "%" ? "%" : "";
+    value = prefixes + value.toFixed(2) + suffixes;
   }
-  return `<div   class="additional-metrics"><p class="wt-text-caption-title wt-mb-xs-2 wt-no-wrap">${
-    metric.metricName
-  }</p><p class="wt-text-heading">${
-    metric.symbol == "$" ? "$" : ""
-  }${value.toFixed(2)}${metric.symbol == "%" ? "%" : ""}</p></div>`;
+  return `<div   class="additional-metrics"><p class="wt-text-caption-title wt-mb-xs-2 wt-no-wrap">${metric.metricName}</p><p class="wt-text-heading">${value}</p></div>`;
 }
 
 function convertAbbreviatedNumber(abbreviatedNumber) {
@@ -82,10 +83,20 @@ async function getMetrics() {
   const clicksRate = clicks / views;
   const cr = orders / clicks;
   const cpc = spend / clicks;
-  const cpp = spend / orders;
-  const aov = revenue / orders;
+  let cpp, aov, eFeePerOrder;
+  if (orders) {
+    cpp = spend / orders;
+    aov = revenue / orders;
+    eFeePerOrder = eFee / orders;
+  } else {
+    cpp = "No Order";
+
+    aov = "No Order";
+    eFeePerOrder = "No Order";
+  }
+
   const eFee = revenue * 0.03 + revenue * 0.065 + orders * (0.2 + 0.35);
-  const eFeePerOrder = eFee / orders;
+
   const profit = revenue + shipping * orders - spend - basecost * orders - eFee;
   const expenses = eFee + spend + basecost * orders;
   const roi = profit / expenses;
