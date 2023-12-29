@@ -97,7 +97,7 @@
   width: 20px;
 }
 
-.close-icon-for-text img{
+.close-icon-for-text img {
   top: 9px;
 }
 .close-icon {
@@ -221,4 +221,20 @@ label[for="searchForm"] {
 }
 #om-table-loading img {
   width: 100px;
+}
+.new-table-container {
+  height: 500px;
+  overflow: scroll;
+}
+#new-table {
+  overflow: auto;
+  height: 100px;
+}
+#new-table thead {
+  position: sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 80px;
+  width: 100%;
 }

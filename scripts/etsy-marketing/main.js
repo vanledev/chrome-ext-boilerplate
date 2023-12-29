@@ -85,7 +85,7 @@ async function addNewTable() {
     return;
   }
   console.log("place for add table", place);
-  $(`<table id="new-table"><thead> </thead><tbody></tbody><table>`).insertAfter(
+  $(`<div class="new-table-container"><table id="new-table"><thead> </thead><tbody></tbody><table></div>`).insertAfter(
     place.parent()
   );
 
