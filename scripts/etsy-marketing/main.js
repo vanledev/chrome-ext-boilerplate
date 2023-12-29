@@ -1,5 +1,3 @@
-addNewTable();
-
 window.addEventListener("message", async function (event) {
   // Your event handling logic goes here
   console.log("window receiv message", event);
@@ -31,12 +29,14 @@ async function whenHaveKeywords(data) {
   currentKeywordsPool = getCurrentKeywordsPool();
 
   updateFuse();
+  await addNewTable();
 
   fillTable();
   addSearchFilterToDOM();
   addMetricToDom();
 }
 async function fillTable() {
+  console.log("fill table");
   for (let keyword of keywordsDataRaw.queryStats) {
     $("#new-table tbody").append(`
       <tr>
