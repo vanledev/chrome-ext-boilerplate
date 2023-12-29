@@ -29,3 +29,18 @@ function removeDoubleEle(selector) {
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+async function waitForElement(selector, count, delay) {
+  let attempts = 0;
+  while (true && attempts < count) {
+    attempts++;
+    const ele = $(selector);
+
+    if (ele.length !== 0) {
+      return ele;
+    } else {
+      await sleep(delay);
+    }
+  }
+  return false;
+}

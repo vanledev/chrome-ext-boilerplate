@@ -83,6 +83,7 @@ async function getMetrics() {
   const clicksRate = clicks / views;
   const cr = orders / clicks;
   const cpc = spend / clicks;
+  const eFee = revenue * 0.03 + revenue * 0.065 + orders * (0.2 + 0.35);
   let cpp, aov, eFeePerOrder;
   if (orders) {
     cpp = spend / orders;
@@ -94,8 +95,6 @@ async function getMetrics() {
     aov = "No Order";
     eFeePerOrder = "No Order";
   }
-
-  const eFee = revenue * 0.03 + revenue * 0.065 + orders * (0.2 + 0.35);
 
   const profit = revenue + shipping * orders - spend - basecost * orders - eFee;
   const expenses = eFee + spend + basecost * orders;

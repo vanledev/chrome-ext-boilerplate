@@ -25,7 +25,7 @@
     {
       "matches": ["https://www.etsy.com/your/shops/me/advertising*"],
       "js": [
-        "scripts/etsy-marketing/observer.js",
+     
         "assets/libs/jquery.min.js",
         "assets/libs/search/fuse.js",
         "scripts/etsy-marketing/globals.js",
