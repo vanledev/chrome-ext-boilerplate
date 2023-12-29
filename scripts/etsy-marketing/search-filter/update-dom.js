@@ -1,6 +1,6 @@
 function updateDOMTable(keywordsShouldShow) {
   document.querySelector("#om-table-loading").classList.remove("hide-loading");
-  debugger;
+
   $("#countRows").html(keywordsShouldShow.length);
 
   // Now 'table' variable contains the reference to the desired table.
@@ -20,5 +20,4 @@ function updateDOMTable(keywordsShouldShow) {
   });
   console.timeEnd(1);
   $("#om-table-loading").addClass("hide-loading");
-  
 }

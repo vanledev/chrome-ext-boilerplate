@@ -1,6 +1,7 @@
 const ENDPOINTS = [
   "/mission-control/orders\\?filters", // get list orders
   "prolist/listings/querystats",
+  "prolist/stats/listings",
 ];
 
 const { fetch: originFetch } = window;

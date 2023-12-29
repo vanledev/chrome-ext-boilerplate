@@ -38,8 +38,10 @@
 
         "scripts/etsy-marketing/helpers.js",
         "scripts/etsy-marketing/globals.js",
+        "scripts/etsy-marketing/noti/noti.js",
         "scripts/etsy-marketing/search-filter/state.js",
         "scripts/etsy-marketing/main.js",
+        "scripts/etsy-marketing/send-request/index.js",
         "scripts/etsy-marketing/search-filter/update-dom.js",
         "scripts/etsy-marketing/search-filter/fuse.js",
         "scripts/etsy-marketing/search-filter/filter-keywords.js",
@@ -76,7 +78,7 @@
         "assets/images/completed.png",
         "assets/images/loading.gif",
         "injected.js",
-
+        "scripts/etsy-marketing/send-request/injected-request.js",
         "assets/libs/jquery.min.js",
         "assets/libs/jquery-ui.min.js",
         "scripts/etsy-marketing/etsy-marketing.css"

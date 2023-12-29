@@ -10,3 +10,5 @@ let basecost;
 let shipping;
 const keywordTableSelector =
   "table:has(th:has(p:contains('Buyers searched for'))) ";
+let owner_id = "";
+let listing_id = "";

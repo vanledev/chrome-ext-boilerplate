@@ -351,8 +351,7 @@ s.onload = function () {
 window.addEventListener("message", function (e) {
   const { data } = e.data || {};
 
-  console.log("data", data);
-  if (!data?.queryStats) {
+  if (!data?.url?.includes("/mission-control/orders")) {
     chrome.runtime.sendMessage({
       message: "orderInfo",
       data,

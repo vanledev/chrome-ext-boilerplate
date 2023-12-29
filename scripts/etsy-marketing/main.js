@@ -1,15 +1,18 @@
 window.addEventListener("message", async function (event) {
   // Your event handling logic goes here
 
-  const { data } = event.data || {};
+  const { data, url } = event.data || {};
 
-  if (data?.queryStats) {
+  if (url?.includes("prolist/listings/querystats")) {
     console.log("content script receive keywords from window");
     const res = await handleKeywordData(data);
     if (res) {
       addSearchFilterToDOM();
       addMetricToDom();
     }
+  } else if (url?.includes("prolist/stats/listings")) {
+    owner_id = data.listing.listingImages[0].ownerId;
+    listing_id = data.listing.listingId;
   }
 });
 
