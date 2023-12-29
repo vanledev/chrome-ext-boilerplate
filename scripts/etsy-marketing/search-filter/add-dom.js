@@ -87,3 +87,4 @@ function addFilterAndSearchNodes() {
     $(this).parent().find("input").val("").trigger("input");
   });
 }
+

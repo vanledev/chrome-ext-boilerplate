@@ -1,43 +1,78 @@
+addNewTable();
+
 window.addEventListener("message", async function (event) {
   // Your event handling logic goes here
   console.log("window receiv message", event);
   const { data, url } = event.data || {};
 
   if (url?.includes("prolist/listings/querystats")) {
-    console.log("content script receive keywords from window");
-    console.log("keywordsDataRaw", keywordsDataRaw);
-    keywordsDataRaw = data;
-    console.log("keywordsDataRaw", keywordsDataRaw);
-    allKeywords = keywordsDataRaw.queryStats.map(
-      (keywordData) => keywordData.stemmedQuery
-    );
-
-    enabledKeywords = keywordsDataRaw.queryStats
-      .filter((keyword) => keyword.isRelevant === true)
-      .map((keywordData) => keywordData.stemmedQuery);
-    disabledKeywords = keywordsDataRaw.queryStats
-      .filter((keyword) => keyword.isRelevant === false)
-      .map((keywordData) => keywordData.stemmedQuery);
-    currentKeywordsPool = getCurrentKeywordsPool();
-
-    updateFuse();
-
-    fillTable();
-    addSearchFilterToDOM();
-    addMetricToDom();
+    whenHaveKeywords(data);
   } else if (url?.includes("prolist/stats/listings")) {
     owner_id = data.listing.listingImages[0].ownerId;
     listing_id = data.listing.listingId;
   }
 });
 
+async function whenHaveKeywords(data) {
+  console.log("content script receive keywords from window");
+  console.log("keywordsDataRaw", keywordsDataRaw);
+  keywordsDataRaw = data;
+  console.log("keywordsDataRaw", keywordsDataRaw);
+  allKeywords = keywordsDataRaw.queryStats.map(
+    (keywordData) => keywordData.stemmedQuery
+  );
+
+  enabledKeywords = keywordsDataRaw.queryStats
+    .filter((keyword) => keyword.isRelevant === true)
+    .map((keywordData) => keywordData.stemmedQuery);
+  disabledKeywords = keywordsDataRaw.queryStats
+    .filter((keyword) => keyword.isRelevant === false)
+    .map((keywordData) => keywordData.stemmedQuery);
+  currentKeywordsPool = getCurrentKeywordsPool();
+
+  updateFuse();
+
+  fillTable();
+  addSearchFilterToDOM();
+  addMetricToDom();
+}
 async function fillTable() {
   for (let keyword of keywordsDataRaw.queryStats) {
     $("#new-table tbody").append(`
       <tr>
-        <td data-index-td=" ">
-  ${keyword.stemmedQuery}
+        <td data-index-td="">
+          ${keyword.stemmedQuery}
         </td>
+        <td data-index-td="">
+        ${keyword.impressionCounts}
+      </td>
+      <td data-index-td="">
+      ${keyword.clickCount}
+    </td>
+    <td data-index-td="">
+    ${keyword.meetsHighThresholdCtr}
+  </td>
+  <td data-index-td="">
+  
+</td>
+<td data-index-td="">
+ 
+</td>
+<td data-index-td="">
+${keyword.orderCount}
+</td>
+<td data-index-td="">
+ ${keyword.meetsHighThresholdOrderRate}
+</td>
+<td data-index-td="">
+ 
+</td>
+<td>
+
+    <input type="checkbox" value=${keyword.isRelevant} ${
+      keyword.isRelevant ? "checked" : ""
+    }/>
+<td>
       </tr>
       `);
   }
@@ -79,4 +114,3 @@ async function addNewTable() {
 
   tableHead.append(newRow);
 }
-addNewTable();
