@@ -4,18 +4,27 @@ window.addEventListener("message", async function (event) {
   const { data, url } = event.data || {};
 
   if (url?.includes("prolist/listings/querystats")) {
-    whenHaveKeywords(data);
+    await whenHaveKeywords(data);
   } else if (url?.includes("prolist/stats/listings")) {
     owner_id = data.listing.listingImages[0].ownerId;
     listing_id = data.listing.listingId;
+
+    views = data.totalStats.impressionCount;
+    orders = data.totalStats.conversions;
+    clicks = data.totalStats.clickCount;
+
+    revenue = data.totalStats.revenue / 100;
+    spend = data.totalStats.spentTotal / 100;
+    addMetricToDom();
   }
 });
 
 async function whenHaveKeywords(data) {
   console.log("content script receive keywords from window");
-  console.log("keywordsDataRaw", keywordsDataRaw);
+
   keywordsDataRaw = data;
-  console.log("keywordsDataRaw", keywordsDataRaw);
+  dataToFillTable = data;
+  console.log("dataToFillTable", data);
   allKeywords = keywordsDataRaw.queryStats.map(
     (keywordData) => keywordData.stemmedQuery
   );
@@ -31,13 +40,13 @@ async function whenHaveKeywords(data) {
   updateFuse();
   await addNewTable();
 
-  fillTable();
+  fillTable(keywordsDataRaw.queryStats);
   addSearchFilterToDOM();
-  addMetricToDom();
 }
-async function fillTable() {
+async function fillTable(data) {
   console.log("fill table");
-  for (let keyword of keywordsDataRaw.queryStats) {
+  $("#new-table tbody").empty();
+  for (let keyword of data) {
     $("#new-table tbody").append(`
       <tr>
         <td data-name="stemmedQuery">
@@ -52,11 +61,11 @@ async function fillTable() {
     <td data-name="">
     ${keyword.meetsHighThresholdCtr ? high : ""}
   </td>
-  <td data-name="">
-  
+  <td  data-id='om-individual-metric-click-rate'>
+  ${keyword.clicksRate ? (keyword.clicksRate * 100).toFixed(2).toString() : ""}
 </td>
-<td data-name="">
- 
+<td   data-id='om-individual-metric-spend'>
+ ${keyword.spend?.toFixed(2) || ""}
 </td>
 <td data-name="">
 ${keyword.orderCount}
@@ -64,8 +73,8 @@ ${keyword.orderCount}
 <td data-name="">
  ${keyword.meetsHighThresholdOrderRate ? high : ""}
 </td>
-<td data-name="">
- 
+<td data-name="" data-id='om-individual-metric-poas'>
+ ${keyword.poas?.toFixed(2) || ""}
 </td>
 <td>
 
@@ -76,6 +85,7 @@ ${keyword.orderCount}
       </tr>
       `);
   }
+
   $('#new-table tbody input[type="checkbox"]').on("change", onCheckbox);
 }
 

@@ -35,10 +35,22 @@ async function waitForElement(selector, count, delay) {
   while (true && attempts < count) {
     attempts++;
     const ele = $(selector);
-
+    console.log("ele", ele);
     if (ele.length !== 0) {
       return ele;
     } else {
+      await sleep(delay);
+    }
+  }
+  return false;
+}
+async function waitForVar(variable, count = 10, delay = 1000) {
+  let attemp = 0;
+  while (true && attemp < count) {
+    if (variable) {
+      return variable;
+    } else {
+      attemp++;
       await sleep(delay);
     }
   }

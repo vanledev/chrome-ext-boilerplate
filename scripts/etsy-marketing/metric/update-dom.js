@@ -24,50 +24,38 @@ function addTd() {
 
 async function updateInvidualMetricsToDOM(metrics) {
   // Now 'table' variable contains the reference to the desired table.
+  console.log("update indi");
   const basecost = parseFloat(await getManualMetric("basecost"));
   const shipping = parseFloat(await getManualMetric("shipping"));
-  $(keywordTableSelector + " tbody tr").each(function () {
-    const views = parseInt(
-      $(this).find('td:contains("Views")').text().replace("Views", "").trim()
-    );
+  let tr = await waitForElement("#new-table tbody tr");
+  console.log("tr", $("#new-table tbody tr"));
+  await sleep(2000);
+  console.log("tr", $("#new-table tbody tr"));
+  if (tr) {
+    let new_data = dataToFillTable.map((keyword) => {
+      keyword.clicksRate = keyword.clickCount / keyword.impressionCounts;
+      keyword.spend = keyword.clickCount * metrics.cpc.metricValue;
+      if (
+        keyword.clickCount == 0 ||
+        metrics.cpc.metricValue == 0 ||
+        typeof metrics.aov.metricValue !== "number" ||
+        typeof metrics.eFeePerOrder.metricValue !== "number"
+      ) {
+        keyword.poas = 0;
+      } else {
+        keyword.poas =
+          (keyword.orderCount *
+            (metrics.aov.metricValue -
+              basecost -
+              metrics.eFeePerOrder.metricValue +
+              shipping)) /
+          (keyword.clickCount * metrics.cpc.metricValue);
+      }
 
-    const orders = parseInt(
-      $(this).find('td:contains("Orders")').text().replace("Orders", "").trim()
-    );
-
-    const clicks = parseInt(
-      $(this).find('td:contains("Clicks")').text().replace("Clicks", "").trim()
-    );
-    const clicksRate = clicks / views;
-    const spend = clicks * metrics.cpc.metricValue;
-
-    let poas;
-    if (
-      clicks == 0 ||
-      metrics.cpc.metricValue == 0 ||
-      typeof metrics.aov.metricValue !== "number" ||
-      typeof metrics.eFeePerOrder.metricValue !== "number"
-    ) {
-      poas = 0;
-    } else {
-      poas =
-        (orders *
-          (metrics.aov.metricValue -
-            basecost -
-            metrics.eFeePerOrder.metricValue +
-            shipping)) /
-        (clicks * metrics.cpc.metricValue);
-    }
-
-    $(this)
-      .find("[data-id='om-individual-metric-click-rate']")
-      .text((clicksRate * 100).toFixed(2).toString());
-
-    $(this)
-      .find("[data-id='om-individual-metric-spend']")
-      .text(spend.toFixed(2));
-    $(this).find("[data-id='om-individual-metric-poas']").text(poas.toFixed(2));
-  });
+      return keyword;
+    });
+    fillTable(new_data);
+  }
 }
 
 async function updateDOMGeneralMetrics(metrics) {

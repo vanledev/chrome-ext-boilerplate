@@ -63,22 +63,6 @@ async function getManualMetric(metricName) {
 async function getMetrics() {
   const basecost = parseFloat(await getManualMetric("basecost"));
   const shipping = parseFloat(await getManualMetric("shipping"));
-  const views = convertAbbreviatedNumber(
-    $("#impressions-tab-content .wt-text-heading").text()
-  );
-
-  const clicks = convertAbbreviatedNumber(
-    $("#clicks-tab-content  .wt-text-heading").text()
-  );
-  const orders = convertAbbreviatedNumber(
-    $("#conversions-tab-content  .wt-text-heading").text()
-  );
-  const revenue = convertAbbreviatedNumber(
-    $("#revenue-tab-content  .wt-text-heading").text()
-  );
-  const spend = convertAbbreviatedNumber(
-    $("#spent-tab-content  .wt-text-heading").text()
-  );
 
   const clicksRate = clicks / views;
   const cr = orders / clicks;

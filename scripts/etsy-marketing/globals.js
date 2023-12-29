@@ -13,3 +13,4 @@ const keywordTableSelector =
 let owner_id = "";
 let listing_id = "";
 let high = `<span class="wt-badge wt-m-xs-2 wt-badge--notificationTertiary">High</span>`;
+let views, orders, clicks, revenue, spend, dataToFillTable;

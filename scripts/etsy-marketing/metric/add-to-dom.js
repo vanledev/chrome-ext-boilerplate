@@ -2,7 +2,6 @@ async function addMetricToDom() {
   if (
     window.location.href.includes("etsy.com/your/shops/me/advertising/listings")
   ) {
-    await sleep(2000);
     await addMetrics();
   }
 }
@@ -65,10 +64,9 @@ async function addMetrics() {
   removeDoubleEle(".om-general-metrics");
 
   const metrics = await getMetrics();
-  updateDOMGeneralMetrics(metrics);
-  addTd();
-  replaceThead();
-  updateInvidualMetricsToDOM(metrics);
+  await updateDOMGeneralMetrics(metrics);
+  
+  await updateInvidualMetricsToDOM(metrics);
 }
 function replaceThead() {
   main();
