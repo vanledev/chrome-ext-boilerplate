@@ -93,8 +93,12 @@
   position: absolute;
   right: 10px;
 
-  top: 9px;
+  top: 22px;
   width: 20px;
+}
+
+.close-icon-for-text img{
+  top: 9px;
 }
 .close-icon {
   cursor: pointer;

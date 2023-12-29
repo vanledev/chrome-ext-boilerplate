@@ -25,3 +25,7 @@ async function retryFunctionWithDelay(childFunction, count, delay) {
 function removeDoubleEle(selector) {
   $(selector + ":not(:last)").remove();
 }
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

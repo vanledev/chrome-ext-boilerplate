@@ -1,6 +1,6 @@
 window.addEventListener("message", async function (event) {
   // Your event handling logic goes here
-
+  console.log("window receiv message", event);
   const { data, url } = event.data || {};
 
   if (url?.includes("prolist/listings/querystats")) {

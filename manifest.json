@@ -1,17 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "MerchBridge Etsy Helper",
+  "name": "MerchBridge Etsy Ads Helper",
   "version": "1.3.22",
-  "description": "An extension to help you fulfill Etsy orders easier with MerchBridge.",
-  "devtools_page": "devtool/devtool.html",
+  "description": "An extension that adds advanced view for Etsy Ads.",
+
   "icons": {
     "16": "assets/images/16.png",
     "48": "assets/images/48.png",
     "128": "assets/images/128.png"
   },
   "action": {
-    "default_popup": "popup/index.html",
-    "default_title": "Etsy Helper",
+    "default_title": "Etsy Ads Helper",
     "default_icon": {
       "48": "assets/images/48.png"
     }
@@ -19,25 +18,18 @@
   "default_locale": "en",
   "content_scripts": [
     {
-      "matches": ["https://www.etsy.com/*", "https://www.yuntrack.com/*"],
-      "js": [
-        "assets/libs/jquery.min.js",
-        "assets/libs/jquery.toast.js",
-        "scripts/content_script.js",
-        "scripts/sync_order.js",
-        "scripts/add_tracking.js",
-        "scripts/settings.js"
-      ],
-      "css": ["assets/styles/jquery.toast.css", "assets/styles/content.css"],
-      "run_at": "document_end"
+      "matches": ["https://www.etsy.com/your/shops/me/advertising*"],
+      "js": ["scripts/etsy-marketing/injector.js"],
+      "run_at": "document_start"
     },
     {
       "matches": ["https://www.etsy.com/your/shops/me/advertising*"],
       "js": [
+        "scripts/etsy-marketing/observer.js",
+        "assets/libs/jquery.min.js",
         "assets/libs/search/fuse.js",
-
-        "scripts/etsy-marketing/helpers.js",
         "scripts/etsy-marketing/globals.js",
+        "scripts/etsy-marketing/helpers.js",
         "scripts/etsy-marketing/noti/noti.js",
         "scripts/etsy-marketing/search-filter/state.js",
         "scripts/etsy-marketing/main.js",
@@ -53,12 +45,11 @@
 
         "scripts/etsy-marketing/metric/add-to-dom.js"
       ],
-      "css": ["scripts/etsy-marketing/etsy-marketing.css"]
+      "css": ["assets/styles/etsy-marketing.css"],
+      "run_at": "document_end"
     }
   ],
-  "background": {
-    "service_worker": "scripts/background.js"
-  },
+
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'",
     "sandbox": "sandbox allow-scripts; script-src 'self' 'https://www.etsy.com/*'; object-src 'self'"
@@ -77,10 +68,10 @@
         "assets/images/not-found.png",
         "assets/images/completed.png",
         "assets/images/loading.gif",
-        "injected.js",
-        "scripts/etsy-marketing/send-request/injected-request.js",
+        "scripts/etsy-marketing/injected.js",
+
         "assets/libs/jquery.min.js",
-        "assets/libs/jquery-ui.min.js",
+
         "scripts/etsy-marketing/etsy-marketing.css"
       ],
       "matches": ["https://www.etsy.com/*", "https://www.yuntrack.com/*"]
