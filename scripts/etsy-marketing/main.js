@@ -22,7 +22,6 @@ window.addEventListener("message", async function (event) {
 async function whenHaveKeywords(data) {
   console.log("content script receive keywords from window");
 
- 
   fullDataToFillTable = data.queryStats;
 
   allKeywords = fullDataToFillTable;
@@ -136,11 +135,12 @@ async function addNewTable() {
 }
 
 function makeTableSortable() {
-  $("#new-table thead th").click(function () {
+  $("#new-table thead th").on("click", async function () {
     if ([0, 3, 7, 9].includes($(this).index())) {
       return;
     }
 
+    // showNoti();
     const thIndex = $(this).index();
 
     $("#new-table thead th").each(function (index) {

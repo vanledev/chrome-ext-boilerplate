@@ -179,11 +179,11 @@ label[for="searchForm"] {
   text-align: left;
 }
 
-.injected-table th {
+#new-table th {
   cursor: pointer;
 }
-.injected-table th:first-child,
-.injected-table th:last-child {
+#new-table th:first-child,
+#new-table th:last-child {
   cursor: text;
 }
 
