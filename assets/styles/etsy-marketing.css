@@ -210,18 +210,7 @@ label[for="searchForm"] {
 .keyword-table {
   position: relative;
 }
-#om-table-loading {
-  position: absolute;
-  top: 20px;
-  left: 45%;
-  display: block;
-}
-#om-table-loading.hide-loading {
-  display: none;
-}
-#om-table-loading img {
-  width: 100px;
-}
+
 .new-table-container {
   height: 500px;
   overflow-y: scroll;
@@ -239,6 +228,22 @@ label[for="searchForm"] {
   width: 100%;
 }
 
-.wt-badge {
+#new-table th:first-child {
+  width: 25% !important;
+}
+#new-table td {
+  height: 60px !important;
+}
+.keyword-table th,
+.keyword-table td,
+.injected-table th,
+.injected-table td {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+#new-table .wt-badge {
   word-break: normal !important;
+  padding: 5px !important;
+  margin: 0 !important;
 }

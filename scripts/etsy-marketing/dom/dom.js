@@ -313,7 +313,7 @@ async function fillTable(data) {
     debounce(function () {
       if (
         container.scrollTop() + container.height() >=
-        container[0].scrollHeight - 50
+        container[0].scrollHeight - 120
       ) {
         console.log("load more rows");
 
@@ -367,15 +367,16 @@ async function addNewTable() {
 
   tableHead.append(newRow);
 
-  makeTableSortable();
+  handleTheadOnClick();
 }
 
-function makeTableSortable() {
+function handleTheadOnClick() {
   $("#new-table thead th").on("click", async function () {
     if ([0, 3, 7, 9].includes($(this).index())) {
       return;
     }
-
+    $("#new-table-container").animate({ scrollTop: 0 }, "slow");
+   
     // showNoti();
     const thIndex = $(this).index();
 
