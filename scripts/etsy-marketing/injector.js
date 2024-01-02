@@ -5,3 +5,7 @@ s.onload = function () {
   this.remove();
 };
 (document.head || document.documentElement).appendChild(s);
+
+var s2 = document.createElement("script");
+s2.src = chrome.runtime.getURL("assets/libs/jquery.min.js");
+(document.head || document.documentElement).appendChild(s2);
