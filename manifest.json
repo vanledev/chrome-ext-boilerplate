@@ -30,7 +30,7 @@
       "js": [
         "assets/libs/jquery.min.js",
         "assets/libs/search/fuse.js",
-
+        "assets/libs/infinite-scroll.pkgd.min.js",
         "scripts/etsy-marketing/helpers.js",
         "scripts/etsy-marketing/noti/noti.js",
 

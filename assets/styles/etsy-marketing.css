@@ -224,10 +224,10 @@ label[for="searchForm"] {
 }
 .new-table-container {
   height: 500px;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 #new-table {
-  overflow: auto;
+  overflow-y: auto;
   height: 100px;
 }
 #new-table thead {
@@ -237,4 +237,8 @@ label[for="searchForm"] {
   z-index: 1;
   height: 80px;
   width: 100%;
+}
+
+.wt-badge {
+  word-break: normal !important;
 }
