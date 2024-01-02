@@ -1,17 +1,5 @@
-main2();
-async function main2() {
-  await sleep(5000);
-  const button = $(`<button id="send-request-to-etsy">Send</button>`);
-  const place = $("#listing-detail-stats-date-menu-button");
-  console.log(place);
-  button.insertAfter(place);
-  $("#send-request-to-etsy").on("click", fetchToEtsy);
-}
-
 async function fetchToEtsy(keyword, is_relevant) {
   let csrf = $("meta[name='csrf_nonce']").attr("content");
-
- 
 
   const res = await fetch(
     `https://www.etsy.com/api/v3/ajax/shop/${owner_id}/prolist/listing-query`,

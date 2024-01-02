@@ -22,26 +22,24 @@ window.addEventListener("message", async function (event) {
 async function whenHaveKeywords(data) {
   console.log("content script receive keywords from window");
 
-  keywordsDataRaw = data;
-  dataToFillTable = data;
-  console.log("dataToFillTable", data);
-  allKeywords = keywordsDataRaw.queryStats.map(
-    (keywordData) => keywordData.stemmedQuery
+ 
+  fullDataToFillTable = data.queryStats;
+
+  allKeywords = fullDataToFillTable;
+
+  enabledKeywords = fullDataToFillTable.filter(
+    (keyword) => keyword.isRelevant === true
   );
 
-  enabledKeywords = keywordsDataRaw.queryStats
-    .filter((keyword) => keyword.isRelevant === true)
-    .map((keywordData) => keywordData.stemmedQuery);
-  disabledKeywords = keywordsDataRaw.queryStats
-    .filter((keyword) => keyword.isRelevant === false)
-    .map((keywordData) => keywordData.stemmedQuery);
-  currentKeywordsPool = getCurrentKeywordsPool();
+  disabledKeywords = fullDataToFillTable.filter(
+    (keyword) => keyword.isRelevant === false
+  );
 
-  updateFuse();
   await addNewTable();
 
-  fillTable(keywordsDataRaw.queryStats);
-  addSearchFilterToDOM();
+  fillTable(fullDataToFillTable);
+
+  addFilterAndSearchNodes();
 }
 async function fillTable(data) {
   console.log("fill table");
@@ -62,7 +60,11 @@ async function fillTable(data) {
     ${keyword.meetsHighThresholdCtr ? high : ""}
   </td>
   <td  data-id='om-individual-metric-click-rate'>
-  ${keyword.clicksRate ? (keyword.clicksRate * 100).toFixed(2).toString() : ""}
+  ${
+    keyword.clicksRate !== undefined && keyword.clicksRate !== null
+      ? (keyword.clicksRate * 100).toFixed(2).toString()
+      : ""
+  }
 </td>
 <td   data-id='om-individual-metric-spend'>
  ${keyword.spend?.toFixed(2) || ""}
@@ -97,33 +99,67 @@ async function addNewTable() {
   }
   console.log("place for add table", place);
   $(
-    `<div class="new-table-container"><table id="new-table"><thead> </thead><tbody></tbody><table></div>`
+    `<section id="om-section"><div class="new-table-container"><table id="new-table"><thead> </thead><tbody></tbody><table></div></section>`
   ).insertAfter(place.parent());
 
   const headerTextArray = [
-    "Buyers searched for",
-    "Views",
-    "Clicks",
-    "",
-    "Click Rate",
-    "Spend",
-    "Orders",
-    "",
-    "POAS",
-    "Relevant",
+    { variable_name: "buyers_searched_for", text: "Buyers searched for" },
+    { variable_name: "impressionCounts", text: "Views" },
+    { variable_name: "clickCount", text: "Clicks" },
+    { variable_name: "", text: "" },
+    { variable_name: "clicksRate", text: "Click Rate" },
+    { variable_name: "spend", text: "Spend" },
+    { variable_name: "orderCount", text: "Orders" },
+    { variable_name: "", text: "" },
+    { variable_name: "poas", text: "POAS" },
+    { variable_name: "isRelevant", text: "Relevant" },
   ];
+
   const tableHead = $("#new-table thead");
   const newRow = $("<tr class='injected-tr'>");
 
   // Loop through the header text array and create <th> elements
-  headerTextArray.forEach(function (text) {
-    const newHeader = $("<th class='wt-table__head__cell wt-no-wrap'>").html(
-      text + '<span class="injected-icon"></span> '
-    );
+  headerTextArray.forEach(function (item) {
+    const newHeader = $("<th class='wt-table__head__cell wt-no-wrap'>")
+      .attr("data-name", item.variable_name)
+      .html(
+        `<span id="col-name">` +
+          item.text +
+          '</span> <span class="injected-icon"></span> '
+      );
     newRow.append(newHeader);
   });
 
   tableHead.append(newRow);
+
+  makeTableSortable();
+}
+
+function makeTableSortable() {
+  $("#new-table thead th").click(function () {
+    if ([0, 3, 7, 9].includes($(this).index())) {
+      return;
+    }
+
+    const thIndex = $(this).index();
+
+    $("#new-table thead th").each(function (index) {
+      // Check if the index is different from 4
+      if (index !== thIndex) {
+        // Set the HTML content of the current TH element to empty
+        $(this).find(".injected-icon").html("");
+      }
+    });
+    this.desc = !this.desc;
+    if (!this.desc) {
+      $(this).find(".injected-icon").text("⬆");
+    } else {
+      $(this).find(".injected-icon").text("⬇");
+    }
+    sortBy = [$(this).attr("data-name"), this.desc];
+    console.log("sortBy", sortBy);
+    handleChange();
+  });
 }
 
 async function onCheckbox() {

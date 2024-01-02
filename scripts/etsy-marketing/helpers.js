@@ -30,7 +30,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function waitForElement(selector, count, delay) {
+async function waitForElement(selector, count = 10, delay = 1000) {
   let attempts = 0;
   while (true && attempts < count) {
     attempts++;

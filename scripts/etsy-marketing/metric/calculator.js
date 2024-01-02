@@ -62,8 +62,9 @@ async function getManualMetric(metricName) {
 
 async function getMetrics() {
   const basecost = parseFloat(await getManualMetric("basecost"));
-  const shipping = parseFloat(await getManualMetric("shipping"));
 
+  const shipping = parseFloat(await getManualMetric("shipping"));
+  console.log(basecost, shipping);
   const clicksRate = clicks / views;
   const cr = orders / clicks;
   const cpc = spend / clicks;
