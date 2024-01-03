@@ -291,11 +291,12 @@ async function fillTable(data) {
               ${data[i].poas?.toFixed(2) || ""}
               </td>
               <td>
-           
+              <label class="custom-checkbox">
                   <input type="checkbox" value=${data[i].isRelevant} ${
             data[i].isRelevant ? "checked" : ""
           }/>
-         
+          <span class="checkmark"></span>
+          </label>
        
               <td>
                     </tr>
@@ -414,7 +415,7 @@ async function onCheckbox() {
   const old_value = JSON.parse($(this).attr("value"));
 
   $(this).attr("value", !old_value);
-  const tr = $(this).parent().parent();
+  const tr = $(this).parent().parent().parent();
   const trkeyword = tr.find('td[data-name="stemmedQuery"]').text().trim();
 
   const res = await fetchToEtsy(trkeyword, !old_value);
