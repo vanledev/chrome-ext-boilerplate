@@ -291,10 +291,12 @@ async function fillTable(data) {
               ${data[i].poas?.toFixed(2) || ""}
               </td>
               <td>
-              
+           
                   <input type="checkbox" value=${data[i].isRelevant} ${
             data[i].isRelevant ? "checked" : ""
           }/>
+         
+       
               <td>
                     </tr>
           `
@@ -370,32 +372,41 @@ async function addNewTable() {
   handleTheadOnClick();
 }
 
-function handleTheadOnClick() {
+async function handleTheadOnClick() {
   $("#new-table thead th").on("click", async function () {
     if ([0, 3, 7, 9].includes($(this).index())) {
       return;
     }
-    $("#new-table-container").animate({ scrollTop: 0 }, "slow");
 
-    // showNoti();
-    const thIndex = $(this).index();
+    const first = async () => {
+      $(".new-table-container").scrollTop(0);
+      const thIndex = $(this).index();
 
-    $("#new-table thead th").each(function (index) {
-      // Check if the index is different from 4
-      if (index !== thIndex) {
-        // Set the HTML content of the current TH element to empty
-        $(this).find(".injected-icon").html("");
+      $("#new-table thead th").each(function (index) {
+        // Check if the index is different from 4
+        if (index !== thIndex) {
+          // Set the HTML content of the current TH element to empty
+          $(this).find(".injected-icon").html("");
+        }
+      });
+      this.desc = !this.desc;
+      if (!this.desc) {
+        $(this).find(".injected-icon").text("⬆");
+      } else {
+        $(this).find(".injected-icon").text("⬇");
       }
-    });
-    this.desc = !this.desc;
-    if (!this.desc) {
-      $(this).find(".injected-icon").text("⬆");
-    } else {
-      $(this).find(".injected-icon").text("⬇");
-    }
-    sortBy = [$(this).attr("data-name"), this.desc];
-    console.log("sortBy", sortBy);
-    handleChange();
+
+      return true;
+    };
+
+    const second = async () => {
+      sortBy = [$(this).attr("data-name"), this.desc];
+      console.log("sortBy", sortBy);
+      handleChange();
+    };
+
+    await first();
+    second();
   });
 }
 
