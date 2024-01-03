@@ -117,7 +117,7 @@ async function getMetrics() {
     symbol: "$",
   };
   const roiObj = { metricName: "ROI", metricValue: roi, symbol: "%", roi };
-  const poasObj = { metricName: "POAS", metricValue: poas, symbol: "$", poas };
+  const poasObj = { metricName: "POAS", metricValue: poas, symbol: "", poas };
 
   // Array of metric objects
   const metricObjects = {
