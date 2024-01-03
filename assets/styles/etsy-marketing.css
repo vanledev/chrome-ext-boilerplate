@@ -257,8 +257,9 @@ label[for="searchForm"] {
 .custom-checkbox {
   display: inline-block;
   position: relative;
-  padding-left: 30px; /* Adjust the padding based on your design */
+
   cursor: pointer;
+  margin-bottom: 30px;
 }
 
 /* Style the custom checkbox */
@@ -273,8 +274,8 @@ label[for="searchForm"] {
   position: absolute;
   top: 0;
   left: 0;
-  height: 20px; /* Adjust the size of the checkmark based on your design */
-  width: 20px;
+  height: 30px; /* Adjust the size of the checkmark based on your design */
+  width: 30px;
   background-color: #eee; /* Background color of the checkbox */
   border: 1px solid #ccc; /* Border color of the checkbox */
   border-radius: 4px;
@@ -282,8 +283,8 @@ label[for="searchForm"] {
 
 /* Style the checkmark when checked */
 .custom-checkbox input:checked + .checkmark {
-  background-color: #007bff; /* Background color when checked */
-  border: 1px solid #007bff; /* Border color when checked */
+  background-color: #01080f; /* Background color when checked */
+  border: 1px solid #01070e; /* Border color when checked */
 }
 
 /* Style the checkmark inside the container */
@@ -300,10 +301,10 @@ label[for="searchForm"] {
 
 /* Style the checkmark icon (using Unicode character) */
 .checkmark:after {
-  left: 7px;
+  left: 8px;
   top: 3px;
-  width: 6px;
-  height: 12px;
+  width: 11px;
+  height: 16px;
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
