@@ -311,7 +311,7 @@ async function fillTable(data) {
   appendRows(0, rowsToLoad);
 
   var currentIndex = rowsToLoad;
-
+  container.off();
   container.scroll(
     debounce(function () {
       if (
