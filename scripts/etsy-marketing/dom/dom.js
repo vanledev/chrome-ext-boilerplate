@@ -322,7 +322,7 @@ async function fillTable(data) {
         appendRows(currentIndex, endIndex);
         currentIndex = endIndex;
       }
-    })
+    }, 50)
   );
 }
 
@@ -376,7 +376,7 @@ function handleTheadOnClick() {
       return;
     }
     $("#new-table-container").animate({ scrollTop: 0 }, "slow");
-   
+
     // showNoti();
     const thIndex = $(this).index();
 
