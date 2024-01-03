@@ -251,7 +251,7 @@ async function fillTable(data) {
   const rowsToLoad = 10;
   const tableBody = $("#new-table tbody");
   const container = $(".new-table-container");
-
+  container.scrollTop(0);
   function appendRows(startIndex, endIndex) {
     for (var i = startIndex; i < endIndex; i++) {
       if (data[i]) {
@@ -380,7 +380,6 @@ async function handleTheadOnClick() {
     }
 
     const first = async () => {
-      $(".new-table-container").scrollTop(0);
       const thIndex = $(this).index();
 
       $("#new-table thead th").each(function (index) {
