@@ -56,52 +56,52 @@ async function addMetricToDom() {
     removeDoubleEle(".om-general-metrics");
 
     updateMetrics();
-  }
-}
 
-async function updateMetrics() {
-  const metrics = await getMetrics();
-  updateDOMGeneralMetrics(metrics);
+    async function updateMetrics() {
+      const metrics = await getMetrics();
+      updateDOMGeneralMetrics(metrics);
 
-  updateInvidualMetricsToDOM(metrics);
-  async function updateInvidualMetricsToDOM(metrics) {
-    let tr = await waitForElement("#new-table tbody tr");
-    await insertMetricsToGlobalTableData(metrics);
-    if (tr) {
-      await updateDataAndFillTable();
-    }
-    async function insertMetricsToGlobalTableData(metrics) {
-      const basecost = parseFloat(await getManualMetric("basecost"));
-      const shipping = parseFloat(await getManualMetric("shipping"));
-      fullDataToFillTable = fullDataToFillTable.map((keyword) => {
-        keyword.clicksRate = keyword.clickCount / keyword.impressionCounts;
-        keyword.spend = keyword.clickCount * metrics.cpc.metricValue;
-        if (
-          keyword.clickCount == 0 ||
-          metrics.cpc.metricValue == 0 ||
-          typeof metrics.aov.metricValue !== "number" ||
-          typeof metrics.eFeePerOrder.metricValue !== "number"
-        ) {
-          keyword.poas = 0;
-        } else {
-          keyword.poas =
-            (keyword.orderCount *
-              (metrics.aov.metricValue -
-                basecost -
-                metrics.eFeePerOrder.metricValue +
-                shipping)) /
-            (keyword.clickCount * metrics.cpc.metricValue);
+      updateInvidualMetricsToDOM(metrics);
+      async function updateInvidualMetricsToDOM(metrics) {
+        let tr = await waitForElement("#new-table tbody tr");
+        await insertMetricsToGlobalTableData(metrics);
+        if (tr) {
+          await updateDataAndFillTable();
         }
+        async function insertMetricsToGlobalTableData(metrics) {
+          const basecost = parseFloat(await getManualMetric("basecost"));
+          const shipping = parseFloat(await getManualMetric("shipping"));
+          fullDataToFillTable = fullDataToFillTable.map((keyword) => {
+            keyword.clicksRate = keyword.clickCount / keyword.impressionCounts;
+            keyword.spend = keyword.clickCount * metrics.cpc.metricValue;
+            if (
+              keyword.clickCount == 0 ||
+              metrics.cpc.metricValue == 0 ||
+              typeof metrics.aov.metricValue !== "number" ||
+              typeof metrics.eFeePerOrder.metricValue !== "number"
+            ) {
+              keyword.poas = 0;
+            } else {
+              keyword.poas =
+                (keyword.orderCount *
+                  (metrics.aov.metricValue -
+                    basecost -
+                    metrics.eFeePerOrder.metricValue +
+                    shipping)) /
+                (keyword.clickCount * metrics.cpc.metricValue);
+            }
 
-        return keyword;
-      });
-    }
-  }
+            return keyword;
+          });
+        }
+      }
 
-  async function updateDOMGeneralMetrics(metrics) {
-    $(".om-general-metrics").empty();
-    for (let metric of Object.values(metrics)) {
-      $(".om-general-metrics").append(returnMetricHTML(metric));
+      async function updateDOMGeneralMetrics(metrics) {
+        $(".om-general-metrics").empty();
+        for (let metric of Object.values(metrics)) {
+          $(".om-general-metrics").append(returnMetricHTML(metric));
+        }
+      }
     }
   }
 }
@@ -298,14 +298,9 @@ async function updateDataAndFillTable() {
   }
 }
 
-async function whenHaveKeywords(data) {
-  console.log("content script receive keywords from window");
-
-  fullDataToFillTable = data.queryStats;
-
+async function addDOMEle() {
   await addNewTable();
   addFilterAndSearchNodes();
-  await updateDataAndFillTable();
   function addFilterAndSearchNodes() {
     const html = `
   

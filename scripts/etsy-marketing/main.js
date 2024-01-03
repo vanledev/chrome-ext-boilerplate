@@ -4,7 +4,10 @@ window.addEventListener("message", async function (event) {
   const { data, url } = event.data || {};
 
   if (url?.includes("prolist/listings/querystats")) {
-    await whenHaveKeywords(data);
+    fullDataToFillTable = data.queryStats;
+    await addDOMEle();
+
+    await updateDataAndFillTable();
   } else if (url?.includes("prolist/stats/listings")) {
     owner_id = data.listing.listingImages[0].ownerId;
     listing_id = data.listing.listingId;
@@ -18,4 +21,3 @@ window.addEventListener("message", async function (event) {
     addMetricToDom();
   }
 });
-
