@@ -17,3 +17,4 @@ async function fetchToEtsy(keyword, is_relevant) {
   );
   return res;
 }
+ 

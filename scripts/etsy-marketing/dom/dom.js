@@ -2,17 +2,12 @@ async function addMetricToDom() {
   if (
     window.location.href.includes("etsy.com/your/shops/me/advertising/listings")
   ) {
-    await addMetrics();
-  }
-}
+    // Select the desired div
+    const placeForGeneralMetrics = $(
+      ".wt-tab[aria-label*='Interactive graph with Etsy Ads']"
+    );
 
-async function addMetrics() {
-  // Select the desired div
-  const placeForGeneralMetrics = $(
-    ".wt-tab[aria-label*='Interactive graph with Etsy Ads']"
-  );
-
-  placeForGeneralMetrics.append(`
+    placeForGeneralMetrics.append(`
   <div class="om-metric-input">
       <div>
         <label for="metric-basecost" class="wt-text-caption-title ">Basecost:</label>
@@ -48,215 +43,87 @@ async function addMetrics() {
     </div>
     </div>
       `);
-  removeDoubleEle(".om-metric-input");
-  $(".om-input-manual-metric").on(
-    "input",
-    debounce(onInputBasecostShipping, 500)
-  );
+    removeDoubleEle(".om-metric-input");
+    $(".om-input-manual-metric").on("input", debounce(updateMetrics, 500));
 
-  $(".close-icon-for-number").on("click", function () {
-    $(this).parent().find("input").val(0).trigger("input");
-  });
-  // add general metrics
-  $('<div class="om-general-metrics"></div>').insertAfter(
-    placeForGeneralMetrics
-  );
-  removeDoubleEle(".om-general-metrics");
+    $(".close-icon-for-number").on("click", function () {
+      $(this).parent().find("input").val(0).trigger("input");
+    });
+    // add general metrics
+    $('<div class="om-general-metrics"></div>').insertAfter(
+      placeForGeneralMetrics
+    );
+    removeDoubleEle(".om-general-metrics");
 
-  const metrics = await getMetrics();
-  await updateDOMGeneralMetrics(metrics);
-
-  await updateInvidualMetricsToDOM(metrics);
+    updateMetrics();
+  }
 }
 
-async function onInputBasecostShipping(event) {
+async function updateMetrics() {
   const metrics = await getMetrics();
   updateDOMGeneralMetrics(metrics);
+
   updateInvidualMetricsToDOM(metrics);
-}
+  async function updateInvidualMetricsToDOM(metrics) {
+    let tr = await waitForElement("#new-table tbody tr");
+    await insertMetricsToGlobalTableData(metrics);
+    if (tr) {
+      await updateDataAndFillTable();
+    }
+    async function insertMetricsToGlobalTableData(metrics) {
+      const basecost = parseFloat(await getManualMetric("basecost"));
+      const shipping = parseFloat(await getManualMetric("shipping"));
+      fullDataToFillTable = fullDataToFillTable.map((keyword) => {
+        keyword.clicksRate = keyword.clickCount / keyword.impressionCounts;
+        keyword.spend = keyword.clickCount * metrics.cpc.metricValue;
+        if (
+          keyword.clickCount == 0 ||
+          metrics.cpc.metricValue == 0 ||
+          typeof metrics.aov.metricValue !== "number" ||
+          typeof metrics.eFeePerOrder.metricValue !== "number"
+        ) {
+          keyword.poas = 0;
+        } else {
+          keyword.poas =
+            (keyword.orderCount *
+              (metrics.aov.metricValue -
+                basecost -
+                metrics.eFeePerOrder.metricValue +
+                shipping)) /
+            (keyword.clickCount * metrics.cpc.metricValue);
+        }
 
-function addFilterAndSearchNodes() {
-  const html = `
-
-    <div class="wrap-filter-search">
-
-        <div class="flex">
-                  <div class="om-search om-select-style">
-                    <select id="om-search-option" >
-                      <option value="contain" selected>Contain </option>
-                      <option value="exclude" > Exclude  </option>        
-                    </select> 
-                  </div>
-
-                  <div class="om-input-container">
-                    <input class="om-input" id="searchForm">
-                    <span class="close-icon close-icon-for-text">
-
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='100' height='100' viewBox='0 0 64 64'%3E%3Cpath d='M32,10c12.15,0,22,9.85,22,22s-9.85,22-22,22s-22-9.85-22-22S19.85,10,32,10z M36.95,39.778	c0.781,0.781,2.047,0.781,2.828,0c0.781-0.781,0.781-2.047,0-2.828c-0.175-0.175-2.767-2.767-4.95-4.95	c2.183-2.183,4.774-4.774,4.95-4.95c0.781-0.781,0.781-2.047,0-2.828c-0.781-0.781-2.047-0.781-2.828,0	c-0.175,0.175-2.767,2.767-4.95,4.95c-2.183-2.183-4.775-4.775-4.95-4.95c-0.781-0.781-2.047-0.781-2.828,0	c-0.781,0.781-0.781,2.047,0,2.828c0.175,0.175,2.767,2.767,4.95,4.95c-2.183,2.183-4.774,4.774-4.95,4.95	c-0.781,0.781-0.781,2.047,0,2.828c0.781,0.781,2.047,0.781,2.828,0c0.175-0.175,2.767-2.767,4.95-4.95	C34.183,37.011,36.775,39.603,36.95,39.778z'%3E%3C/path%3E%3C/svg%3E" alt="SVG">
- 
-                    </span>
-                  
-                  </div>
-                  <label for="searchForm">Showing <span id="countRows">${fullDataToFillTable.length}</span> results</label>
-        </div> 
-    
-
- 
-
-    <div class="om-select-style">
-        <select id="om-keyword-status" >
-        <option value="all" selected>All (${fullDataToFillTable.length})</option>
-          <option value="enabled" >Enabled (${enabledKeywords.length})</option>
-          <option value="disabled">Disabled (${disabledKeywords.length})</option>
-        </select> 
-    </div>
-  
-    
-  </div>
-    `;
-
-  $("#om-section").prepend(html);
-
-  $("#om-keyword-status").on("change", handleChange);
-
-  $("#searchForm").on("input change", debounce(handleChange, 500));
-  $("#om-search-option").on("change", handleChange);
-
-  // $(".wrap-filter-search" + ":not(:first)").remove();
-
-  $(".close-icon-for-text").on("click", function () {
-    $(this).parent().find("input").val("").trigger("input");
-  });
-}
-async function handleChange() {
-  const data = await getNewfullDataToFillTable();
-  console.log("new data to fill table", data);
-  fillTable(data);
-}
-async function getNewfullDataToFillTable() {
-  let data = fullDataToFillTable;
-  let searchText = $("#searchForm").val();
-  if (searchText) {
-    const newFuse = new Fuse(data, {
-      keys: ["stemmedQuery"],
-      threshold: 0,
-      ignoreLocation: true,
-      useExtendedSearch: true,
-    });
-    const containOrExclude = $("#om-search-option").val()
-      ? $("#om-search-option").val()
-      : "contain";
-    switch (containOrExclude) {
-      case "contain":
-        data = newFuse.search(searchText).map((word) => word.item);
-
-        break;
-      case "exclude":
-        data = newFuse.search("!" + searchText).map((word) => word.item);
-        break;
+        return keyword;
+      });
     }
   }
 
-  const onOrOff = $("#om-keyword-status").val()
-    ? $("#om-keyword-status").val()
-    : "all";
-
-  switch (onOrOff) {
-    case "all":
-      data = data;
-      break;
-    case "enabled":
-      data = data.filter((keyword) => keyword.isRelevant == true);
-      break;
-    case "disabled":
-      data = data.filter((keyword) => keyword.isRelevant == false);
-      break;
-  }
-
-  data = [...data].sort((a, b) =>
-    sortBy[1] ? b[sortBy[0]] - a[sortBy[0]] : a[sortBy[0]] - b[sortBy[0]]
-  );
-
-  $("#countRows").text(data.length);
-  return data;
-}
-
-async function updateInvidualMetricsToDOM(metrics) {
-  let tr = await waitForElement("#new-table tbody tr");
-  await insertMetricsToGlobalTableData(metrics);
-  if (tr) {
-    fillTable(fullDataToFillTable);
-  }
-  async function insertMetricsToGlobalTableData(metrics) {
-    const basecost = parseFloat(await getManualMetric("basecost"));
-    const shipping = parseFloat(await getManualMetric("shipping"));
-    fullDataToFillTable = fullDataToFillTable.map((keyword) => {
-      keyword.clicksRate = keyword.clickCount / keyword.impressionCounts;
-      keyword.spend = keyword.clickCount * metrics.cpc.metricValue;
-      if (
-        keyword.clickCount == 0 ||
-        metrics.cpc.metricValue == 0 ||
-        typeof metrics.aov.metricValue !== "number" ||
-        typeof metrics.eFeePerOrder.metricValue !== "number"
-      ) {
-        keyword.poas = 0;
-      } else {
-        keyword.poas =
-          (keyword.orderCount *
-            (metrics.aov.metricValue -
-              basecost -
-              metrics.eFeePerOrder.metricValue +
-              shipping)) /
-          (keyword.clickCount * metrics.cpc.metricValue);
-      }
-
-      return keyword;
-    });
+  async function updateDOMGeneralMetrics(metrics) {
+    $(".om-general-metrics").empty();
+    for (let metric of Object.values(metrics)) {
+      $(".om-general-metrics").append(returnMetricHTML(metric));
+    }
   }
 }
 
-async function updateDOMGeneralMetrics(metrics) {
-  $(".om-general-metrics").empty();
-  for (let metric of Object.values(metrics)) {
-    $(".om-general-metrics").append(returnMetricHTML(metric));
-  }
-}
+async function updateDataAndFillTable() {
+  const data = await getNewfullDataToFillTable();
 
-async function whenHaveKeywords(data) {
-  console.log("content script receive keywords from window");
+  fillTable(data);
 
-  fullDataToFillTable = data.queryStats;
+  async function fillTable(data) {
+    console.log("fill table");
+    $("#new-table tbody").empty();
 
-  allKeywords = fullDataToFillTable;
-
-  enabledKeywords = fullDataToFillTable.filter(
-    (keyword) => keyword.isRelevant === true
-  );
-
-  disabledKeywords = fullDataToFillTable.filter(
-    (keyword) => keyword.isRelevant === false
-  );
-
-  await addNewTable();
-
-  fillTable(fullDataToFillTable);
-
-  addFilterAndSearchNodes();
-}
-
-async function fillTable(data) {
-  console.log("fill table");
-  $("#new-table tbody").empty();
-
-  const rowsToLoad = 10;
-  const tableBody = $("#new-table tbody");
-  const container = $(".new-table-container");
-  container.scrollTop(0);
-  function appendRows(startIndex, endIndex) {
-    for (var i = startIndex; i < endIndex; i++) {
-      if (data[i]) {
-        const newRow = $(
-          `
+    const rowsToLoad = 10;
+    const tableBody = $("#new-table tbody");
+    const container = $(".new-table-container");
+    container.scrollTop(0);
+    function appendRows(startIndex, endIndex) {
+      for (var i = startIndex; i < endIndex; i++) {
+        if (data[i]) {
+          const newRow = $(
+            `
                     <tr>
                       <td data-name="stemmedQuery">
                         ${data[i].stemmedQuery}
@@ -293,144 +160,278 @@ async function fillTable(data) {
               <td>
               <label class="custom-checkbox">
                   <input type="checkbox" value=${data[i].isRelevant} ${
-            data[i].isRelevant ? "checked" : ""
-          }/>
+              data[i].isRelevant ? "checked" : ""
+            }/>
           <span class="checkmark"></span>
           </label>
        
               <td>
                     </tr>
           `
-        );
-        tableBody.append(newRow);
+          );
+          tableBody.append(newRow);
+        }
+      }
+      $('#new-table tbody input[type="checkbox"]').on("change", onCheckbox);
+    }
+    async function onCheckbox() {
+      const old_value = JSON.parse($(this).attr("value"));
+
+      $(this).attr("value", !old_value);
+      const tr = $(this).parent().parent().parent();
+      const trkeyword = tr.find('td[data-name="stemmedQuery"]').text().trim();
+
+      const res = await fetchToEtsy(trkeyword, !old_value);
+
+      console.log(res);
+      if (res.status == 201) {
+        $("#wt-toast-feed")
+          .html(
+            writeSuccessText(
+              `${trkeyword} has been ${old_value ? "turned off" : "turned on"}`
+            )
+          )
+          .show();
+
+        fullDataToFillTable.find(
+          (x) => x.stemmedQuery == trkeyword
+        ).isRelevant = !old_value;
+        updateDataAndFillTable();
+      } else {
+        $(this).attr("value", old_value);
+        $("#wt-toast-feed")
+          .html(
+            writeSuccessText(
+              `Error ${res.status}, ${res.statusText}, ${trkeyword} can't be ${
+                old_value ? "turned off" : "turned on"
+              }.  `
+            )
+          )
+          .show();
+      }
+
+      setTimeout(function () {
+        $("#wt-toast-feed").hide();
+      }, 2000);
+    }
+
+    appendRows(0, rowsToLoad);
+
+    var currentIndex = rowsToLoad;
+    container.off();
+    container.scroll(
+      debounce(function () {
+        if (
+          container.scrollTop() + container.height() >=
+          container[0].scrollHeight - 120
+        ) {
+          console.log("load more rows");
+
+          var endIndex = currentIndex + rowsToLoad;
+          console.log("currentIndex, endIndex", currentIndex, endIndex);
+          appendRows(currentIndex, endIndex);
+          currentIndex = endIndex;
+        }
+      }, 50)
+    );
+  }
+  async function getNewfullDataToFillTable() {
+    let data = fullDataToFillTable;
+    let searchText = $("#searchForm").val();
+    if (searchText) {
+      const newFuse = new Fuse(data, {
+        keys: ["stemmedQuery"],
+        threshold: 0,
+        ignoreLocation: true,
+        useExtendedSearch: true,
+      });
+      const containOrExclude = $("#om-search-option").val()
+        ? $("#om-search-option").val()
+        : "contain";
+      switch (containOrExclude) {
+        case "contain":
+          data = newFuse.search(searchText).map((word) => word.item);
+
+          break;
+        case "exclude":
+          data = newFuse.search("!" + searchText).map((word) => word.item);
+          break;
       }
     }
-    $('#new-table tbody input[type="checkbox"]').on("change", onCheckbox);
+
+    const onOrOff = $("#om-keyword-status").val()
+      ? $("#om-keyword-status").val()
+      : "all";
+
+    switch (onOrOff) {
+      case "all":
+        data = data;
+        break;
+      case "enabled":
+        data = data.filter((keyword) => keyword.isRelevant == true);
+        break;
+      case "disabled":
+        data = data.filter((keyword) => keyword.isRelevant == false);
+        break;
+    }
+
+    data = [...data].sort((a, b) =>
+      sortBy[1] ? b[sortBy[0]] - a[sortBy[0]] : a[sortBy[0]] - b[sortBy[0]]
+    );
+
+    $("#countAll").text("All (" + fullDataToFillTable.length + ")");
+
+    $("#countEnabled").text(
+      "On (" +
+        fullDataToFillTable.filter((keyword) => keyword.isRelevant === true)
+          .length +
+        ")"
+    );
+    $("#countDisabled").text(
+      "Off (" +
+        fullDataToFillTable.filter((keyword) => keyword.isRelevant === false)
+          .length +
+        ")"
+    );
+    $("#countRows").text(data.length);
+    return data;
   }
-
-  appendRows(0, rowsToLoad);
-
-  var currentIndex = rowsToLoad;
-  container.off();
-  container.scroll(
-    debounce(function () {
-      if (
-        container.scrollTop() + container.height() >=
-        container[0].scrollHeight - 120
-      ) {
-        console.log("load more rows");
-
-        var endIndex = currentIndex + rowsToLoad;
-        console.log("currentIndex, endIndex", currentIndex, endIndex);
-        appendRows(currentIndex, endIndex);
-        currentIndex = endIndex;
-      }
-    }, 50)
-  );
 }
 
-async function addNewTable() {
-  const place = await waitForElement("#impressions_wt_tab_panel", 10, 1000);
-  if (!place) {
-    console.error("Cant find place to insert table");
-    return;
+async function whenHaveKeywords(data) {
+  console.log("content script receive keywords from window");
+
+  fullDataToFillTable = data.queryStats;
+
+  await addNewTable();
+  addFilterAndSearchNodes();
+  await updateDataAndFillTable();
+  function addFilterAndSearchNodes() {
+    const html = `
+  
+      <div class="wrap-filter-search">
+  
+          <div class="flex">
+                    <div class="om-search om-select-style">
+                      <select id="om-search-option" >
+                        <option value="contain" selected>Contain </option>
+                        <option value="exclude" > Exclude  </option>        
+                      </select> 
+                    </div>
+  
+                    <div class="om-input-container">
+                      <input class="om-input" id="searchForm">
+                      <span class="close-icon close-icon-for-text">
+  
+                      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='100' height='100' viewBox='0 0 64 64'%3E%3Cpath d='M32,10c12.15,0,22,9.85,22,22s-9.85,22-22,22s-22-9.85-22-22S19.85,10,32,10z M36.95,39.778	c0.781,0.781,2.047,0.781,2.828,0c0.781-0.781,0.781-2.047,0-2.828c-0.175-0.175-2.767-2.767-4.95-4.95	c2.183-2.183,4.774-4.774,4.95-4.95c0.781-0.781,0.781-2.047,0-2.828c-0.781-0.781-2.047-0.781-2.828,0	c-0.175,0.175-2.767,2.767-4.95,4.95c-2.183-2.183-4.775-4.775-4.95-4.95c-0.781-0.781-2.047-0.781-2.828,0	c-0.781,0.781-0.781,2.047,0,2.828c0.175,0.175,2.767,2.767,4.95,4.95c-2.183,2.183-4.774,4.774-4.95,4.95	c-0.781,0.781-0.781,2.047,0,2.828c0.781,0.781,2.047,0.781,2.828,0c0.175-0.175,2.767-2.767,4.95-4.95	C34.183,37.011,36.775,39.603,36.95,39.778z'%3E%3C/path%3E%3C/svg%3E" alt="SVG">
+   
+                      </span>
+                    
+                    </div>
+                    <label for="searchForm">Showing <span id="countRows">${fullDataToFillTable.length}</span> results</label>
+          </div> 
+      
+  
+   
+  
+      <div class="om-select-style">
+          <select id="om-keyword-status" >
+          <option  id="countAll" value="all" selected></option>
+            <option id="countEnabled" value="enabled" ></option>
+            <option id="countDisabled" value="disabled"></option>
+          </select> 
+      </div>
+    
+      
+    </div>
+      `;
+
+    $("#om-section").prepend(html);
+
+    $("#om-keyword-status").on("change", updateDataAndFillTable);
+
+    $("#searchForm").on("input change", debounce(updateDataAndFillTable, 500));
+    $("#om-search-option").on("change", updateDataAndFillTable);
+
+    // $(".wrap-filter-search" + ":not(:first)").remove();
+
+    $(".close-icon-for-text").on("click", function () {
+      $(this).parent().find("input").val("").trigger("input");
+    });
   }
-  console.log("place for add table", place);
-  $(
-    `<section id="om-section"><div class="new-table-container"><table id="new-table"><thead> </thead><tbody></tbody><table></div></section>`
-  ).insertAfter(place.parent());
-
-  const headerTextArray = [
-    { variable_name: "buyers_searched_for", text: "Buyers searched for" },
-    { variable_name: "impressionCounts", text: "Views" },
-    { variable_name: "clickCount", text: "Clicks" },
-    { variable_name: "", text: "" },
-    { variable_name: "clicksRate", text: "Click Rate" },
-    { variable_name: "spend", text: "Spend" },
-    { variable_name: "orderCount", text: "Orders" },
-    { variable_name: "", text: "" },
-    { variable_name: "poas", text: "POAS" },
-    { variable_name: "isRelevant", text: "Relevant" },
-  ];
-
-  const tableHead = $("#new-table thead");
-  const newRow = $("<tr class='injected-tr'>");
-
-  // Loop through the header text array and create <th> elements
-  headerTextArray.forEach(function (item) {
-    const newHeader = $("<th class='wt-table__head__cell wt-no-wrap'>")
-      .attr("data-name", item.variable_name)
-      .html(
-        `<span id="col-name">` +
-          item.text +
-          '</span> <span class="injected-icon"></span> '
-      );
-    newRow.append(newHeader);
-  });
-
-  tableHead.append(newRow);
-
-  handleTheadOnClick();
-}
-
-async function handleTheadOnClick() {
-  $("#new-table thead th").on("click", async function () {
-    if ([0, 3, 7, 9].includes($(this).index())) {
+  async function addNewTable() {
+    const place = await waitForElement("#impressions_wt_tab_panel", 10, 1000);
+    if (!place) {
+      console.error("Cant find place to insert table");
       return;
     }
+    console.log("place for add table", place);
+    $(
+      `<section id="om-section"><div class="new-table-container"><table id="new-table"><thead> </thead><tbody></tbody><table></div></section>`
+    ).insertAfter(place.parent());
 
-    const first = async () => {
-      const thIndex = $(this).index();
+    const headerTextArray = [
+      { variable_name: "buyers_searched_for", text: "Buyers searched for" },
+      { variable_name: "impressionCounts", text: "Views" },
+      { variable_name: "clickCount", text: "Clicks" },
+      { variable_name: "", text: "" },
+      { variable_name: "clicksRate", text: "Click Rate" },
+      { variable_name: "spend", text: "Spend" },
+      { variable_name: "orderCount", text: "Orders" },
+      { variable_name: "", text: "" },
+      { variable_name: "poas", text: "POAS" },
+      { variable_name: "isRelevant", text: "Relevant" },
+    ];
 
-      $("#new-table thead th").each(function (index) {
-        // Check if the index is different from 4
-        if (index !== thIndex) {
-          // Set the HTML content of the current TH element to empty
-          $(this).find(".injected-icon").html("");
-        }
-      });
-      this.desc = !this.desc;
-      if (!this.desc) {
-        $(this).find(".injected-icon").text("⬆");
-      } else {
-        $(this).find(".injected-icon").text("⬇");
+    const tableHead = $("#new-table thead");
+    const newRow = $("<tr class='injected-tr'>");
+
+    // Loop through the header text array and create <th> elements
+    headerTextArray.forEach(function (item) {
+      const newHeader = $("<th class='wt-table__head__cell wt-no-wrap'>")
+        .attr("data-name", item.variable_name)
+        .html(
+          `<span id="col-name">` +
+            item.text +
+            '</span> <span class="injected-icon"></span> '
+        );
+      newRow.append(newHeader);
+    });
+
+    tableHead.append(newRow);
+    $("#new-table thead th").on("click", async function () {
+      if ([0, 3, 7, 9].includes($(this).index())) {
+        return;
       }
 
-      return true;
-    };
+      const first = async () => {
+        const thIndex = $(this).index();
 
-    const second = async () => {
-      sortBy = [$(this).attr("data-name"), this.desc];
-      console.log("sortBy", sortBy);
-      handleChange();
-    };
+        $("#new-table thead th").each(function (index) {
+          // Check if the index is different from 4
+          if (index !== thIndex) {
+            // Set the HTML content of the current TH element to empty
+            $(this).find(".injected-icon").html("");
+          }
+        });
+        this.desc = !this.desc;
+        if (!this.desc) {
+          $(this).find(".injected-icon").text("⬆");
+        } else {
+          $(this).find(".injected-icon").text("⬇");
+        }
 
-    await first();
-    second();
-  });
-}
+        return true;
+      };
 
-async function onCheckbox() {
-  const old_value = JSON.parse($(this).attr("value"));
+      const second = async () => {
+        sortBy = [$(this).attr("data-name"), this.desc];
+        console.log("sortBy", sortBy);
+        updateDataAndFillTable();
+      };
 
-  $(this).attr("value", !old_value);
-  const tr = $(this).parent().parent().parent();
-  const trkeyword = tr.find('td[data-name="stemmedQuery"]').text().trim();
-
-  const res = await fetchToEtsy(trkeyword, !old_value);
-  console.log(res);
-  if (res.status == 201) {
-    $("#wt-toast-feed")
-      .html(
-        writeSuccessText(
-          `${trkeyword} has been ${old_value ? "turned off" : "turned on"}`
-        )
-      )
-      .show();
-  } else {
+      await first();
+      second();
+    });
   }
-
-  setTimeout(function () {
-    $("#wt-toast-feed").hide();
-  }, 2000);
 }
