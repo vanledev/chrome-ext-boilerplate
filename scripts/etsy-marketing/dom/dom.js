@@ -173,7 +173,7 @@ async function updateDataAndFillTable() {
           tableBody.append(tr);
         }
       }
-
+      $(".wt-switch__toggle").off("click");
       $(".wt-switch__toggle").on("click", onCheckbox);
     }
     async function onCheckbox() {
