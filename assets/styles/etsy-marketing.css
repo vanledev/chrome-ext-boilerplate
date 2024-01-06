@@ -178,7 +178,7 @@ label[for="searchForm"] {
 #new-table th {
   cursor: pointer;
 }
-#new-table th:first-child,
+#new-table th:nth-child(2),
 #new-table th:last-child {
   cursor: text;
 }
