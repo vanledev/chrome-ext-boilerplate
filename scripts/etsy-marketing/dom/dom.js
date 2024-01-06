@@ -158,12 +158,10 @@ async function updateDataAndFillTable() {
               ${data[i].poas?.toFixed(2) || ""}
               </td>
               <td>
-              <label class="custom-checkbox">
-                  <input type="checkbox" value=${data[i].isRelevant} ${
-              data[i].isRelevant ? "checked" : ""
-            }/>
-          <span class="checkmark"></span>
-          </label>
+              <input class="wt-switch wt-switch--small" type="checkbox" value=${
+                data[i].isRelevant
+              } ${data[i].isRelevant ? "checked" : ""}/>
+              <label  class="wt-switch__toggle"></label>
        
               <td>
                     </tr>
