@@ -179,6 +179,7 @@ async function updateDataAndFillTable() {
     async function onCheckbox() {
       const tr = $(this).parent().parent();
       const input = $(this).parent().find("input");
+      input.addClass("wt-switch--is-loading");
       const old_value = JSON.parse(input.attr("value"));
 
       input.attr("value", !old_value);
