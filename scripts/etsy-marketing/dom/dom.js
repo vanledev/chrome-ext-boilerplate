@@ -172,6 +172,8 @@ async function updateDataAndFillTable() {
           tableBody.append(newRow);
         }
       }
+
+      $('#new-table tbody input[type="checkbox"]').off("change");
       $('#new-table tbody input[type="checkbox"]').on("change", onCheckbox);
     }
     async function onCheckbox() {
