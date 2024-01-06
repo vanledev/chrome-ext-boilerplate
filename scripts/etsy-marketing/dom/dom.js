@@ -423,34 +423,25 @@ async function addDOMEle() {
         return;
       }
 
-      const first = async () => {
-        const thIndex = $(this).index();
+      const thIndex = $(this).index();
 
-        $("#new-table thead th").each(function (index) {
-          // Check if the index is different from 4
-          if (index !== thIndex) {
-            // Set the HTML content of the current TH element to empty
-            $(this).find(".injected-icon").html("");
-          }
-        });
-        this.desc = !this.desc;
-        if (!this.desc) {
-          $(this).find(".injected-icon").text("⬆");
-        } else {
-          $(this).find(".injected-icon").text("⬇");
+      $("#new-table thead th").each(function (index) {
+        // Check if the index is different from 4
+        if (index !== thIndex) {
+          // Set the HTML content of the current TH element to empty
+          $(this).find(".injected-icon").html("");
         }
+      });
+      this.desc = !this.desc;
+      if (!this.desc) {
+        $(this).find(".injected-icon").text("⬆");
+      } else {
+        $(this).find(".injected-icon").text("⬇");
+      }
 
-        return true;
-      };
-
-      const second = async () => {
-        sortBy = [$(this).attr("data-name"), this.desc];
-        console.log("sortBy", sortBy);
-        updateDataAndFillTable();
-      };
-
-      await first();
-      second();
+      sortBy = [$(this).attr("data-name"), this.desc];
+      console.log("sortBy", sortBy);
+      updateDataAndFillTable();
     });
   }
 }
