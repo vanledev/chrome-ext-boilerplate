@@ -171,7 +171,6 @@ label[for="searchForm"] {
   }
 }
 
- 
 .injected-table th {
   text-align: left;
 }
@@ -184,7 +183,6 @@ label[for="searchForm"] {
   cursor: text;
 }
 
- 
 .injected-table th {
   white-space: wrap !important;
   word-break: break-all;
@@ -196,13 +194,11 @@ label[for="searchForm"] {
   width: 25% !important;
 }
 
- 
 .injected-table th,
 .injected-table td {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
- 
 
 .new-table-container {
   height: 500px;
@@ -227,7 +223,7 @@ label[for="searchForm"] {
 #new-table td {
   height: 60px !important;
 }
- 
+
 .injected-table th,
 .injected-table td {
   padding-left: 0 !important;
@@ -305,4 +301,9 @@ label[for="searchForm"] {
 #om-search-option,
 #om-keyword-status {
   cursor: pointer;
+}
+
+#new-table thead td:first-child,
+#new-table tbody td:first-child {
+  display: none;
 }
