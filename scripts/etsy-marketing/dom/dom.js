@@ -122,10 +122,13 @@ async function updateDataAndFillTable() {
     function appendRows(startIndex, endIndex) {
       for (var i = startIndex; i < endIndex; i++) {
         if (data[i]) {
-          const newRow = $(
+          const tr = $(
             `
                     <tr>
-                      <td data-name="stemmedQuery">
+                    <td>
+              <input type="checkbox"  />
+            </td>
+                      <td class="td-wide" data-name="stemmedQuery">
                         ${data[i].stemmedQuery}
                       </td>
                       <td data-name="">
@@ -167,18 +170,19 @@ async function updateDataAndFillTable() {
                     </tr>
           `
           );
-          tableBody.append(newRow);
+          tableBody.append(tr);
         }
       }
 
-      $('#new-table tbody input[type="checkbox"]').off("change");
-      $('#new-table tbody input[type="checkbox"]').on("change", onCheckbox);
+      $(".wt-switch__toggle").on("click", onCheckbox);
     }
     async function onCheckbox() {
-      const old_value = JSON.parse($(this).attr("value"));
+      const tr = $(this).parent().parent();
+      const input = $(this).parent().find("input");
+      const old_value = JSON.parse(input.attr("value"));
 
-      $(this).attr("value", !old_value);
-      const tr = $(this).parent().parent().parent();
+      input.attr("value", !old_value);
+
       const trkeyword = tr.find('td[data-name="stemmedQuery"]').text().trim();
 
       const res = await fetchToEtsy(trkeyword, !old_value);
@@ -198,7 +202,7 @@ async function updateDataAndFillTable() {
         ).isRelevant = !old_value;
         updateDataAndFillTable();
       } else {
-        $(this).attr("value", old_value);
+        input.attr("value", old_value);
         $("#wt-toast-feed")
           .html(
             writeSuccessText(
@@ -379,7 +383,13 @@ async function addDOMEle() {
     ];
 
     const tableHead = $("#new-table thead");
-    const newRow = $("<tr class='injected-tr'>");
+    const tr = $(`<tr class='injected-tr'>
+  
+    <td>
+     <input type="checkbox" id="check-all"/>
+    
+    </td>
+    </tr>`);
 
     // Loop through the header text array and create <th> elements
     headerTextArray.forEach(function (item) {
@@ -390,10 +400,11 @@ async function addDOMEle() {
             item.text +
             '</span> <span class="injected-icon"></span> '
         );
-      newRow.append(newHeader);
+      tr.append(newHeader);
     });
 
-    tableHead.append(newRow);
+    tableHead.append(tr);
+
     $("#new-table thead th").on("click", async function () {
       if ([0, 3, 7, 9].includes($(this).index())) {
         return;
