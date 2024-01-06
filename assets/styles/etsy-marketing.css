@@ -183,14 +183,15 @@ label[for="searchForm"] {
   cursor: text;
 }
 
-.injected-table th {
+#new-table th,
+td {
   white-space: wrap !important;
   word-break: break-all;
-  width: 7% !important;
+  width: 8% !important;
   padding: 10px !important;
 }
 
-.injected-table .td-wide {
+#new-table .td-wide {
   width: 25% !important;
 }
 
