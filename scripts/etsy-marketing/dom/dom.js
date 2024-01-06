@@ -189,6 +189,9 @@ async function updateDataAndFillTable() {
       const res = await fetchToEtsy(trkeyword, !old_value);
 
       console.log(res);
+      if (res) {
+        input.removeClass("wt-switch--is-loading");
+      }
       if (res.status == 201) {
         $("#wt-toast-feed")
           .html(
@@ -201,9 +204,10 @@ async function updateDataAndFillTable() {
         fullDataToFillTable.find(
           (x) => x.stemmedQuery == trkeyword
         ).isRelevant = !old_value;
-        updateDataAndFillTable();
+        // updateDataAndFillTable();
+        input.prop("checked", !old_value);
       } else {
-        input.attr("value", old_value);
+         
         $("#wt-toast-feed")
           .html(
             writeSuccessText(
