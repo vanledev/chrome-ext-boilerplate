@@ -207,7 +207,6 @@ async function updateDataAndFillTable() {
         // updateDataAndFillTable();
         input.prop("checked", !old_value);
       } else {
-         
         $("#wt-toast-feed")
           .html(
             writeSuccessText(
@@ -411,7 +410,16 @@ async function addDOMEle() {
     tableHead.append(tr);
 
     $("#new-table thead th").on("click", async function () {
-      if ([0, 3, 7, 9].includes($(this).index())) {
+      if (
+        ![
+          "clickCount",
+          "impressionCounts",
+          "clicksRate",
+          "spend",
+          "orderCount",
+          "poas",
+        ].includes($(this).attr("data-name"))
+      ) {
         return;
       }
 
