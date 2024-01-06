@@ -423,11 +423,11 @@ async function addDOMEle() {
         return;
       }
 
-      const thIndex = $(this).index();
+      const thName = $(this).attr("data-name");
 
-      $("#new-table thead th").each(function (index) {
+      $("#new-table thead th").each(function () {
         // Check if the index is different from 4
-        if (index !== thIndex) {
+        if ($(this).attr("data-name") !== thName) {
           // Set the HTML content of the current TH element to empty
           $(this).find(".injected-icon").html("");
         }
