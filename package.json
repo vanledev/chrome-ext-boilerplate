@@ -1,0 +1,19 @@
+{
+  "name": "boilerplate",
+  "version": "1.0.0",
+  "description": "Sync order to app Merchbrigde and add tracking for orders",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "commonjs",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
