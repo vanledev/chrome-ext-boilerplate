@@ -8,11 +8,12 @@
     "16": "assets/images/16.png"
   },
   "action": {
-    "default_title": "Boilerplate",
+    "default_popup": "popup/index.html",
     "default_icon": {
-      "48": "assets/images/16.png"
+      "16": "assets/images/16.png"
     }
   },
+
   "default_locale": "en",
   "content_scripts": [
     {
@@ -41,7 +42,7 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "injected/injected.js",
+        "injected/main.js",
         "injected/ext.css",
         "injected/jquery.min.js"
       ],

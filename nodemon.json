@@ -1,0 +1,4 @@
+{
+  "watch": ["./injected/main/*.js"],
+  "ext": "js json"
+}

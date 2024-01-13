@@ -1,3 +1,4 @@
-- add content scripts to content-scripts/main
-- join content scripts by `npx gulp scripts`
+- add pre-joined content scripts to content-scripts/main, add pre-joined injected scripts to injected/main
 - edit gulp file: gulpfile.js
+- edit nodemon file: nodemon.json
+- join  scripts by `nodemon --exec gulp` or `npx gulp` 
