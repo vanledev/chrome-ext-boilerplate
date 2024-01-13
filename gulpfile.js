@@ -7,6 +7,7 @@ gulp.task("scripts", function () {
   return gulp
     .src([
       "./content-scripts/main/jquery.min.js",
+      "./content-scripts/main/helpers.js",
       "./content-scripts/main/general.js",
     ])
     .pipe(concat("main.js"))
